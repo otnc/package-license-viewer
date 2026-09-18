@@ -1,11 +1,65 @@
 {
   "version": 1,
   "skills": {
+    "hush": {
+      "source": "ro80t/hush",
+      "sourceType": "github",
+      "skillPath": "skills/hush/SKILL.md",
+      "computedHash": "bc4c35c783c5aac0e30636592d040b0e64e14b969d1f3f2b93daa711925c9839"
+    },
+    "hush-fix": {
+      "source": "ro80t/hush",
+      "sourceType": "github",
+      "skillPath": "skills/hush-fix/SKILL.md",
+      "computedHash": "a3f6e0b98984b0305b1c0bd5af107b9034be537d4c94f2566b9e2654fc8b6392"
+    },
+    "hush-review": {
+      "source": "ro80t/hush",
+      "sourceType": "github",
+      "skillPath": "skills/hush-review/SKILL.md",
+      "computedHash": "dd9414f55feab1f83a0d6c4c1b8cfe15fd525fb63090c56812ea8a7ca6c480da"
+    },
+    "js-ts-business-crud-transforms": {
+      "source": "icyJoseph/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/js-ts-business-crud-transforms/SKILL.md",
+      "computedHash": "64e9b134f0099dd10bd558a38e26b4ddd3d190b9409c02525145337e6bf7513c"
+    },
+    "js-ts-performance-readability": {
+      "source": "icyJoseph/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/js-ts-performance-readability/SKILL.md",
+      "computedHash": "c29a1d1066e3847ab925714df950f3cce187e8d877353e9ca1d3599db440d38a"
+    },
     "kiritan": {
       "source": "otnc/kiritan",
       "sourceType": "github",
       "skillPath": "skills/kiritan/SKILL.md",
       "computedHash": "ce347da3dc8cbb40771708bf50482b5c29fc1999eb83072cf901478bbd2f67e5"
+    },
+    "natural-japanese": {
+      "source": "coji/natural-japanese",
+      "sourceType": "github",
+      "skillPath": "skills/natural-japanese/SKILL.md",
+      "computedHash": "fddcb0ad9dcf3f415e34964f4ef05f168d0c368e2657361e11a38caf01c9e541"
+    },
+    "report-skills": {
+      "source": "mizuamedesu/ReportSkills",
+      "sourceType": "github",
+      "skillPath": "skills/report-skills/SKILL.md",
+      "computedHash": "12e810635d144084cc4904a9dea2921e34ad3a1a4db40a6881e82a64ffadfaa0"
+    },
+    "stop-ai-slop-jp": {
+      "source": "iKora128/stop-ai-slop-jp",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "39b85c919cd3158139441c167760345b8f3a2c9d1de44d4219cdeb8cc0b1e5e0"
+    },
+    "typescript-design": {
+      "source": "fa0311/typescript-design-skill",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-design/SKILL.md",
+      "computedHash": "7d032322845910a1105eb48c6dad59a73bff9f1e79a0c17636d8532c16b54247"
     }
   }
 }
