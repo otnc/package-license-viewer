@@ -24,7 +24,10 @@
     "deno",
     "spdx",
     "cargo",
-    "crates.io"
+    "crates.io",
+    "moonbit",
+    "moon",
+    "mooncakes"
   ],
   "icon": "images/icon.png",
   "repository": {
@@ -40,7 +43,9 @@
     "onLanguage:jsonc",
     "onLanguage:yaml",
     "onLanguage:toml",
-    "workspaceContains:**/Cargo.toml"
+    "workspaceContains:**/Cargo.toml",
+    "workspaceContains:**/moon.mod",
+    "workspaceContains:**/moon.mod.json"
   ],
   "contributes": {
     "commands": [
@@ -191,6 +196,21 @@
           "type": "boolean",
           "default": true,
           "description": "Use a uniquely matching crates.io version from Cargo.lock before selecting a public version from the requirement."
+        },
+        "packageLicenseViewer.moonbit.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable license annotations for MoonBit module manifests (`moon.mod`, `moon.mod.json`)."
+        },
+        "packageLicenseViewer.moonbit.useRegistry": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow mooncakes.io requests. When disabled, installed modules, the local registry index and existing cached metadata are still used."
+        },
+        "packageLicenseViewer.moonbit.useRegistryIndex": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`. It records every published version's license, so an installed toolchain resolves without any request."
         }
       }
     }

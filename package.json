@@ -15,7 +15,7 @@
     "check-types": "npm run check-types --workspaces --if-present",
     "lint": "eslint .",
     "build-tests": "npm run build-tests -w package-license-viewer",
-    "test": "npm run build-tests && node --test test/unit/index.test.js test/unit/annotator.test.js test/unit/crates.test.js",
+    "test": "npm run build-tests && node --test test/unit/index.test.js test/unit/annotator.test.js test/unit/crates.test.js test/unit/moonbit.test.js",
     "test:integration": "npm run test:integration -w package-license-viewer",
     "package": "npm run package -w package-license-viewer",
     "publish": "npm run publish -w package-license-viewer",

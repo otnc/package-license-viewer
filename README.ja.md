@@ -34,10 +34,10 @@
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
 | Rust | ✅ | Cargo | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
+| MoonBit | ✅ | moon | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
 | Python | ❌ | pip, uv, poetry | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
 | Go | ❌ | go mod | 対応予定 — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
-| MoonBit | ❌ | moon | 対応予定 — [Issue #13](https://github.com/otnc/package-license-viewer/issues/13) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
@@ -87,6 +87,9 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.crates.enabled` | `true` | `Cargo.toml` の依存関係宣言に注釈を付けます。 |
 | `packageLicenseViewer.crates.useRegistry` | `true` | crates.ioへのリクエストを許可します。無効にした場合もキャッシュ済みの公開メタデータは利用できます。 |
 | `packageLicenseViewer.crates.useLockfiles` | `true` | 該当する `Cargo.lock` 内で一意に一致するcrates.ioのバージョンを優先します。 |
+| `packageLicenseViewer.moonbit.enabled` | `true` | `moon.mod` / `moon.mod.json` の依存関係宣言に注釈を付けます。 |
+| `packageLicenseViewer.moonbit.useRegistry` | `true` | mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。 |
+| `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
 
 ## コントリビュート
 

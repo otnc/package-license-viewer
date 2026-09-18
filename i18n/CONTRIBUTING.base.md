@@ -50,6 +50,18 @@ Cargo's implementation lives in [`packages/core/src/providers/crates/`](packages
 `workspace.ts` and `lockfile.ts` only locate declarations and uniquely matching public versions. `client.ts` shares a send-start limiter (one request per second) across clients and uses `fetchJson` for HTTP. Its `/versions` request deliberately omits `per_page`: the [API implementation](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs) returns all versions in this mode. A response advertising another page is rejected instead of being treated as complete. The version records carry `license`, so candidate selection needs no request for each individual version. Exact locked versions use the per-version endpoint, including yanked versions. Transient failures are never written to `LicenseCache`; HTTP 429 delays subsequent sends for at least one minute without automatic retries.
 
 Keep manifest resolution keys separate from public version metadata keys. The former include the URI, alias, section, source, requirement and workspace context; the latter share exact public metadata across documents. `invalidate()` clears auxiliary reads and cancels pending Cargo requests. No Cargo command, archive reader, source cache, filesystem watcher or dependency graph belongs here.
+
+### MoonBit implementation
+
+MoonBit's implementation lives in [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/). moon is replacing `moon.mod.json` with `moon.mod`, a small DSL, so both are parsed: [`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) is a tokenizer for the [published grammar](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html) that reads only what is needed (the strings in a top-level `import` block, a `key = "string"`, a `key = [ … ]`) and skips whatever it does not recognize, so a half-typed statement never blanks out the dependencies above it. [`parse.ts`](packages/core/src/providers/moonbit/parse.ts) lowers both formats to the same entries, splitting each `import` item on its **last** `@` the way `read_module_from_dsl` does in moon.
+
+A declared version is an exact `semver::Version`, never a range: moon resolves with [minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs). Nothing here interprets ranges, and nothing runs `moon`. Resolution is [`.mooncakes`](packages/core/src/providers/moonbit/installed.ts) → `moon.work` members → the [registry index](packages/core/src/providers/moonbit/registryIndex.ts) → [mooncakes.io](packages/core/src/providers/moonbit/client.ts); the first two answer from the manifest that `moon build` unpacked, which is the only source that knows where selection actually landed, and both are checked before a declared version is even looked at — a `moon.work` member's `@version` is ignored by moon whatever it says, so validating it first would misreport a member with an odd placeholder version as unresolvable instead of skipped.
+
+The registry index is the clone `moon update` maintains in `$MOON_HOME/registry/index` (`~/.moon` by default), one JSON-lines file per module carrying every version **and its license** — which is why an installed toolchain resolves offline. Keep dropping a malformed line on its own rather than the whole file, as the crates.io client does for a bad version record.
+
+mooncakes.io answers `/api/v0/modules/<user>/<module>@<version>` with that release's metadata and `…/<user>/<module>` with the newest one; only the exact-version answer is cached, since the newest release is by definition what changes. That route has **no form for a nested name** such as `moonbitlang/lex/runtime`, even though the index carries one — those resolve from disk only and must not be given a hover link that would fail to load. The registry publishes no rate limit, so sends are spaced out instead of filling `maxConcurrentRequests`, and an HTTP 429 stands down for a minute without retrying.
+
+No `moon` invocation, archive download, `.mbt` parsing, package-level (`moon.pkg`) handling or dependency graph belongs here.
 :::
 
 :::kiritan{locale=ja}
@@ -74,6 +86,18 @@ Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/prov
 `workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
 
 マニフェスト解決キーと公開バージョンのメタデータキーは分けて管理してください。前者はURI、エイリアス、セクション、ソース、要件、ワークスペースのコンテキストを含み、後者はドキュメント間で正確な公開メタデータを共有します。`invalidate()` は補助的な読み込みをクリアし、保留中のCargoリクエストをキャンセルします。Cargoコマンドの実行、アーカイブの読み込み、ソースキャッシュ、ファイルシステムウォッチャー、依存関係グラフのいずれもここには含まれません。
+
+### MoonBitの実装
+
+MoonBitの実装は [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/) にあります。moonは `moon.mod.json` を小さなDSLである `moon.mod` に置き換えている途中のため、両方をパースします。[`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) は[公開されている文法](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html)に対するトークナイザーで、必要な部分(トップレベルの `import` ブロック内の文字列、`key = "string"`、`key = [ … ]`)だけを読み取り、認識できないものはすべてスキップします。そのため、途中まで書きかけの文があっても、その上に書かれた依存関係が消えることはありません。[`parse.ts`](packages/core/src/providers/moonbit/parse.ts) は両方のフォーマットを同じエントリ形式に落とし込み、各 `import` の項目をmoonの `read_module_from_dsl` と同じように**最後の** `@` で分割します。
+
+宣言されたバージョンは正確な `semver::Version` であり、範囲指定ではありません。moonは[minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs)で解決するためです。ここでは範囲を解釈する処理は一切なく、`moon` コマンドも実行しません。解決順序は [`.mooncakes`](packages/core/src/providers/moonbit/installed.ts) → `moon.work` メンバー → [レジストリインデックス](packages/core/src/providers/moonbit/registryIndex.ts) → [mooncakes.io](packages/core/src/providers/moonbit/client.ts) で、最初の2つは `moon build` が展開したマニフェストから答えます。これは、minimal version selectionが実際にどこに着地したかを知っている唯一の情報源です。また、この2つは宣言されたバージョンを見る**前に**チェックされます — `moon.work` メンバーの `@version` はmoonにとって何が書かれていても無視されるため、先にバージョンを検証してしまうと、奇妙なプレースホルダーのバージョンを持つメンバーが「スキップ」ではなく「解決不能」として誤って報告されてしまいます。
+
+レジストリインデックスは、`moon update` が `$MOON_HOME/registry/index`(デフォルトは `~/.moon`)に維持しているクローンで、モジュールごとに1つのJSON Lines形式のファイルに、すべてのバージョン**とそのライセンス**が記録されています。これがインストール済みツールチェーンがオフラインで解決できる理由です。crates.ioクライアントが不正なバージョンレコードに対して行っているのと同様に、壊れた行はファイル全体を捨てるのではなく、その行だけを読み飛ばしてください。
+
+mooncakes.ioは `/api/v0/modules/<user>/<module>@<version>` にその release のメタデータを、`…/<user>/<module>` に最新版を返します。最新版は定義上変わり得るものなので、正確なバージョンを指定した回答だけがキャッシュされます。このルートには `moonbitlang/lex/runtime` のようなネストした名前の**ルートが存在せず**、インデックス自体はそれを保持しているにもかかわらずです。そのため、そのようなモジュールはディスクからのみ解決し、読み込みに失敗するホバーリンクを渡してはいけません。レジストリはレート制限を公開していないため、`maxConcurrentRequests` を埋め尽くすのではなく送信間隔を空け、HTTP 429が返ってきた場合はリトライせずに1分間送信を停止します。
+
+`moon` コマンドの実行、アーカイブのダウンロード、`.mbt` のパース、パッケージレベル(`moon.pkg`)の扱い、依存関係グラフのいずれもここには含まれません。
 :::
 
 :::kiritan{locale=en}
@@ -227,6 +251,8 @@ npm run watch:vscode # esbuild in watch mode
 # press F5 in VS Code to launch the Extension Development Host
 ```
 
+Two launch configurations are contributed. **Run Extension** opens an empty Extension Development Host; **Run Extension (MoonBit sample)** opens [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) in it, which is a two-member `moon.work` holding one manifest of each format plus an unpacked `.mooncakes` module, so the annotations are visible the moment the host finishes loading. Either way, `File > Open Folder` in the host switches to a real project.
+
 ```sh
 npm run format:check     # prettier --check .
 npm run lint             # eslint .
@@ -240,7 +266,7 @@ The lockfiles in [`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) were pro
 
 `npm test` also loads the bundled `dist/extension.js`, because bundling can break the extension on its own: a dependency whose entry point defers its `require()` calls to runtime resolves fine under `tsc` and then fails inside the extension host.
 
-Compile before unit tests to exercise the bundle rather than skip that check. Cargo's integration suite launches a separate Cargo-only workspace with TOML associated to plaintext. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
+Compile before unit tests to exercise the bundle rather than skip that check. Cargo and MoonBit each get their own integration workspace, with `Cargo.toml` and `moon.mod` associated to plaintext so that dispatch cannot quietly come to depend on a language registration. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
 
 Run `npm run format` before committing; CI enforces `format:check` and `lint`.
 :::
@@ -253,6 +279,8 @@ npm install
 npm run watch:vscode # esbuildをwatchモードで実行
 # VS CodeでF5を押すとExtension Development Hostが起動します
 ```
+
+2つの起動構成が用意されています。**Run Extension** は空のExtension Development Hostを開きます。**Run Extension (MoonBit sample)** はその中で [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) を開きます。これは各フォーマットのマニフェストを1つずつと、展開済みの `.mooncakes` モジュールを持つ、2メンバー構成の `moon.work` です。そのため、ホストの起動が終わった瞬間に注釈が確認できます。どちらの場合も、ホスト内で `File > Open Folder` を実行すれば実際のプロジェクトに切り替えられます。
 
 ```sh
 npm run format:check     # prettier --check .
@@ -267,7 +295,7 @@ npm run package           # .vsixをビルド
 
 `npm test` はビルド済みの `dist/extension.js` も読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、`tsc` の下では問題なく解決されても、拡張機能ホスト内では失敗することがあります。
 
-このチェックを飛ばさず、バンドルを実際に動かすために、ユニットテストの前にコンパイルしてください。CargoのIntegrationテストスイートは、TOMLをプレーンテキストに関連付けた、Cargo専用の別ワークスペースを起動します。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
+このチェックを飛ばさず、バンドルを実際に動かすために、ユニットテストの前にコンパイルしてください。CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml` と `moon.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
 
 コミット前に `npm run format` を実行してください。CIでは `format:check` と `lint` が強制されます。
 :::
@@ -282,7 +310,7 @@ Test code is split across two tiers — different tools on purpose, not an incon
 
 [`test/fixtures/`](test/fixtures/) stays at the repository root, outside both packages, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
 
-When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/unit/`, following whichever of [`index.test.js`](test/unit/index.test.js) (npm/JSR) or [`crates.test.js`](test/unit/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/unit/`, following whichever of [`index.test.js`](test/unit/index.test.js) (npm/JSR), [`crates.test.js`](test/unit/crates.test.js) (Cargo) or [`moonbit.test.js`](test/unit/moonbit.test.js) (MoonBit) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — the suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/), [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) and [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/).
 :::
 
 :::kiritan{locale=ja}
@@ -295,7 +323,7 @@ When adding a provider or changing resolution logic, add a unit test next to the
 
 [`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、`test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、[`index.test.js`](test/unit/index.test.js)(npm/JSR)、[`crates.test.js`](test/unit/crates.test.js)(Cargo)、[`moonbit.test.js`](test/unit/moonbit.test.js)(MoonBit)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) のフィクスチャを共通で使っています。
 :::
 
 :::kiritan{locale=en}
