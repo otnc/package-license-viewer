@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "kiritan": {
+      "source": "otnc/kiritan",
+      "sourceType": "github",
+      "skillPath": "skills/kiritan/SKILL.md",
+      "computedHash": "53903fb13a8f0c33769aea78a0eacb909740f133ac43eb8c5c24dc4df3995f82"
+    }
+  }
+}

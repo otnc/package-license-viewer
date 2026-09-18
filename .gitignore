@@ -14,3 +14,4 @@ dist/
 !test/fixtures/workspace/node_modules/
 
 .private/
+local.kiritanconfig

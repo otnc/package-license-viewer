@@ -207,7 +207,9 @@
     "package": "vsce package",
     "publish": "node scripts/publish.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "docs:build": "kiritan build",
+    "docs:check": "kiritan check"
   },
   "dependencies": {
     "jsonc-parser": "^3.3.1",
@@ -227,6 +229,7 @@
     "eslint": "^10.10.0",
     "git-cliff": "^2.13.1",
     "globals": "^17.12.0",
+    "kiritan": "^0.4.0",
     "mocha": "^12.0.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
