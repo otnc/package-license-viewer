@@ -126,12 +126,14 @@ npm run package           # .vsixをビルド
 
 ## テスト
 
-2つの階層に分かれているのは意図的な設計であり、整理すべき不統一ではありません。
+テストコードはすべて [`src/test/`](src/test/) 配下にまとめられており、その中で2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
 
-- **ユニットテスト**([`test/*.test.js`](test/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`test/vscode-stub.js`](test/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
-- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれています。
+- **ユニットテスト**([`src/test/unit/*.test.js`](src/test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
+- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、`src/` の内側にあるため別立てのコンパイルではなく拡張機能本体と同じ `tsc` のパスでコンパイルされます。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`test/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](test/index.test.js)(npm/JSR)か [`crates.test.js`](test/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
+[`test/fixtures/`](test/fixtures/) はリポジトリのルート、`src/` の外側に置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+
+プロバイダーの追加や解決ロジックの変更を行う際は、`src/test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](src/test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](src/test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
 
 ## リリース
 

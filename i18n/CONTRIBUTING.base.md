@@ -275,23 +275,27 @@ npm run package           # .vsixをビルド
 :::kiritan{locale=en}
 ## Testing
 
-Two tiers, on purpose — not an inconsistency to clean up:
+All test code lives under [`src/test/`](src/test/), in two tiers — different tools on purpose, not an inconsistency:
 
-- **Unit tests** ([`test/*.test.js`](test/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`test/vscode-stub.js`](test/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
-- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly.
+- **Unit tests** ([`src/test/unit/*.test.js`](src/test/unit/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
+- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly, and they're compiled by the same `tsc` pass as the extension itself (they're inside `src/`) rather than a separate one.
 
-When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/`, following whichever of [`index.test.js`](test/index.test.js) (npm/JSR) or [`crates.test.js`](test/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
+[`test/fixtures/`](test/fixtures/) stays at the repository root, outside `src/`, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
+
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in `src/test/unit/`, following whichever of [`index.test.js`](src/test/unit/index.test.js) (npm/JSR) or [`crates.test.js`](src/test/unit/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
 :::
 
 :::kiritan{locale=ja}
 ## テスト
 
-2つの階層に分かれているのは意図的な設計であり、整理すべき不統一ではありません。
+テストコードはすべて [`src/test/`](src/test/) 配下にまとめられており、その中で2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
 
-- **ユニットテスト**([`test/*.test.js`](test/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`test/vscode-stub.js`](test/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
-- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれています。
+- **ユニットテスト**([`src/test/unit/*.test.js`](src/test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
+- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、`src/` の内側にあるため別立てのコンパイルではなく拡張機能本体と同じ `tsc` のパスでコンパイルされます。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`test/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](test/index.test.js)(npm/JSR)か [`crates.test.js`](test/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
+[`test/fixtures/`](test/fixtures/) はリポジトリのルート、`src/` の外側に置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+
+プロバイダーの追加や解決ロジックの変更を行う際は、`src/test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](src/test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](src/test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
 :::
 
 :::kiritan{locale=en}

@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
 
-const OUT = path.join(__dirname, "..", "out");
+const OUT = path.join(__dirname, "..", "..", "..", "out");
 const { parseSpec, encodePackageName } = require(path.join(OUT, "providers/npm/spec.js"));
 const { normalizeLicense, normalizeNodeEngine } = require(
   path.join(OUT, "providers/npm/manifest.js")
@@ -40,14 +40,14 @@ const memoryMemento = () => ({
   },
 });
 
-const FIXTURES = path.join(__dirname, "fixtures", "lockfiles");
+const FIXTURES = path.join(__dirname, "..", "..", "..", "test", "fixtures", "lockfiles");
 const readFixture = (name) => fs.readFileSync(path.join(FIXTURES, name), "utf8");
 
 // --- the shipped bundle -----------------------------------------------------
 // The tests above load out/, which is plain tsc output. dist/extension.js is what actually ships, and bundling can break it on its own — a dependency whose entry point defers its require() calls to runtime resolves fine under tsc and then fails inside the extension host. So load the real bundle too.
 
 test("the bundled extension loads and exposes its entry points", (t) => {
-  const bundle = path.join(__dirname, "..", "dist", "extension.js");
+  const bundle = path.join(__dirname, "..", "..", "..", "dist", "extension.js");
   if (!fs.existsSync(bundle)) {
     t.skip("dist/extension.js is not built; run npm run compile");
     return;

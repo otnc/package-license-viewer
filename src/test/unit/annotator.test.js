@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { test } = require("node:test");
 
-const OUT = path.join(__dirname, "..", "out");
+const OUT = path.join(__dirname, "..", "..", "..", "out");
 const { Annotator } = require(OUT + "/annotator.js");
 
 const MANIFEST = `{

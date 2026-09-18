@@ -126,12 +126,14 @@ Run `npm run format` before committing; CI enforces `format:check` and `lint`.
 
 ## Testing
 
-Two tiers, on purpose — not an inconsistency to clean up:
+All test code lives under [`src/test/`](src/test/), in two tiers — different tools on purpose, not an inconsistency:
 
-- **Unit tests** ([`test/*.test.js`](test/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`test/vscode-stub.js`](test/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
-- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly.
+- **Unit tests** ([`src/test/unit/*.test.js`](src/test/unit/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
+- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly, and they're compiled by the same `tsc` pass as the extension itself (they're inside `src/`) rather than a separate one.
 
-When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/`, following whichever of [`index.test.js`](test/index.test.js) (npm/JSR) or [`crates.test.js`](test/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
+[`test/fixtures/`](test/fixtures/) stays at the repository root, outside `src/`, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
+
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in `src/test/unit/`, following whichever of [`index.test.js`](src/test/unit/index.test.js) (npm/JSR) or [`crates.test.js`](src/test/unit/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
 
 ## Releasing
 
