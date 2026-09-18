@@ -4,7 +4,7 @@
 
 [![VS Code Marketplace Version](https://vsmarketplacebadges.dev/version/otoneko1102.package-license-viewer.svg)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
 [![VS Code Marketplace Installs](https://vsmarketplacebadges.dev/installs-short/otoneko1102.package-license-viewer.svg)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
-[![Vim/NeoVim](https://img.shields.io/badge/Vim%2FNeoVim-work%20in%20progress-yellow)](docs/vim-neovim-lsp-design.md)
+[![Vim/NeoVim](https://img.shields.io/badge/Vim%2FNeoVim-experimental-yellow)](packages/vim-plugin)
 [![CI](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/github/license/otnc/package-license-viewer)](LICENSE)
 
@@ -43,7 +43,13 @@
 
 ## エディタ
 
-現時点ではVS Codeに対応しています。共通の言語サーバーを土台にしたVim/NeoVim対応は現在進行中です — [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md) を参照してください(英語のみ)。
+| エディタ | サポート状況 | 備考 |
+| --- | --- | --- |
+| VS Code | ✅ | 全機能に対応: インライン注釈、hover、`packageLicenseViewer.*` の全設定。 |
+| Neovim | ✅ (実験的) | インライン注釈とhoverのみ対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。設定の同期は未対応で、現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`) — [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md) を参照してください(英語のみ)。 |
+| Vim | ✅ (実験的) | Neovimと同じくインライン注釈とhoverに対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md) を参照してください(英語のみ)。 |
+
+Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあります。セットアップと設定については `:help package_license_viewer` を参照してください(英語のみ)。
 
 ## コマンド
 
