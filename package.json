@@ -199,6 +199,8 @@
     "vscode:prepublish": "npm run check-types && node esbuild.js --production",
     "compile": "node esbuild.js",
     "watch": "node esbuild.js --watch",
+    "compile:lsp": "node esbuild.lspServer.js",
+    "watch:lsp": "node esbuild.lspServer.js --watch",
     "check-types": "tsc --noEmit",
     "lint": "eslint .",
     "build-tests": "tsc",
@@ -214,7 +216,9 @@
   "dependencies": {
     "jsonc-parser": "^3.3.1",
     "semver": "^7.6.3",
-    "toml-eslint-parser": "0.10.0"
+    "toml-eslint-parser": "0.10.0",
+    "vscode-languageserver": "^10.1.1",
+    "vscode-languageserver-textdocument": "^1.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
