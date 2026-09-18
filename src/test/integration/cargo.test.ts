@@ -1,5 +1,6 @@
 import * as assert from "node:assert/strict";
 import * as vscode from "vscode";
+import { toTextDocumentLike } from "../../annotator";
 import { LicenseCache } from "../../cache";
 import { buildHover } from "../../format";
 import { createProviders, findProvider } from "../../providers";
@@ -88,10 +89,11 @@ suite("Cargo-only workspace", () => {
         vscode.workspace.getConfiguration("packageLicenseViewer").get("crates.useRegistry"),
         false
       );
+      const doc = toTextDocumentLike(document);
       const providers = createProviders(cache);
-      const provider = findProvider(providers, document);
+      const provider = findProvider(providers, doc);
       assert.ok(provider instanceof CratesLicenseProvider);
-      const entries = provider.parse(document);
+      const entries = provider.parse(doc);
       assert.deepEqual(
         entries.map((e) => [e.name, e.line]),
         [
@@ -99,26 +101,26 @@ suite("Cargo-only workspace", () => {
           ["private", 6],
         ]
       );
-      const result = await provider.resolve(entries[0], document, noCancel);
+      const result = await provider.resolve(entries[0], doc, noCancel);
       assert.equal(result.license, "MIT OR Apache-2.0");
       assert.match(result.via ?? "", /Cargo.lock/);
       assert.match(
         buildHover(entries[0], result)?.value ?? "",
         /https:\/\/crates.io\/crates\/semver\/1.0.27/
       );
-      assert.equal((await provider.resolve(entries[1], document, noCancel)).source, "skipped");
+      assert.equal((await provider.resolve(entries[1], doc, noCancel)).source, "skipped");
       await vscode.window.showTextDocument(document);
       await vscode.commands.executeCommand("packageLicenseViewer.refresh");
       const settings = vscode.workspace.getConfiguration("packageLicenseViewer");
       await settings.update("crates.enabled", false, vscode.ConfigurationTarget.Workspace);
-      assert.equal(findProvider(providers, document), undefined);
+      assert.equal(findProvider(providers, doc), undefined);
       await settings.update("crates.enabled", undefined, vscode.ConfigurationTarget.Workspace);
-      assert.equal(findProvider(providers, document)?.id, "crates");
+      assert.equal(findProvider(providers, doc)?.id, "crates");
       const edit = new vscode.WorkspaceEdit();
       edit.insert(document.uri, new vscode.Position(7, 0), '\n[dev-dependencies]\nother = "1"\n');
       assert.equal(await vscode.workspace.applyEdit(edit), true);
       assert.equal(document.isDirty, true);
-      assert.equal(provider.parse(document).at(-1)?.name, "other");
+      assert.equal(provider.parse(doc).at(-1)?.name, "other");
       await vscode.commands.executeCommand("workbench.action.files.revert");
       const cleared = vscode.commands.executeCommand("packageLicenseViewer.clearCache");
       await delay(100);

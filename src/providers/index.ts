@@ -1,9 +1,8 @@
-import * as vscode from "vscode";
 import type { LicenseCache } from "../cache";
 import { CratesLicenseProvider } from "./crates";
 import { JsrLicenseProvider } from "./jsr";
 import { NpmLicenseProvider } from "./npm";
-import type { LicenseProvider } from "./types";
+import type { LicenseProvider, TextDocumentLike } from "./types";
 
 export * from "./types";
 
@@ -25,7 +24,7 @@ export function createProviders(cache: LicenseCache): LicenseProvider[] {
 /** The first provider that can handle this document, if any */
 export function findProvider(
   providers: readonly LicenseProvider[],
-  document: vscode.TextDocument
+  document: TextDocumentLike
 ): LicenseProvider | undefined {
   return providers.find((provider) => provider.isEnabled() && provider.supports(document));
 }

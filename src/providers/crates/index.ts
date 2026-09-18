@@ -1,7 +1,13 @@
 import * as vscode from "vscode";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
-import type { DependencyEntry, LicenseInfo, LicenseProvider } from "../types";
+import type {
+  CancellationLike,
+  DependencyEntry,
+  LicenseInfo,
+  LicenseProvider,
+  TextDocumentLike,
+} from "../types";
 import { CratesClient } from "./client";
 import { selectLocked } from "./lockfile";
 import { CargoEntry, parseManifest } from "./parse";
@@ -15,14 +21,14 @@ export class CratesLicenseProvider implements LicenseProvider {
   constructor(cache: LicenseCache) {
     this.client = new CratesClient(cache);
   }
-  supports(document: vscode.TextDocument): boolean {
-    return document.uri.path.endsWith("/Cargo.toml");
+  supports(document: TextDocumentLike): boolean {
+    return vscode.Uri.parse(document.uri).path.endsWith("/Cargo.toml");
   }
   isEnabled(): boolean {
     return getSetting("crates.enabled", true);
   }
-  parse(document: vscode.TextDocument): CargoEntry[] {
-    return parseManifest(document.getText(), document.uri.toString())?.entries ?? [];
+  parse(document: TextDocumentLike): CargoEntry[] {
+    return parseManifest(document.getText(), document.uri)?.entries ?? [];
   }
   cacheKey(entry: DependencyEntry): string {
     return entry instanceof CargoEntry
@@ -36,16 +42,16 @@ export class CratesLicenseProvider implements LicenseProvider {
 
   async resolve(
     entry: DependencyEntry,
-    document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    document: TextDocumentLike,
+    token: CancellationLike
   ): Promise<LicenseInfo> {
     if (!(entry instanceof CargoEntry)) return { source: "unknown", detail: "invalid Cargo entry" };
     let spec = entry.declaration;
     if (spec.kind === "skipped" || spec.kind === "unknown")
       return { source: spec.kind, detail: spec.reason };
-    const manifest = parseManifest(document.getText(), document.uri.toString());
+    const manifest = parseManifest(document.getText(), document.uri);
     if (!manifest) return { source: "unknown", detail: "invalid Cargo manifest" };
-    const root = await this.workspace.root(document.uri, manifest);
+    const root = await this.workspace.root(vscode.Uri.parse(document.uri), manifest);
     if (root.kind === "unknown") return { source: "unknown", detail: root.reason };
     if (spec.kind === "workspace") {
       const inherited = root.manifest.entries.find(

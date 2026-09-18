@@ -63,6 +63,13 @@ const stub = {
       const normalized = "/" + fsPath.replace(/\\/g, "/").replace(/^\//, "");
       return fakeUri(normalized);
     },
+    parse(value) {
+      const match = /^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/([^/]*)(\/.*)?$/.exec(value);
+      if (match) {
+        return fakeUri(match[3] ?? "", match[1], match[2]);
+      }
+      return fakeUri(value);
+    },
   },
   Position: class {
     constructor(line, character) {
@@ -129,7 +136,7 @@ Module._load = function (request, ...rest) {
 function fakeDocument(text, fsPath = "d:/project/package.json") {
   const lines = text.split("\n");
   return {
-    uri: stub.Uri.file(fsPath),
+    uri: stub.Uri.file(fsPath).toString(),
     getText: () => text,
     lineCount: lines.length,
     positionAt(offset) {

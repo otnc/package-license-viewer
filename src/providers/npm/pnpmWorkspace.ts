@@ -1,5 +1,4 @@
-import * as vscode from "vscode";
-import type { DependencyEntry } from "../types";
+import type { DependencyEntry, TextDocumentLike } from "../types";
 
 /**
  * Extract dependencies from a pnpm-workspace.yaml `catalog:` (default) and `catalogs:` (named) sections.
@@ -8,7 +7,7 @@ import type { DependencyEntry } from "../types";
 
  * Written by hand instead of pulling in a YAML parser, the same way `pnpm-lock.yaml` is read in `../lockfile/parsers.ts`: only a small, predictable subset of YAML needs to be understood — two-space-indented `name: spec` maps, optionally one level deeper under a named catalog.
  */
-export function parsePnpmWorkspaceYaml(document: vscode.TextDocument): DependencyEntry[] {
+export function parsePnpmWorkspaceYaml(document: TextDocumentLike): DependencyEntry[] {
   const lines = document.getText().split(/\r?\n/);
   const entries: DependencyEntry[] = [];
 

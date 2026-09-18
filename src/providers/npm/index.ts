@@ -9,7 +9,13 @@ import {
   parseJsrPackageName,
   resolveViaNpmRegistry,
 } from "../jsr";
-import type { DependencyEntry, LicenseInfo, LicenseProvider } from "../types";
+import type {
+  CancellationLike,
+  DependencyEntry,
+  LicenseInfo,
+  LicenseProvider,
+  TextDocumentLike,
+} from "../types";
 import { InstalledPackageLookup } from "./installed";
 import { LockfileResolver } from "./lockfile";
 import { normalizeLicense, normalizeNodeEngine } from "./manifest";
@@ -52,8 +58,8 @@ export class NpmLicenseProvider implements LicenseProvider {
     this.jsr = new JsrClient(cache);
   }
 
-  supports(document: vscode.TextDocument): boolean {
-    const path = document.uri.path;
+  supports(document: TextDocumentLike): boolean {
+    const path = vscode.Uri.parse(document.uri).path;
     if (path.endsWith("/package.json")) {
       // Never annotate a package.json that lives inside node_modules
       return !path.includes("/node_modules/");
@@ -68,8 +74,8 @@ export class NpmLicenseProvider implements LicenseProvider {
     return getSetting("npm.enabled", true);
   }
 
-  parse(document: vscode.TextDocument): DependencyEntry[] {
-    const path = document.uri.path;
+  parse(document: TextDocumentLike): DependencyEntry[] {
+    const path = vscode.Uri.parse(document.uri).path;
     if (path.endsWith("/pnpm-workspace.yaml") || path.endsWith("/pnpm-workspace.yml")) {
       return parsePnpmWorkspaceYaml(document);
     }
@@ -90,9 +96,10 @@ export class NpmLicenseProvider implements LicenseProvider {
 
   async resolve(
     entry: DependencyEntry,
-    document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    document: TextDocumentLike,
+    token: CancellationLike
   ): Promise<LicenseInfo> {
+    const uri = vscode.Uri.parse(document.uri);
     const parsed = parseSpec(entry.name, entry.spec);
 
     // JSR-flavored dependencies show up two ways in a package.json:
@@ -106,7 +113,7 @@ export class NpmLicenseProvider implements LicenseProvider {
       (parsed.kind === "jsr" ? parseJsrPackageName(parsed.name) : undefined);
 
     // 1. Whatever is installed wins
-    const local = await this.installed.find(document.uri, entry.name);
+    const local = await this.installed.find(uri, entry.name);
     if (local) {
       const version = local.manifest.version;
       const satisfies =
@@ -172,7 +179,7 @@ export class NpmLicenseProvider implements LicenseProvider {
 
     // 2. Ask the lockfile for the pinned version
     if (getSetting("npm.useLockfiles", true)) {
-      const locked = await this.lockfiles.lookup(document.uri, parsed.name, parsed.spec);
+      const locked = await this.lockfiles.lookup(uri, parsed.name, parsed.spec);
       if (locked) {
         // npm's lockfile has the license, so this can be answered outright
         if (locked.license) {
@@ -222,7 +229,7 @@ export class NpmLicenseProvider implements LicenseProvider {
   private async fetchExactVersion(
     name: string,
     version: string,
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<LicenseInfo | undefined> {
     try {
       const { license, homepage, nodeEngine } = await this.registry.fetchLicense(

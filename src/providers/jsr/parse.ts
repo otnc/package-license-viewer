@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { type Node, parseTree } from "jsonc-parser";
-import type { DependencyEntry } from "../types";
+import type { DependencyEntry, TextDocumentLike } from "../types";
 
 /** A specifier a Deno manifest can express that we know how to resolve */
 export interface DenoSpecifier {
@@ -12,8 +12,8 @@ export interface DenoSpecifier {
 }
 
 /** Is this a Deno or import-map manifest? */
-export function isDenoManifest(document: vscode.TextDocument): boolean {
-  const fileName = document.uri.path.split("/").pop() ?? "";
+export function isDenoManifest(uri: vscode.Uri): boolean {
+  const fileName = uri.path.split("/").pop() ?? "";
   return (
     fileName === "deno.json" ||
     fileName === "deno.jsonc" ||
@@ -29,7 +29,7 @@ export function isDenoManifest(document: vscode.TextDocument): boolean {
 
  * `spec` keeps the original specifier verbatim and is re-read at resolution time, which is how the `jsr:` or `npm:` distinction survives the trip.
  */
-export function parseDenoManifest(document: vscode.TextDocument): DependencyEntry[] {
+export function parseDenoManifest(document: TextDocumentLike): DependencyEntry[] {
   const root = parseTree(document.getText());
   if (!root || root.type !== "object" || !root.children) {
     return [];
@@ -63,7 +63,7 @@ function looksLikeBareImportMap(root: Node): boolean {
 }
 
 function collectImports(
-  document: vscode.TextDocument,
+  document: TextDocumentLike,
   objectNode: Node,
   out: DependencyEntry[]
 ): void {

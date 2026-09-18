@@ -368,9 +368,9 @@ test("NpmLicenseProvider.supports recognises pnpm-workspace.yaml, not other yaml
 
 test("isDenoManifest recognises the manifest file names", () => {
   for (const name of ["deno.json", "deno.jsonc", "jsr.json", "import_map.json"]) {
-    assert.ok(isDenoManifest(fakeDocument("{}", `d:/p/${name}`)), name);
+    assert.ok(isDenoManifest(stub.Uri.file(`d:/p/${name}`)), name);
   }
-  assert.equal(isDenoManifest(fakeDocument("{}", "d:/p/package.json")), false);
+  assert.equal(isDenoManifest(stub.Uri.file("d:/p/package.json")), false);
 });
 
 test("parseDenoSpecifier splits jsr: and npm: specifiers", () => {

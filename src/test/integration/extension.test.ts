@@ -1,5 +1,6 @@
 import * as assert from "node:assert/strict";
 import * as vscode from "vscode";
+import { toTextDocumentLike } from "../../annotator";
 import { LicenseCache } from "../../cache";
 import { createProviders, findProvider, type LicenseProvider } from "../../providers";
 import { JsrLicenseProvider } from "../../providers/jsr";
@@ -68,19 +69,19 @@ suite("provider dispatch", () => {
 
   test("package.json goes to the npm provider", async () => {
     const document = await vscode.workspace.openTextDocument(workspaceUri("package.json"));
-    assert.equal(findProvider(providers, document)?.id, "npm");
+    assert.equal(findProvider(providers, toTextDocumentLike(document))?.id, "npm");
   });
 
   test("deno.json goes to the jsr provider", async () => {
     const document = await vscode.workspace.openTextDocument(workspaceUri("deno.json"));
-    assert.equal(findProvider(providers, document)?.id, "jsr");
+    assert.equal(findProvider(providers, toTextDocumentLike(document))?.id, "jsr");
   });
 
   test("a package.json inside node_modules is left alone", async () => {
     const document = await vscode.workspace.openTextDocument(
       workspaceUri("node_modules", "plv-local-pkg", "package.json")
     );
-    assert.equal(findProvider(providers, document), undefined);
+    assert.equal(findProvider(providers, toTextDocumentLike(document)), undefined);
   });
 });
 
@@ -88,7 +89,7 @@ suite("parsing a real document", () => {
   test("dependencies are found on the right lines", async () => {
     const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
     const document = await vscode.workspace.openTextDocument(workspaceUri("package.json"));
-    const entries = provider.parse(document);
+    const entries = provider.parse(toTextDocumentLike(document));
 
     const names = entries.map((entry) => entry.name);
     assert.deepEqual(names, [
@@ -120,7 +121,7 @@ suite("parsing a real document", () => {
   test("deno.json imports are found", async () => {
     const provider = new JsrLicenseProvider(new LicenseCache(memoryMemento()));
     const document = await vscode.workspace.openTextDocument(workspaceUri("deno.json"));
-    const entries = provider.parse(document);
+    const entries = provider.parse(toTextDocumentLike(document));
     assert.deepEqual(
       entries.map((entry) => entry.name),
       ["@std/fs", "chalk"]
@@ -132,14 +133,16 @@ suite("parsing a real document", () => {
 suite("resolving offline", () => {
   let provider: NpmLicenseProvider;
   let document: vscode.TextDocument;
+  let doc: ReturnType<typeof toTextDocumentLike>;
 
   suiteSetup(async () => {
     provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
     document = await vscode.workspace.openTextDocument(workspaceUri("package.json"));
+    doc = toTextDocumentLike(document);
   });
 
   const resolve = (name: string, spec: string) =>
-    provider.resolve({ name, spec, section: "dependencies", line: 0 }, document, noCancel);
+    provider.resolve({ name, spec, section: "dependencies", line: 0 }, doc, noCancel);
 
   test("registry lookups really are disabled for this workspace", () => {
     const useRegistry = vscode.workspace
@@ -191,7 +194,7 @@ suite("resolving offline", () => {
     );
     const info = await provider.resolve(
       { name: "plv-hoisted-pkg", spec: "^2.0.0", section: "dependencies", line: 0 },
-      inner,
+      toTextDocumentLike(inner),
       noCancel
     );
     assert.equal(info.source, "local");

@@ -1,6 +1,5 @@
-import * as vscode from "vscode";
 import { Node, parseTree } from "jsonc-parser";
-import type { DependencyEntry } from "../types";
+import type { DependencyEntry, TextDocumentLike } from "../types";
 
 export interface NpmParseOptions {
   /** Top-level sections that are always annotated */
@@ -15,7 +14,7 @@ export interface NpmParseOptions {
  * Uses the jsonc-parser AST so half-typed, temporarily invalid JSON still yields whatever can be read.
  */
 export function parsePackageJson(
-  document: vscode.TextDocument,
+  document: TextDocumentLike,
   options: NpmParseOptions
 ): DependencyEntry[] {
   const root = parseTree(document.getText());
@@ -50,7 +49,7 @@ function isDependencySection(name: string): boolean {
 }
 
 function collectSection(
-  document: vscode.TextDocument,
+  document: TextDocumentLike,
   objectNode: Node,
   section: string,
   out: DependencyEntry[]

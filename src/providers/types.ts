@@ -1,4 +1,27 @@
-import * as vscode from "vscode";
+/**
+ * Minimal view of a text document, shaped like `vscode.TextDocument` but without depending on
+ * `vscode` — so a provider's public contract works the same whether the host is VS Code, an LSP
+ * server, or a test. VS Code's own `TextDocument` satisfies this once its `uri` is stringified.
+ */
+export interface TextDocumentLike {
+  /** The document's URI as a string, e.g. `file:///path/to/package.json` */
+  readonly uri: string;
+  getText(): string;
+  readonly lineCount: number;
+  lineAt(line: number): { readonly text: string };
+  /** Convert a character offset into a zero-based line number */
+  positionAt(offset: number): { readonly line: number };
+}
+
+export interface DisposableLike {
+  dispose(): void;
+}
+
+/** Minimal view of `vscode.CancellationToken` */
+export interface CancellationLike {
+  readonly isCancellationRequested: boolean;
+  onCancellationRequested(listener: (e: unknown) => unknown): DisposableLike;
+}
 
 /**
  * One dependency taken from a manifest.
@@ -67,13 +90,13 @@ export interface LicenseProvider {
   readonly id: string;
 
   /** Whether this provider handles the given document (package.json, Cargo.toml, …) */
-  supports(document: vscode.TextDocument): boolean;
+  supports(document: TextDocumentLike): boolean;
 
   /** Whether the user has this provider turned on */
   isEnabled(): boolean;
 
   /** Extract the dependencies from the manifest text */
-  parse(document: vscode.TextDocument): DependencyEntry[];
+  parse(document: TextDocumentLike): DependencyEntry[];
 
   /**
    * A cache key that uniquely identifies this entry.
@@ -84,7 +107,7 @@ export interface LicenseProvider {
   /** Resolve the license. May hit the network. */
   resolve(
     entry: DependencyEntry,
-    document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    document: TextDocumentLike,
+    token: CancellationLike
   ): Promise<LicenseInfo>;
 }

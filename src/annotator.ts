@@ -8,6 +8,7 @@ import {
   type DependencyEntry,
   type LicenseInfo,
   type LicenseProvider,
+  type TextDocumentLike,
 } from "./providers";
 
 /** How long to wait after the last keystroke before re-resolving */
@@ -30,6 +31,17 @@ const RESULT_TTL_MS = 60_000;
 interface StoredResult {
   at: number;
   info: LicenseInfo;
+}
+
+/** Adapts a real `vscode.TextDocument` to the editor-agnostic shape providers expect */
+export function toTextDocumentLike(document: vscode.TextDocument): TextDocumentLike {
+  return {
+    uri: document.uri.toString(),
+    getText: () => document.getText(),
+    lineCount: document.lineCount,
+    lineAt: (line) => document.lineAt(line),
+    positionAt: (offset) => document.positionAt(offset),
+  };
 }
 
 /**
@@ -124,7 +136,8 @@ export class Annotator implements vscode.Disposable {
     }
 
     const config = getConfig(document);
-    const provider = config.enabled ? findProvider(this.providers, document) : undefined;
+    const doc = toTextDocumentLike(document);
+    const provider = config.enabled ? findProvider(this.providers, doc) : undefined;
     if (!provider) {
       this.cancel(key);
       this.setDecorations(editors, emptyAnnotationOptions());
@@ -137,7 +150,7 @@ export class Annotator implements vscode.Disposable {
 
     let entries: DependencyEntry[];
     try {
-      entries = provider.parse(document);
+      entries = provider.parse(doc);
     } catch (error) {
       log.warn(`parse failed for ${key}: ${String(error)}`);
       this.setDecorations(editors, emptyAnnotationOptions());
@@ -173,7 +186,7 @@ export class Annotator implements vscode.Disposable {
       if (cts.token.isCancellationRequested) {
         return;
       }
-      await this.resolveEntry(provider, entry, document, cts.token);
+      await this.resolveEntry(provider, entry, doc, cts.token);
       scheduleFlush();
     });
 
@@ -198,7 +211,7 @@ export class Annotator implements vscode.Disposable {
   private async resolveEntry(
     provider: LicenseProvider,
     entry: DependencyEntry,
-    document: vscode.TextDocument,
+    document: TextDocumentLike,
     token: vscode.CancellationToken
   ): Promise<LicenseInfo> {
     const key = this.keyOf(provider, entry);

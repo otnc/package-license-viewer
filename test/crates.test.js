@@ -705,7 +705,7 @@ test("explicit absolute Cargo workspace roots are not appended to the member dir
   const { CargoWorkspace } = require("../out/providers/crates/workspace");
   const document = fakeDocument('[package]\nworkspace="/ws"', "/app/Cargo.toml");
   const result = await new CargoWorkspace().root(
-    document.uri,
+    stub.Uri.file("/app/Cargo.toml"),
     parseManifest(document.getText(), document.uri.toString())
   );
   assert.equal(result.kind, "found");
@@ -854,7 +854,7 @@ test("Windows UNC variants stop before any workspace file read", async (t) => {
     assert.equal(workspaceManifestUri(directory, reference), undefined, reference);
     const document = fakeDocument(`[package]\nworkspace='${reference}'`, "/C:/app/Cargo.toml");
     const root = await new CargoWorkspace().root(
-      document.uri,
+      stub.Uri.file("/C:/app/Cargo.toml"),
       parseManifest(document.getText(), document.uri.toString())
     );
     assert.equal(root.kind, "unknown", reference);

@@ -4,7 +4,13 @@ import { getSetting } from "../../config";
 import { NotFoundError } from "../../net";
 import { NpmRegistryClient } from "../npm/registry";
 import { parseSpec } from "../npm/spec";
-import type { DependencyEntry, LicenseInfo, LicenseProvider } from "../types";
+import type {
+  CancellationLike,
+  DependencyEntry,
+  LicenseInfo,
+  LicenseProvider,
+  TextDocumentLike,
+} from "../types";
 import { JsrClient, parseJsrPackageName } from "./client";
 import { isDenoManifest, parseDenoManifest, parseDenoSpecifier } from "./parse";
 
@@ -25,15 +31,16 @@ export class JsrLicenseProvider implements LicenseProvider {
     this.npm = new NpmRegistryClient(cache);
   }
 
-  supports(document: vscode.TextDocument): boolean {
-    return isDenoManifest(document) && !document.uri.path.includes("/node_modules/");
+  supports(document: TextDocumentLike): boolean {
+    const uri = vscode.Uri.parse(document.uri);
+    return isDenoManifest(uri) && !uri.path.includes("/node_modules/");
   }
 
   isEnabled(): boolean {
     return getSetting("jsr.enabled", true);
   }
 
-  parse(document: vscode.TextDocument): DependencyEntry[] {
+  parse(document: TextDocumentLike): DependencyEntry[] {
     return parseDenoManifest(document);
   }
 
@@ -43,8 +50,8 @@ export class JsrLicenseProvider implements LicenseProvider {
 
   async resolve(
     entry: DependencyEntry,
-    _document: vscode.TextDocument,
-    token: vscode.CancellationToken
+    _document: TextDocumentLike,
+    token: CancellationLike
   ): Promise<LicenseInfo> {
     const specifier = parseDenoSpecifier(entry.spec);
     if (!specifier) {
@@ -70,7 +77,7 @@ export async function resolveViaNpmRegistry(
   client: NpmRegistryClient,
   name: string,
   spec: string,
-  token: vscode.CancellationToken
+  token: CancellationLike
 ): Promise<LicenseInfo> {
   const parsed = parseSpec(name, spec);
   // This helper only talks to npmjs.org, so a `jsr:` specifier (which parseSpec also recognises, for the package.json provider's benefit) has no business reaching it.
