@@ -1,0 +1,11 @@
+{
+  "name": "plv/legacy",
+  "version": "0.1.0",
+  "license": "MIT",
+  "deps": {
+    "moonbitlang/x": "0.4.10",
+    "plv/pinned": { "version": "1.2.3" },
+    "plv/vendored": { "path": "../vendored" },
+    "plv/fromgit": { "git": "https://example.com/m.git", "branch": "main" }
+  }
+}

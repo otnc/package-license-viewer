@@ -27,6 +27,14 @@ Shows the license of every dependency inline at the end of the line, with the li
 }
 ```
 
+```moonbit
+// moon.mod
+import {
+  "moonbitlang/x@0.4.10",       // Apache-2.0
+  "tonyfettes/uv@0.12.12",      // Apache-2.0
+}
+```
+
 When a package declares an `engines.node` range, it's appended to the annotation too, as shown for `axios` above. Hover an annotation to see the resolved version, where the information came from, and a link to the package homepage.
 
 | Manifest | Sections read |
@@ -35,6 +43,7 @@ When a package declares an `engines.node` range, it's appended to the annotation
 | `deno.json`, `deno.jsonc`, `jsr.json`, `import_map.json` | `imports` — both `jsr:` and `npm:` specifiers |
 | `pnpm-workspace.yaml` | `catalog:` and `catalogs:` — the actual ranges a workspace catalog resolves to |
 | `Cargo.toml` | `dependencies`, `dev-dependencies`, `build-dependencies`, their target-specific forms, and `workspace.dependencies` |
+| `moon.mod`, `moon.mod.json` | `import` — and `deps` / `bin-deps` in the JSON form |
 
 ## How a license is resolved
 
@@ -44,7 +53,7 @@ For ordinary npm dependencies in `package.json` and pnpm catalogs:
 2. **The lockfile.** Gives the exact pinned version even when nothing is installed yet. `package-lock.json` carries the license itself, so npm projects can resolve with **no network access at all**.
 3. **The registry.** `registry.npmjs.org` for npm, `jsr.io` for JSR. Results are cached on disk for a week.
 
-Deno/JSR use registry metadata directly. Cargo has its own limited lookup path, described below; it does not read `node_modules` or installed Cargo sources.
+Deno/JSR use registry metadata directly. Cargo and MoonBit each have their own lookup path, described below; neither reads `node_modules`.
 
 Specifiers that cannot be resolved — `file:`, `link:`, `workspace:`, `git+…`, `user/repo`, tarball URLs, `https://` imports — are left un-annotated rather than marked unknown. A pnpm workspace catalog reference (`catalog:`, `catalog:<name>`) has no version of its own in `package.json` to resolve against the registry, but `pnpm-lock.yaml` records what it resolved to, so it works wherever the lockfile is readable — and `pnpm-workspace.yaml` itself is annotated too, so the actual range behind a catalog entry is visible right where it's declared. `npm:` aliases are followed to their target. JSR packages inside `package.json` are recognized either way they show up — the npm-compatibility alias `@jsr/scope__name`, or the native `jsr:<range>` / `jsr:@scope/name@<range>` specifier pnpm ≥10.9 and Yarn ≥4.9 write directly — and routed to JSR automatically, since the npm-compatibility registry never publishes a license for them, installed or not.
 
@@ -103,6 +112,9 @@ Lockfile formats understood: `package-lock.json` (v1/v2/v3, including workspaces
 | `packageLicenseViewer.crates.enabled` | `true` | Annotate dependency declarations in `Cargo.toml`. |
 | `packageLicenseViewer.crates.useRegistry` | `true` | Allow crates.io requests. When disabled, existing cached public metadata can still be used. |
 | `packageLicenseViewer.crates.useLockfiles` | `true` | Prefer a uniquely matching crates.io version in the applicable `Cargo.lock`. |
+| `packageLicenseViewer.moonbit.enabled` | `true` | Annotate dependency declarations in `moon.mod` and `moon.mod.json`. |
+| `packageLicenseViewer.moonbit.useRegistry` | `true` | Allow mooncakes.io requests. When disabled, everything on disk is still used. |
+| `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`. |
 
 ### Cargo license annotations
 
@@ -134,6 +146,42 @@ Editing/saving the document, switching editors or Refresh triggers updates. Auxi
 
 Opening a workspace containing `Cargo.toml` activates the extension even if TOML files are treated as plain text. Opening a standalone file without such a workspace requires a TOML language registration (or running the Refresh command). The extension contributes no TOML grammar or language server. VS Code 1.90 remains the minimum supported version.
 
+### MoonBit license annotations
+
+```moonbit
+// moon.mod
+import {
+  "moonbitlang/x@0.4.10",        // Apache-2.0
+  "yourname/vendored@0.1.0",     // built from a moon.work member — nothing shown
+}
+```
+
+```jsonc
+// moon.mod.json
+{
+  "deps": {
+    "moonbitlang/x": "0.4.10",                  // Apache-2.0
+    "yourname/pinned": { "version": "1.2.3" },  // MIT
+    "yourname/local": { "path": "../local" }    // path dependency — nothing shown
+  }
+}
+```
+
+Both manifest formats are read. moon is replacing `moon.mod.json` with `moon.mod`, a small DSL that states the same dependencies as `import { "module@version" }`; the items are split on their last `@` exactly the way moon does, and an item without both halves is reported as unknown rather than guessed at. In the JSON form, `deps` and the deprecated `bin-deps` are annotated.
+
+A declared version is not a range. moon parses it as an exact release and resolves with [minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs), so what a manifest writes is the *lowest* acceptable version and the build only moves past it when something else in the graph asks for more. That is why the lookup path starts with what is actually on disk:
+
+1. **`.mooncakes`.** `moon build` unpacks every resolved dependency there, manifest and license included — the MoonBit counterpart of reading `node_modules`. It is the only source that knows where minimal version selection actually landed, so it wins over the version written in the manifest. Parent directories are searched too, which is what makes a `moon.work` workspace work.
+2. **`moon.work`.** A workspace member is built from its directory in the repository and the `@version` beside it is ignored. Asking mooncakes.io about one would describe a different module that merely shares the name, so members are left un-annotated instead.
+3. **The registry index.** `moon update` clones the registry index into `$MOON_HOME/registry/index` (`~/.moon` by default), one file per module holding every published version *and its license*. An installed toolchain therefore resolves any version **with no network access at all**.
+4. **mooncakes.io.** One request per module, for the exact declared version.
+
+Path and git dependencies are skipped; their names are never sent anywhere. Hover titles link to `mooncakes.io/docs/<module>@<version>` — except for nested module names such as `moonbitlang/lex/runtime`, which the registry index carries but the mooncakes.io API has no route for, so those resolve from disk only and are never given a link that could not load.
+
+No MoonBit toolchain is required, and no `moon` command is ever run. Without one, resolution falls back to mooncakes.io; with one, the registry index usually answers first. mooncakes.io publishes no rate limit, so requests are spaced out rather than sent in parallel, and an HTTP 429 stands the extension down for a minute without retrying.
+
+Opening a workspace containing `moon.mod` or `moon.mod.json` activates the extension. `moon.mod` has no language registration of its own, so dispatch is by file name and works whether it is treated as plain text or by a MoonBit extension.
+
 ### A note on JSR licenses
 
 JSR only exposes a license for a version if the package declared one in its `deno.json` / `jsr.json`. Many packages have not, and for those the API returns `null` — the hover then says _"the package declares no license on JSR"_. This is a gap in the published metadata, not in the lookup; nothing else in JSR's API carries the information (the npm-compatibility endpoint at `npm.jsr.io` does not include a `license` field either).
@@ -142,7 +190,7 @@ JSR only exposes a license for a version if the package declared one in its `den
 
 ## Other languages
 
-npm, JSR and the limited Cargo declaration lookup above are covered today. Python (PyPI) and Go are planned. Providers share rendering, caching and scheduling, and link Hover titles to their own registries. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.
+npm, JSR, MoonBit and the limited Cargo declaration lookup above are covered today. Python (PyPI) and Go are planned. Providers share rendering, caching and scheduling, and link Hover titles to their own registries. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.
 
 ## Contributors
 

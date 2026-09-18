@@ -22,6 +22,14 @@ export default defineConfig([
     mocha: { ui: "tdd", timeout: 30_000 },
   },
   {
+    label: "MoonBit workspace activation",
+    version: process.env.PLV_VSCODE_VERSION,
+    files: "out/test/integration/moonbit.test.js",
+    workspaceFolder: "./test/fixtures/moonbit-workspace",
+    launchArgs: ["--disable-extensions"],
+    mocha: { ui: "tdd", timeout: 30_000 },
+  },
+  {
     label: "Cargo language activation",
     version: process.env.PLV_VSCODE_VERSION,
     files: "out/test/integration/cargo-language.test.js",

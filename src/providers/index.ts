@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import type { LicenseCache } from "../cache";
 import { CratesLicenseProvider } from "./crates";
 import { JsrLicenseProvider } from "./jsr";
+import { MoonbitLicenseProvider } from "./moonbit";
 import { NpmLicenseProvider } from "./npm";
 import type { LicenseProvider } from "./types";
 
@@ -19,6 +20,7 @@ export function createProviders(cache: LicenseCache): LicenseProvider[] {
     new NpmLicenseProvider(cache),
     new JsrLicenseProvider(cache),
     new CratesLicenseProvider(cache),
+    new MoonbitLicenseProvider(cache),
   ];
 }
 

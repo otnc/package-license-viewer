@@ -1,0 +1,8 @@
+{
+  "packageLicenseViewer.moonbit.useRegistry": false,
+  "packageLicenseViewer.showResolvedVersion": true,
+  "packageLicenseViewer.unknownText": "unknown",
+  "files.associations": {
+    "moon.mod": "plaintext"
+  }
+}

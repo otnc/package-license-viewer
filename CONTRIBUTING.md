@@ -28,6 +28,18 @@ Cargo's implementation lives in [`src/providers/crates/`](src/providers/crates/)
 
 Keep manifest resolution keys separate from public version metadata keys. The former include the URI, alias, section, source, requirement and workspace context; the latter share exact public metadata across documents. `invalidate()` clears auxiliary reads and cancels pending Cargo requests. No Cargo command, archive reader, source cache, filesystem watcher or dependency graph belongs here.
 
+### MoonBit implementation
+
+MoonBit's implementation lives in [`src/providers/moonbit/`](src/providers/moonbit/). moon is replacing `moon.mod.json` with `moon.mod`, a small DSL, so both are parsed: [`dsl.ts`](src/providers/moonbit/dsl.ts) is a tokenizer for the [published grammar](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html) that reads only what is needed (the strings in a top-level `import` block, a `key = "string"`, a `key = [ … ]`) and skips whatever it does not recognize, so a half-typed statement never blanks out the dependencies above it. [`parse.ts`](src/providers/moonbit/parse.ts) lowers both formats to the same entries, splitting each `import` item on its **last** `@` the way `read_module_from_dsl` does in moon.
+
+A declared version is an exact `semver::Version`, never a range: moon resolves with [minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs). Nothing here interprets ranges, and nothing runs `moon`. Resolution is [`.mooncakes`](src/providers/moonbit/installed.ts) → `moon.work` members → the [registry index](src/providers/moonbit/registryIndex.ts) → [mooncakes.io](src/providers/moonbit/client.ts); the first two answer from the manifest that `moon build` unpacked, which is the only source that knows where selection actually landed.
+
+The registry index is the clone `moon update` maintains in `$MOON_HOME/registry/index` (`~/.moon` by default), one JSON-lines file per module carrying every version **and its license** — which is why an installed toolchain resolves offline. Keep dropping a malformed line on its own rather than the whole file, as the crates.io client does for a bad version record.
+
+mooncakes.io answers `/api/v0/modules/<user>/<module>@<version>` with that release's metadata and `…/<user>/<module>` with the newest one; only the exact-version answer is cached, since the newest release is by definition what changes. That route has **no form for a nested name** such as `moonbitlang/lex/runtime`, even though the index carries one — those resolve from disk only and must not be given a hover link that would fail to load. The registry publishes no rate limit, so sends are spaced out instead of filling `maxConcurrentRequests`, and an HTTP 429 stands down for a minute without retrying.
+
+No `moon` invocation, archive download, `.mbt` parsing, package-level (`moon.pkg`) handling or dependency graph belongs here.
+
 ## Adding another ecosystem
 
 Implement `LicenseProvider`, register it, and connect its activation and settings.
@@ -72,6 +84,8 @@ npm run watch      # esbuild in watch mode
 # press F5 in VS Code to launch the Extension Development Host
 ```
 
+Two launch configurations are contributed. **Run Extension** opens an empty Extension Development Host; **Run Extension (MoonBit sample)** opens [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) in it, which is a two-member `moon.work` holding one manifest of each format plus an unpacked `.mooncakes` module, so the annotations are visible the moment the host finishes loading. Either way, `File > Open Folder` in the host switches to a real project.
+
 ```sh
 npm run format:check     # prettier --check .
 npm run lint             # eslint .
@@ -85,7 +99,7 @@ The lockfiles in [`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) were pro
 
 `npm test` also loads the bundled `dist/extension.js`, because bundling can break the extension on its own: a dependency whose entry point defers its `require()` calls to runtime resolves fine under `tsc` and then fails inside the extension host.
 
-Compile before unit tests to exercise the bundle rather than skip that check. Cargo's integration suite launches a separate Cargo-only workspace with TOML associated to plaintext. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
+Compile before unit tests to exercise the bundle rather than skip that check. Cargo and MoonBit each get their own integration workspace, with `Cargo.toml` and `moon.mod` associated to plaintext so that dispatch cannot quietly come to depend on a language registration. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
 
 Run `npm run format` before committing; CI enforces `format:check` and `lint`.
 
