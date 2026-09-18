@@ -16,6 +16,7 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  // https://zenn.dev/spectee/articles/unload-cpu-usage-exclude-files-from-searchindex
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
@@ -32,6 +33,5 @@
     "**/.vscode-test": true,
     "**/test/fixtures/moonbit-workspace/_build": true
   },
-  "search.followSymlinks": false,
-  "git.commandTimings": true
+  "search.followSymlinks": false
 }
