@@ -1,6 +1,6 @@
-**English** | [日本語](CONTRIBUTING.ja.md)
-
 # Contributing
+
+**English** | [日本語](CONTRIBUTING.ja.md)
 
 Thanks for looking at this. This file covers the architecture, adding a new ecosystem, running the project locally, and releasing. For what the extension actually does, see [README.md](README.md).
 

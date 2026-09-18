@@ -1,6 +1,6 @@
-:::kiritan{locale=en}
-# Contributing
+# %{contributingTitle}
 
+:::kiritan{locale=en}
 Thanks for looking at this. This file covers the architecture, adding a new ecosystem, running the project locally, and releasing. For what the extension actually does, see [README.md](README.md).
 
 ## Language
@@ -133,8 +133,6 @@ To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, a
 :::
 
 :::kiritan{locale=ja}
-# コントリビューション
-
 見てくれてありがとうございます。このファイルではアーキテクチャ、新しいエコシステムの追加方法、ローカルでの実行方法、リリース手順について説明しています。拡張機能自体の機能については [README.md](README.md) を参照してください。
 
 ## 言語について

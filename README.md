@@ -1,6 +1,6 @@
-**English** | [日本語](README.ja.md)
-
 # Package License Viewer
+
+**English** | [日本語](README.ja.md)
 
 Shows the license of every dependency inline at the end of the line, with the license itself colored so it stands out at a glance.
 
@@ -28,10 +28,10 @@ Hover an annotation to see the resolved version, where the information came from
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic & berry), bun | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
 | Deno / JSR | ✅ | jsr, `npm:` specifiers | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
 | Rust | ✅ | Cargo | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
-| Python | ❌ | pip, uv, poetry | Planned — [otnc/package-license-viewer#14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Ruby | ❌ | bundler, gem | Planned — [otnc/package-license-viewer#15](https://github.com/otnc/package-license-viewer/issues/15) |
-| Go | ❌ | go mod | Planned — [otnc/package-license-viewer#16](https://github.com/otnc/package-license-viewer/issues/16) |
-| MoonBit | ❌ | moon | Planned — [otnc/package-license-viewer#13](https://github.com/otnc/package-license-viewer/issues/13) |
+| Python | ❌ | pip, uv, poetry | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
+| Ruby | ❌ | bundler, gem | Planned — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
+| Go | ❌ | go mod | Planned — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
+| MoonBit | ❌ | moon | Planned — [Issue #13](https://github.com/otnc/package-license-viewer/issues/13) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
 

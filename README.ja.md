@@ -1,6 +1,6 @@
-[English](README.md) | **日本語**
-
 # Package License Viewer
+
+[English](README.md) | **日本語**
 
 依存パッケージ1つ1つのライセンスを、行末にインラインで表示します。ライセンス部分は色分けされるので、一目で見分けられます。
 
@@ -28,10 +28,10 @@
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
 | Rust | ✅ | Cargo | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
-| Python | ❌ | pip, uv, poetry | 対応予定 — [otnc/package-license-viewer#14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Ruby | ❌ | bundler, gem | 対応予定 — [otnc/package-license-viewer#15](https://github.com/otnc/package-license-viewer/issues/15) |
-| Go | ❌ | go mod | 対応予定 — [otnc/package-license-viewer#16](https://github.com/otnc/package-license-viewer/issues/16) |
-| MoonBit | ❌ | moon | 対応予定 — [otnc/package-license-viewer#13](https://github.com/otnc/package-license-viewer/issues/13) |
+| Python | ❌ | pip, uv, poetry | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
+| Ruby | ❌ | bundler, gem | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
+| Go | ❌ | go mod | 対応予定 — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
+| MoonBit | ❌ | moon | 対応予定 — [Issue #13](https://github.com/otnc/package-license-viewer/issues/13) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
