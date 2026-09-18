@@ -86,8 +86,8 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Editor | Support | Notes |
 | --- | --- | --- |
 | VS Code | ✅ | The full feature set: inline annotations, hover, and every `packageLicenseViewer.*` setting. |
-| Neovim | ✅ (experimental) | Inline annotations and hover only, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). No settings sync yet, and the server currently has to be built locally (`npm run compile:lsp`) — see [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md). |
-| Vim | ✅ (experimental) | Same annotations and hover as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md). |
+| Neovim | ✅ (experimental) | Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server currently has to be built locally (`npm run compile:lsp`, or a plugin manager's build hook) — see `:help package_license_viewer`. |
+| Vim | ✅ (experimental) | Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`. |
 
 The Vim/Neovim plugin lives at [`packages/vim-plugin`](packages/vim-plugin); see its `:help package_license_viewer` for setup and configuration.
 :::
@@ -98,8 +98,8 @@ The Vim/Neovim plugin lives at [`packages/vim-plugin`](packages/vim-plugin); see
 | エディタ | サポート状況 | 備考 |
 | --- | --- | --- |
 | VS Code | ✅ | 全機能に対応: インライン注釈、hover、`packageLicenseViewer.*` の全設定。 |
-| Neovim | ✅ (実験的) | インライン注釈とhoverのみ対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。設定の同期は未対応で、現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`) — [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md) を参照してください(英語のみ)。 |
-| Vim | ✅ (実験的) | Neovimと同じくインライン注釈とhoverに対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md) を参照してください(英語のみ)。 |
+| Neovim | ✅ (実験的) | インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`、またはプラグインマネージャーのbuildフック) — `:help package_license_viewer` を参照してください(英語のみ)。 |
+| Vim | ✅ (実験的) | Neovimと同様に対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — `:help package_license_viewer` を参照してください(英語のみ)。 |
 
 Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあります。セットアップと設定については `:help package_license_viewer` を参照してください(英語のみ)。
 :::

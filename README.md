@@ -46,8 +46,8 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Editor | Support | Notes |
 | --- | --- | --- |
 | VS Code | ✅ | The full feature set: inline annotations, hover, and every `packageLicenseViewer.*` setting. |
-| Neovim | ✅ (experimental) | Inline annotations and hover only, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). No settings sync yet, and the server currently has to be built locally (`npm run compile:lsp`) — see [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md). |
-| Vim | ✅ (experimental) | Same annotations and hover as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see [docs/vim-neovim-lsp-design.md](docs/vim-neovim-lsp-design.md). |
+| Neovim | ✅ (experimental) | Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server currently has to be built locally (`npm run compile:lsp`, or a plugin manager's build hook) — see `:help package_license_viewer`. |
+| Vim | ✅ (experimental) | Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`. |
 
 The Vim/Neovim plugin lives at [`packages/vim-plugin`](packages/vim-plugin); see its `:help package_license_viewer` for setup and configuration.
 
