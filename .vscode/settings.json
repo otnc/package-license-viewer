@@ -15,5 +15,23 @@
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/out/**": true,
+    "**/.vscode-test/**": true,
+    "**/test/fixtures/moonbit-workspace/_build/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/out": true,
+    "**/.vscode-test": true,
+    "**/test/fixtures/moonbit-workspace/_build": true
+  },
+  "search.followSymlinks": false,
+  "git.commandTimings": true
 }
