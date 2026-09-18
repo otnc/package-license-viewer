@@ -1,7 +1,9 @@
 {
   "name": "package-license-viewer-monorepo",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
+  "description": "Shows dependency license metadata inline in package.json, deno.json, Cargo.toml and moon.mod.",
+  "publisher": "otoneko1102",
   "license": "MIT",
   "engines": {
     "node": ">=22"
