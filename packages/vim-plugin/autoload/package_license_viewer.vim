@@ -28,9 +28,9 @@ function! package_license_viewer#ServerPath() abort
   if !empty(g:package_license_viewer_server_path)
     return g:package_license_viewer_server_path
   endif
-  " packages/vim-plugin/autoload/ -> packages/vim-plugin/ -> packages/ -> repo root -> dist/lspServer.js
+  " packages/vim-plugin/autoload/ -> packages/vim-plugin/ -> packages/ -> packages/lsp-server/dist/lspServer.js
   let here = expand('<script>:p:h')
-  return simplify(here . '/../../../dist/lspServer.js')
+  return simplify(here . '/../../lsp-server/dist/lspServer.js')
 endfunction
 
 function! s:EnsureServer() abort

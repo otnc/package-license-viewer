@@ -1,11 +1,15 @@
 import * as assert from "node:assert/strict";
 import * as vscode from "vscode";
-import { toTextDocumentLike } from "../../annotator";
-import { LicenseCache } from "../../cache";
-import { createProviders, findProvider, type LicenseProvider } from "../../providers";
-import { JsrLicenseProvider } from "../../providers/jsr";
-import { NpmLicenseProvider } from "../../providers/npm";
-import { vscodeProviderHost } from "../../vscodeFs";
+import {
+  JsrLicenseProvider,
+  LicenseCache,
+  NpmLicenseProvider,
+  createProviders,
+  findProvider,
+  type LicenseProvider,
+} from "@plv/core";
+import { toTextDocumentLike } from "../../src/annotator";
+import { vscodeProviderHost } from "../../src/vscodeFs";
 
 const EXTENSION_ID = "otoneko1102.package-license-viewer";
 

@@ -24,7 +24,7 @@ const problemMatcherPlugin = {
 
 async function main() {
   const ctx = await esbuild.context({
-    entryPoints: ["src/lspServer/index.ts"],
+    entryPoints: ["src/index.ts"],
     bundle: true,
     format: "cjs",
     minify: production,
@@ -34,9 +34,9 @@ async function main() {
     target: "node20",
     mainFields: ["module", "main"],
     outfile: "dist/lspServer.js",
-    // config.ts and log.ts still import "vscode" for real; the shim
-    // (src/lspServer/installVscodeShim.ts) intercepts that require() at runtime instead, so it
-    // must stay unresolved at bundle time here too, exactly like the extension bundle.
+    // config.ts and log.ts still import "vscode" for real; the shim (src/installVscodeShim.ts)
+    // intercepts that require() at runtime instead, so it must stay unresolved at bundle time
+    // here too, exactly like the extension bundle.
     external: ["vscode"],
     logLevel: "silent",
     plugins: [problemMatcherPlugin],

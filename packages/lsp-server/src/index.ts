@@ -7,18 +7,21 @@ import {
   TextDocuments,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { LicenseCache } from "../cache";
-import { getConfig, invalidateConfigCache } from "../config";
-import { buildHover, formatAnnotationSegments } from "../format";
-import { initLog, log } from "../log";
-import { CancellationTokenSource } from "../providers/cancellation";
 import {
+  CancellationTokenSource,
+  LicenseCache,
+  buildHover,
   createProviders,
   findProvider,
+  formatAnnotationSegments,
+  getConfig,
+  initLog,
+  invalidateConfigCache,
+  log,
   type CancellationLike,
   type DependencyEntry,
   type LicenseInfo,
-} from "../providers";
+} from "@plv/core";
 import { nodeProviderHost } from "./nodeHost";
 import { setSettingsSource } from "./vscodeShim";
 import { toTextDocumentLike } from "./textDocument";

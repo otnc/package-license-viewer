@@ -17,7 +17,7 @@ Shows the license of every dependency inline at the end of the line, in
 `package.json`, `deno.json`/`import_map.json`, `pnpm-workspace.yaml` and
 `Cargo.toml` — the same license resolution the "Package License Viewer" VS
 Code extension uses, running here as a Node-based language server
-(`dist/lspServer.js`) instead.
+(`packages/lsp-server/dist/lspServer.js`) instead.
 
 ==============================================================================
 2. Requirements                          *package_license_viewer-requirements*
@@ -27,7 +27,7 @@ Code extension uses, running here as a Node-based language server
     npm install
     npm run compile:lsp
 <
-  This produces `dist/lspServer.js`. It is not published as a separate,
+  This produces `packages/lsp-server/dist/lspServer.js`. It is not published as a separate,
   pre-built artifact yet, so a plugin manager's build hook (see
   |package_license_viewer-installation|) is the easiest way to keep it
   built without a manual step.
@@ -93,9 +93,9 @@ g:package_license_viewer_node_command  (default: `'node'`)
 
                                     *g:package_license_viewer_server_path*
 g:package_license_viewer_server_path   (default: `''`)
-    Path to `dist/lspServer.js`. Left empty, it is resolved relative to
-    this plugin's own location (`<repo>/dist/lspServer.js`) — set this if
-    you install the server somewhere else.
+    Path to `lspServer.js`. Left empty, it is resolved relative to this
+    plugin's own location (`<repo>/packages/lsp-server/dist/lspServer.js`)
+    — set this if you install the server somewhere else.
 
                                       *g:package_license_viewer_settings*
 g:package_license_viewer_settings      (default: `{}`)
@@ -134,9 +134,9 @@ Both share the same server and the same wire format
 ==============================================================================
 7. Known limitations                      *package_license_viewer-limitations*
 
-- `dist/lspServer.js` is not published as a pre-built artifact; it has to
-  be built, ideally via a plugin manager's build hook — see
-  |package_license_viewer-installation|.
+- `packages/lsp-server/dist/lspServer.js` is not published as a pre-built
+  artifact; it has to be built, ideally via a plugin manager's build hook
+  — see |package_license_viewer-installation|.
 - Settings only apply at startup (Neovim) or when you explicitly run
   |:PackageLicenseViewerRefresh| after editing them (plain Vim) — see
   |g:package_license_viewer_settings|. Neither editor watches for a change

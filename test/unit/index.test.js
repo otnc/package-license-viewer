@@ -6,26 +6,27 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
 
-const OUT = path.join(__dirname, "..", "..", "..", "out");
-const { parseSpec, encodePackageName } = require(path.join(OUT, "providers/npm/spec.js"));
+const CORE_OUT = path.join(__dirname, "..", "..", "packages", "core", "out");
+const EXT_OUT = path.join(__dirname, "..", "..", "packages", "vscode-extension", "out", "src");
+const { parseSpec, encodePackageName } = require(path.join(CORE_OUT, "providers/npm/spec.js"));
 const { normalizeLicense, normalizeNodeEngine } = require(
-  path.join(OUT, "providers/npm/manifest.js")
+  path.join(CORE_OUT, "providers/npm/manifest.js")
 );
-const { parsePackageJson } = require(path.join(OUT, "providers/npm/parse.js"));
-const { parsePnpmWorkspaceYaml } = require(path.join(OUT, "providers/npm/pnpmWorkspace.js"));
+const { parsePackageJson } = require(path.join(CORE_OUT, "providers/npm/parse.js"));
+const { parsePnpmWorkspaceYaml } = require(path.join(CORE_OUT, "providers/npm/pnpmWorkspace.js"));
 const { parseDenoManifest, parseDenoSpecifier, isDenoManifest } = require(
-  path.join(OUT, "providers/jsr/parse.js")
+  path.join(CORE_OUT, "providers/jsr/parse.js")
 );
 const { parseJsrPackageName, parseJsrNpmCompatName } = require(
-  path.join(OUT, "providers/jsr/client.js")
+  path.join(CORE_OUT, "providers/jsr/client.js")
 );
 const { formatAnnotation, formatAnnotationSegments, buildHover } = require(
-  path.join(OUT, "format.js")
+  path.join(CORE_OUT, "format.js")
 );
-const lock = require(path.join(OUT, "providers/npm/lockfile/parsers.js"));
-const { LicenseCache } = require(path.join(OUT, "cache.js"));
-const { NpmLicenseProvider } = require(path.join(OUT, "providers/npm/index.js"));
-const { vscodeProviderHost } = require(path.join(OUT, "vscodeFs.js"));
+const lock = require(path.join(CORE_OUT, "providers/npm/lockfile/parsers.js"));
+const { LicenseCache } = require(path.join(CORE_OUT, "cache.js"));
+const { NpmLicenseProvider } = require(path.join(CORE_OUT, "providers/npm/index.js"));
+const { vscodeProviderHost } = require(path.join(EXT_OUT, "vscodeFs.js"));
 
 const noCancel = {
   isCancellationRequested: false,
@@ -41,14 +42,22 @@ const memoryMemento = () => ({
   },
 });
 
-const FIXTURES = path.join(__dirname, "..", "..", "..", "test", "fixtures", "lockfiles");
+const FIXTURES = path.join(__dirname, "..", "fixtures", "lockfiles");
 const readFixture = (name) => fs.readFileSync(path.join(FIXTURES, name), "utf8");
 
 // --- the shipped bundle -----------------------------------------------------
 // The tests above load out/, which is plain tsc output. dist/extension.js is what actually ships, and bundling can break it on its own — a dependency whose entry point defers its require() calls to runtime resolves fine under tsc and then fails inside the extension host. So load the real bundle too.
 
 test("the bundled extension loads and exposes its entry points", (t) => {
-  const bundle = path.join(__dirname, "..", "..", "..", "dist", "extension.js");
+  const bundle = path.join(
+    __dirname,
+    "..",
+    "..",
+    "packages",
+    "vscode-extension",
+    "dist",
+    "extension.js"
+  );
   if (!fs.existsSync(bundle)) {
     t.skip("dist/extension.js is not built; run npm run compile");
     return;

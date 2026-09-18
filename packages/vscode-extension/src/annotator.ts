@@ -1,15 +1,16 @@
 import * as vscode from "vscode";
-import { getConfig } from "./config";
-import { buildHover, formatAnnotationSegments } from "./format";
-import { log } from "./log";
-import { runWithConcurrency } from "./net";
 import {
+  buildHover,
   findProvider,
+  formatAnnotationSegments,
+  getConfig,
+  log,
+  runWithConcurrency,
   type DependencyEntry,
   type LicenseInfo,
   type LicenseProvider,
   type TextDocumentLike,
-} from "./providers";
+} from "@plv/core";
 
 /** How long to wait after the last keystroke before re-resolving */
 const DEBOUNCE_MS = 300;

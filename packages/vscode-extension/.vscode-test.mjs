@@ -6,7 +6,7 @@ export default defineConfig([
     label: "existing providers",
     version: process.env.PLV_VSCODE_VERSION,
     files: "out/test/integration/extension.test.js",
-    workspaceFolder: "./test/fixtures/workspace",
+    workspaceFolder: "../../test/fixtures/workspace",
     mocha: {
       // tdd is what gives us suite() / test()
       ui: "tdd",
@@ -17,7 +17,7 @@ export default defineConfig([
     label: "Cargo workspace activation",
     version: process.env.PLV_VSCODE_VERSION,
     files: "out/test/integration/cargo.test.js",
-    workspaceFolder: "./test/fixtures/cargo-workspace",
+    workspaceFolder: "../../test/fixtures/cargo-workspace",
     launchArgs: ["--disable-extensions"],
     mocha: { ui: "tdd", timeout: 30_000 },
   },
@@ -25,7 +25,7 @@ export default defineConfig([
     label: "Cargo language activation",
     version: process.env.PLV_VSCODE_VERSION,
     files: "out/test/integration/cargo-language.test.js",
-    extensionDevelopmentPath: [".", "./test/fixtures/toml-language"],
+    extensionDevelopmentPath: [".", "../../test/fixtures/toml-language"],
     launchArgs: [
       "--disable-extensions",
       "--new-window",

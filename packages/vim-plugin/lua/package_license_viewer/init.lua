@@ -11,7 +11,7 @@ local function server_cmd()
   local plugin_root = vim.fn.fnamemodify(source, ":p:h:h:h")
   local server_path = vim.g.package_license_viewer_server_path
   if server_path == nil or server_path == "" then
-    server_path = plugin_root .. "/../../dist/lspServer.js"
+    server_path = plugin_root .. "/../lsp-server/dist/lspServer.js"
   end
   return { vim.g.package_license_viewer_node_command or "node", server_path, "--stdio" }
 end

@@ -16,6 +16,11 @@ dist/
 .private/
 local.kiritanconfig
 
+# Copied in at package/publish time from the repo root — see packages/vscode-extension/scripts/prepack.mjs
+packages/vscode-extension/images/
+packages/vscode-extension/README.md
+packages/vscode-extension/CHANGELOG.md
+
 # `.agents/skills/` is the single canonical copy of each installed skill;
 # every other agent-specific location is a generated symlink/copy — run
 # `npx skills experimental_install` to recreate them, don't commit them.

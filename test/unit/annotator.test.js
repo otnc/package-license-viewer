@@ -5,8 +5,8 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { test } = require("node:test");
 
-const OUT = path.join(__dirname, "..", "..", "..", "out");
-const { Annotator } = require(OUT + "/annotator.js");
+const EXT_OUT = path.join(__dirname, "..", "..", "packages", "vscode-extension", "out", "src");
+const { Annotator } = require(EXT_OUT + "/annotator.js");
 
 const MANIFEST = `{
   "name": "demo",

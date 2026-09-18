@@ -29,9 +29,26 @@ if (!env.VSCE_PAT) {
   process.exit(1);
 }
 
-const args = process.argv.slice(2);
+const extensionDir = path.join(root, "packages", "vscode-extension");
+
+// vsce only packages files inside the extension's own directory, so the shared icon/README/
+// CHANGELOG at the repo root have to be copied in here before publishing too, same as `npm run package`.
+const prepack = spawnSync("node", ["scripts/prepack.mjs"], {
+  cwd: extensionDir,
+  stdio: "inherit",
+  shell: process.platform === "win32",
+});
+if ((prepack.status ?? 1) !== 0) {
+  process.exit(prepack.status ?? 1);
+}
+
+// --no-dependencies: esbuild already bundles every runtime dependency (including @plv/core) into
+// dist/extension.js, and without this flag vsce tries to walk node_modules itself — which, now
+// that installs are hoisted to the workspace root, pulls in the whole monorepo instead of just
+// this package's deps.
+const args = ["--no-dependencies", ...process.argv.slice(2)];
 const result = spawnSync("npx", ["vsce", "publish", ...args], {
-  cwd: root,
+  cwd: extensionDir,
   env,
   stdio: "inherit",
   shell: process.platform === "win32",

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { FileSystemLike, ProviderHost, UriLike } from "./providers/types";
+import type { FileSystemLike, ProviderHost, UriLike } from "@plv/core";
 
 /** Adapts `vscode.workspace.fs` to `FileSystemLike`, normalizing a missing file to Node's `ENOENT` convention instead of vscode's own `FileNotFound`. */
 export const vscodeFileSystem: FileSystemLike = {

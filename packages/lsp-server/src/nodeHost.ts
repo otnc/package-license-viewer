@@ -1,5 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
-import type { FileSystemLike, ProviderHost, UriLike } from "../providers/types";
+import type { FileSystemLike, ProviderHost, UriLike } from "@plv/core";
 
 function makeUri(scheme: string, authority: string, path: string): UriLike {
   return {
@@ -33,7 +33,7 @@ const nodeFileSystem: FileSystemLike = {
   },
 };
 
-/** The `ProviderHost` every provider runs against inside the LSP server — Node's `fs/promises` instead of `vscode.workspace.fs`, and a plain URI parser instead of `vscode.Uri.parse`. Node's own `ENOENT` is already the convention `FileSystemLike` expects, so nothing needs normalizing here (contrast `src/vscodeFs.ts`). */
+/** The `ProviderHost` every provider runs against inside the LSP server — Node's `fs/promises` instead of `vscode.workspace.fs`, and a plain URI parser instead of `vscode.Uri.parse`. Node's own `ENOENT` is already the convention `FileSystemLike` expects, so nothing needs normalizing here (contrast `packages/vscode-extension/src/vscodeFs.ts`). */
 export const nodeProviderHost: ProviderHost = {
   fs: nodeFileSystem,
   parseUri,

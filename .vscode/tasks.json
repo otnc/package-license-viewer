@@ -4,6 +4,7 @@
     {
       "type": "npm",
       "script": "watch",
+      "path": "packages/vscode-extension",
       "problemMatcher": "$esbuild-watch",
       "isBackground": true,
       "presentation": {

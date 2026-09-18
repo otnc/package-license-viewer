@@ -5,6 +5,10 @@ import { NpmLicenseProvider } from "./npm";
 import type { LicenseProvider, ProviderHost, TextDocumentLike } from "./types";
 
 export * from "./types";
+export { CratesLicenseProvider } from "./crates";
+export { workspaceManifestUri } from "./crates/workspace";
+export { JsrLicenseProvider } from "./jsr";
+export { NpmLicenseProvider } from "./npm";
 
 /**
  * Build the set of providers.

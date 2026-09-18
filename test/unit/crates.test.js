@@ -3,19 +3,20 @@ const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const fs = require("node:fs");
 const path = require("node:path");
-const { parseManifest, dependencySpec } = require("../../../out/providers/crates/parse");
-const {
-  parseRequirement,
-  matchesRequirement,
-  compareVersions,
-} = require("../../../out/providers/crates/spec");
-const { CratesLicenseProvider } = require("../../../out/providers/crates");
-const { CratesClient, CratesRateLimiter } = require("../../../out/providers/crates/client");
-const { selectLocked } = require("../../../out/providers/crates/lockfile");
-const { LicenseCache } = require("../../../out/cache");
-const { buildHover } = require("../../../out/format");
-const { Annotator } = require("../../../out/annotator");
-const { vscodeFileSystem, vscodeProviderHost } = require("../../../out/vscodeFs");
+const CORE_OUT = path.join(__dirname, "..", "..", "packages", "core", "out");
+const EXT_OUT = path.join(__dirname, "..", "..", "packages", "vscode-extension", "out", "src");
+const EXT_DIST = path.join(__dirname, "..", "..", "packages", "vscode-extension", "dist");
+const { parseManifest, dependencySpec } = require(path.join(CORE_OUT, "providers/crates/parse"));
+const { parseRequirement, matchesRequirement, compareVersions } = require(
+  path.join(CORE_OUT, "providers/crates/spec")
+);
+const { CratesLicenseProvider } = require(path.join(CORE_OUT, "providers/crates"));
+const { CratesClient, CratesRateLimiter } = require(path.join(CORE_OUT, "providers/crates/client"));
+const { selectLocked } = require(path.join(CORE_OUT, "providers/crates/lockfile"));
+const { LicenseCache } = require(path.join(CORE_OUT, "cache"));
+const { buildHover } = require(path.join(CORE_OUT, "format"));
+const { Annotator } = require(path.join(EXT_OUT, "annotator"));
+const { vscodeFileSystem, vscodeProviderHost } = require(path.join(EXT_OUT, "vscodeFs"));
 const noCancel = {
   isCancellationRequested: false,
   onCancellationRequested: () => ({ dispose() {} }),
@@ -44,10 +45,7 @@ const settle = async () => {
 
 test("Cargo requirements match the generated Rust semver 1.0.27 oracle", () => {
   const rows = fs
-    .readFileSync(
-      path.join(__dirname, "../../../test/fixtures/lockfiles/cargo-versionreq.tsv"),
-      "utf8"
-    )
+    .readFileSync(path.join(__dirname, "../fixtures/lockfiles/cargo-versionreq.tsv"), "utf8")
     .replace(/^\uFEFF/, "")
     .trimEnd()
     .split(/\r?\n/);
@@ -61,7 +59,7 @@ test("Cargo requirements match the generated Rust semver 1.0.27 oracle", () => {
     assert.equal(result, expected, JSON.stringify([req, v]));
   }
   const locked = fs
-    .readFileSync(path.join(__dirname, "../../../test/fixtures/lockfiles/cargo.Cargo.lock"), "utf8")
+    .readFileSync(path.join(__dirname, "../fixtures/lockfiles/cargo.Cargo.lock"), "utf8")
     .replace(/^\uFEFF/, "");
   assert.deepEqual(selectLocked(locked, "semver", parseRequirement("1")), {
     kind: "selected",
@@ -454,7 +452,7 @@ test("extension Refresh, Clear Cache and each Cargo setting invalidate the provi
       return { dispose() {} };
     },
   };
-  const { activate } = require("../../../out/extension");
+  const { activate } = require(path.join(EXT_OUT, "extension"));
   t.after(() => {
     stub.commands = previous;
   });
@@ -488,7 +486,7 @@ test("extension Refresh, Clear Cache and each Cargo setting invalidate the provi
 test(
   "the production-capable bundle parses Cargo and renders a cached license",
   {
-    skip: !fs.existsSync(path.join(__dirname, "../../../dist/extension.js")),
+    skip: !fs.existsSync(path.join(EXT_DIST, "extension.js")),
   },
   async (t) => {
     const previous = stub.commands;
@@ -528,7 +526,7 @@ test(
       context.subscriptions.forEach((s) => s.dispose());
       setVisibleEditors([]);
     });
-    require("../../../dist/extension.js").activate(context);
+    require(path.join(EXT_DIST, "extension.js")).activate(context);
     await new Promise((resolve) => setTimeout(resolve, 350));
     assert.ok(
       editor.lastDecorations.some((d) => d.renderOptions.after.contentText.includes("MIT"))
@@ -706,7 +704,7 @@ test("explicit absolute Cargo workspace roots are not appended to the member dir
       return Buffer.from('[workspace]\n[workspace.dependencies]\nreal="1"');
     throw Object.assign(new Error("missing"), { code: "FileNotFound" });
   });
-  const { CargoWorkspace } = require("../../../out/providers/crates/workspace");
+  const { CargoWorkspace } = require(path.join(CORE_OUT, "providers/crates/workspace"));
   const document = fakeDocument('[package]\nworkspace="/ws"', "/app/Cargo.toml");
   const result = await new CargoWorkspace(vscodeFileSystem).root(
     stub.Uri.file("/app/Cargo.toml"),
@@ -842,10 +840,9 @@ test("root replace Package IDs exclude only the referenced crates.io name", asyn
 });
 
 test("Windows UNC variants stop before any workspace file read", async (t) => {
-  const {
-    CargoWorkspace,
-    workspaceManifestUri,
-  } = require("../../../out/providers/crates/workspace");
+  const { CargoWorkspace, workspaceManifestUri } = require(
+    path.join(CORE_OUT, "providers/crates/workspace")
+  );
   const reads = t.mock.method(stub.workspace.fs, "readFile", async () =>
     Buffer.from("[workspace]")
   );

@@ -1,5 +1,5 @@
 import type { TextDocument } from "vscode-languageserver-textdocument";
-import type { TextDocumentLike } from "../providers/types";
+import type { TextDocumentLike } from "@plv/core";
 
 /** Adapts an LSP `TextDocument` to the same `TextDocumentLike` shape `annotator.ts` builds from a real `vscode.TextDocument`. */
 export function toTextDocumentLike(document: TextDocument): TextDocumentLike {

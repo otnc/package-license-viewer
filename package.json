@@ -1,240 +1,35 @@
 {
-  "name": "package-license-viewer",
-  "displayName": "Package License Viewer",
-  "description": "Shows dependency license metadata inline in package.json, deno.json and Cargo.toml.",
+  "name": "package-license-viewer-monorepo",
+  "private": true,
   "version": "0.4.0",
-  "publisher": "otoneko1102",
   "license": "MIT",
-  "engines": {
-    "vscode": "^1.90.0"
-  },
-  "categories": [
-    "Programming Languages",
-    "Other"
+  "workspaces": [
+    "packages/*"
   ],
-  "keywords": [
-    "license",
-    "package.json",
-    "dependencies",
-    "npm",
-    "pnpm",
-    "yarn",
-    "bun",
-    "jsr",
-    "deno",
-    "spdx",
-    "cargo",
-    "crates.io"
-  ],
-  "icon": "images/icon.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/otnc/package-license-viewer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/otnc/package-license-viewer/issues"
-  },
-  "main": "./dist/extension.js",
-  "activationEvents": [
-    "onLanguage:json",
-    "onLanguage:jsonc",
-    "onLanguage:yaml",
-    "onLanguage:toml",
-    "workspaceContains:**/Cargo.toml"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "packageLicenseViewer.refresh",
-        "title": "Package License Viewer: Refresh License Annotations"
-      },
-      {
-        "command": "packageLicenseViewer.clearCache",
-        "title": "Package License Viewer: Clear License Cache"
-      },
-      {
-        "command": "packageLicenseViewer.toggle",
-        "title": "Package License Viewer: Toggle Inline License Annotations"
-      }
-    ],
-    "configuration": {
-      "title": "Package License Viewer",
-      "properties": {
-        "packageLicenseViewer.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show inline license annotations."
-        },
-        "packageLicenseViewer.format": {
-          "type": "string",
-          "default": "${license}",
-          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`."
-        },
-        "packageLicenseViewer.showResolvedVersion": {
-          "type": "boolean",
-          "default": false,
-          "description": "Append the actually resolved version to the annotation (e.g. \"MIT · 1.2.3\")."
-        },
-        "packageLicenseViewer.showNodeEngine": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Append the package's declared `engines.node` range to the annotation, when it has one (e.g. `MIT (Node: >=20)`)."
-        },
-        "packageLicenseViewer.unknownText": {
-          "type": "string",
-          "default": "",
-          "description": "Text shown when no license could be determined. Leave empty to show nothing."
-        },
-        "packageLicenseViewer.annotationColor": {
-          "type": "string",
-          "default": "editorCodeLens.foreground",
-          "markdownDescription": "Theme color id used for the annotation (e.g. `editorCodeLens.foreground`, `descriptionForeground`), or a CSS color such as `#88888899`."
-        },
-        "packageLicenseViewer.licenseColor": {
-          "type": "string",
-          "default": "charts.green",
-          "markdownDescription": "Theme color id used for just the license part of the annotation (e.g. `charts.green`, `textLink.foreground`), or a CSS color such as `#4ec9b0`. Everything else keeps using `annotationColor`."
-        },
-        "packageLicenseViewer.margin": {
-          "type": "string",
-          "default": "0 0 0 1.5em",
-          "description": "CSS margin applied before the inline annotation."
-        },
-        "packageLicenseViewer.cacheTtlHours": {
-          "type": "number",
-          "default": 168,
-          "minimum": 0,
-          "description": "How long resolved licenses are cached, in hours. 0 disables persistent caching."
-        },
-        "packageLicenseViewer.requestTimeoutMs": {
-          "type": "number",
-          "default": 8000,
-          "minimum": 500,
-          "description": "Timeout for a single registry request, in milliseconds."
-        },
-        "packageLicenseViewer.maxConcurrentRequests": {
-          "type": "number",
-          "default": 8,
-          "minimum": 1,
-          "maximum": 32,
-          "description": "Maximum number of registry requests performed in parallel."
-        },
-        "packageLicenseViewer.npm.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable annotations for npm manifests (package.json)."
-        },
-        "packageLicenseViewer.npm.registry": {
-          "type": "string",
-          "default": "https://registry.npmjs.org",
-          "description": "Registry base URL used to look up packages that are not installed."
-        },
-        "packageLicenseViewer.npm.useRegistry": {
-          "type": "boolean",
-          "default": true,
-          "description": "Fall back to the registry when a package is not found in node_modules."
-        },
-        "packageLicenseViewer.npm.useLockfiles": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Read `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock` or `bun.lock` to find the exact pinned version. This is what makes Yarn PnP and not-yet-installed workspaces work, and `package-lock.json` even carries the license itself."
-        },
-        "packageLicenseViewer.npm.sections": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "dependencies",
-            "devDependencies",
-            "peerDependencies",
-            "optionalDependencies"
-          ],
-          "description": "Top-level package.json sections that are always annotated."
-        },
-        "packageLicenseViewer.npm.autoDetectSections": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Also annotate any other top-level object whose key ends with `dependencies` (e.g. `resolutions` style custom sections named `*Dependencies`)."
-        },
-        "packageLicenseViewer.npm.pnpmWorkspaceCatalogs": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Also annotate the `catalog:` and `catalogs:` sections of `pnpm-workspace.yaml`, where a workspace catalog's actual versions are declared."
-        },
-        "packageLicenseViewer.jsr.enabled": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Enable annotations for Deno / import map manifests (`deno.json`, `deno.jsonc`, `jsr.json`, `import_map.json`)."
-        },
-        "packageLicenseViewer.jsr.registry": {
-          "type": "string",
-          "default": "https://jsr.io",
-          "description": "JSR registry base URL, used to resolve version ranges."
-        },
-        "packageLicenseViewer.jsr.apiUrl": {
-          "type": "string",
-          "default": "https://api.jsr.io",
-          "description": "JSR API base URL, used to read the license of a resolved version."
-        },
-        "packageLicenseViewer.crates.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable license annotations for Cargo.toml dependency declarations."
-        },
-        "packageLicenseViewer.crates.useRegistry": {
-          "type": "boolean",
-          "default": true,
-          "description": "Allow crates.io requests. When disabled, existing cached public metadata may still be used."
-        },
-        "packageLicenseViewer.crates.useLockfiles": {
-          "type": "boolean",
-          "default": true,
-          "description": "Use a uniquely matching crates.io version from Cargo.lock before selecting a public version from the requirement."
-        }
-      }
-    }
-  },
   "scripts": {
-    "vscode:prepublish": "npm run check-types && node esbuild.js --production",
-    "compile": "node esbuild.js",
-    "watch": "node esbuild.js --watch",
-    "compile:lsp": "node esbuild.lspServer.js",
-    "watch:lsp": "node esbuild.lspServer.js --watch",
-    "check-types": "tsc --noEmit",
+    "compile": "npm run compile:lsp && npm run compile:vscode",
+    "compile:lsp": "npm run compile -w @plv/lsp-server",
+    "watch:lsp": "npm run watch -w @plv/lsp-server",
+    "compile:vscode": "npm run compile -w package-license-viewer",
+    "watch:vscode": "npm run watch -w package-license-viewer",
+    "check-types": "npm run check-types --workspaces --if-present",
     "lint": "eslint .",
-    "build-tests": "tsc",
-    "test": "npm run build-tests && node --test src/test/unit/index.test.js src/test/unit/annotator.test.js src/test/unit/crates.test.js",
-    "test:integration": "npm run compile && npm run build-tests && vscode-test",
-    "package": "vsce package",
-    "publish": "node scripts/publish.mjs",
+    "build-tests": "npm run build-tests -w package-license-viewer",
+    "test": "npm run build-tests && node --test test/unit/index.test.js test/unit/annotator.test.js test/unit/crates.test.js",
+    "test:integration": "npm run test:integration -w package-license-viewer",
+    "package": "npm run package -w package-license-viewer",
+    "publish": "npm run publish -w package-license-viewer",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "docs:build": "kiritan build",
     "docs:check": "kiritan check"
   },
-  "dependencies": {
-    "jsonc-parser": "^3.3.1",
-    "semver": "^7.6.3",
-    "toml-eslint-parser": "0.10.0",
-    "vscode-languageserver": "^10.1.1",
-    "vscode-languageserver-textdocument": "^1.0.14"
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^22.10.0",
-    "@types/semver": "^7.5.8",
-    "@types/vscode": "^1.90.0",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.1.0",
-    "@vscode/vsce": "^3.2.1",
-    "esbuild": "^0.28.2",
     "eslint": "^10.10.0",
     "git-cliff": "^2.13.1",
     "globals": "^17.12.0",
     "kiritan": "^0.4.0",
-    "mocha": "^12.0.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0"

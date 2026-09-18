@@ -1,12 +1,15 @@
 import * as assert from "node:assert/strict";
 import * as vscode from "vscode";
-import { toTextDocumentLike } from "../../annotator";
-import { LicenseCache } from "../../cache";
-import { buildHover } from "../../format";
-import { createProviders, findProvider } from "../../providers";
-import { CratesLicenseProvider } from "../../providers/crates";
-import { workspaceManifestUri } from "../../providers/crates/workspace";
-import { vscodeProviderHost } from "../../vscodeFs";
+import {
+  CratesLicenseProvider,
+  LicenseCache,
+  buildHover,
+  createProviders,
+  findProvider,
+  workspaceManifestUri,
+} from "@plv/core";
+import { toTextDocumentLike } from "../../src/annotator";
+import { vscodeProviderHost } from "../../src/vscodeFs";
 
 const noCancel: vscode.CancellationToken = {
   isCancellationRequested: false,
