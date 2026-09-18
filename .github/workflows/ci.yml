@@ -26,6 +26,7 @@ jobs:
       - run: npm run lint
       - run: npm run check-types
       - run: npm test
+      - run: npm run compile:lsp
 
   # Runs the extension inside a real VS Code instance. This is the only job that exercises
   # the bundled dist/extension.js the way the extension host loads it.
