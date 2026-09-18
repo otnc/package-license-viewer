@@ -8,7 +8,7 @@ metadata:
 
 # kiritan
 
-Kiritan is an i18n tool that, beyond the usual key→string runtime i18n, also builds localized documents (README, docs, etc.) from a single base file. This is the operating manual for working inside a project that already uses it — not for writing Kiritan's own source. It's plain Markdown with no Claude-specific instructions in the body, so any coding agent that can be given extra context works equally well; see [../README.md](../README.md) for how to load it into whichever agent you're using.
+Kiritan is an i18n tool that, beyond the usual key→string runtime i18n, also builds localized documents (README, docs, etc.) from a single base file. This is the operating manual for working inside a project that already uses it — not for writing Kiritan's own source.
 
 ## Recognizing a Kiritan project
 
@@ -119,5 +119,5 @@ export default defineConfig({
 
 ## Where to look for more
 
-- The target project's own `docs/DESIGN.md`, if it has one — the authoritative spec for its config shape and behavior (Kiritan's own repository ships one).
+- The target project's own `docs/DESIGN.md`, if it has one — the authoritative spec for its config shape and behavior.
 - `kiritan <command> --help` for exact flags.

@@ -15,3 +15,9 @@ dist/
 
 .private/
 local.kiritanconfig
+
+# `.agents/skills/` is the single canonical copy of each installed skill;
+# every other agent-specific location is a generated symlink/copy — run
+# `npx skills experimental_install` to recreate them, don't commit them.
+.claude/skills/
+agent/skills/
