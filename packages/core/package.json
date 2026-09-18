@@ -7,7 +7,8 @@
   "types": "src/index.ts",
   "scripts": {
     "compile": "tsc",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "jsonc-parser": "^3.3.1",

@@ -1,5 +1,5 @@
 /**
- * A minimal fake `vscode` module, just enough of the surface that `config.ts` and `log.ts` actually call at runtime (`workspace.getConfiguration`, `window.createOutputChannel`, `MarkdownString`) for those two files to load and work outside a real VS Code host. It has nothing to do with the `TextDocumentLike`/`FileSystemLike`/`UriLike`/`ProviderHost` abstractions the providers use — those already avoid `vscode` entirely. Modeled on `src/test/unit/vscode-stub.js`, which solves the exact same problem for unit tests.
+ * A minimal fake `vscode` module, just enough of the surface that `config.ts` and `log.ts` actually call at runtime (`workspace.getConfiguration`, `window.createOutputChannel`, `MarkdownString`) for those two files to load and work outside a real VS Code host. It has nothing to do with the `TextDocumentLike`/`FileSystemLike`/`UriLike`/`ProviderHost` abstractions the providers use — those already avoid `vscode` entirely. Modeled on `packages/core/test/support/vscodeStub.ts`, which solves the exact same problem for that package's unit tests.
  */
 
 type SettingsSource = () => Record<string, unknown>;

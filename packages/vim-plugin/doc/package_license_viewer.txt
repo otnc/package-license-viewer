@@ -22,7 +22,7 @@ Code extension uses, running here as a Node-based language server
 ==============================================================================
 2. Requirements                          *package_license_viewer-requirements*
 
-- Node.js on `$PATH` (or set |g:package_license_viewer_node_command|).
+- Node.js 22+ on `$PATH` (or set |g:package_license_viewer_node_command|).
 - The language server built: from the repository root, >
     npm install
     npm run compile:lsp

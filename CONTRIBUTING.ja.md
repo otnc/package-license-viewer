@@ -132,9 +132,9 @@ npm run package           # .vsixをビルド
 
 [`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) 内のロックファイルは、同じマニフェストに対して実際に `npm`、`pnpm`、`yarn`(classicとberry)、`bun` でインストールして生成したものです。そのため、パーサーは手書きのサンプルではなく実物に対してテストされています。
 
-`npm test` はビルド済みの `dist/extension.js` も読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、`tsc` の下では問題なく解決されても、拡張機能ホスト内では失敗することがあります。
+`npm test` はTypeScriptのソースに対して直接Vitestを実行します。事前にコンパイルする必要はありません。`packages/vscode-extension` のテストスイートは、加えてビルド済みの `dist/extension.js` が存在する場合はそれも読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、ソースに対しては問題なく解決されても、拡張機能ホスト内では失敗することがあります。このチェックを黙ってスキップさせず実際に働かせるには、先に `npm run compile` を実行してください。
 
-このチェックを飛ばさず、バンドルを実際に動かすために、ユニットテストの前にコンパイルしてください。CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml` と `moon.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
+CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml` と `moon.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
 
 コミット前に `npm run format` を実行してください。CIでは `format:check` と `lint` が強制されます。
 
@@ -142,12 +142,12 @@ npm run package           # .vsixをビルド
 
 テストコードは2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
 
-- **ユニットテスト**([`test/unit/*.test.js`](test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`test/unit/vscode-stub.js`](test/unit/vscode-stub.js))と `packages/core` および `packages/vscode-extension` のコンパイル済み `out/` 成果物(`npm run build-tests`)に対して実行します。これ以上の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。両パッケージのどちらにも属さずリポジトリのルートに置かれているのは、両方をまたいでテストするためです(例えば `crates.test.js` は `packages/core` の `CratesLicenseProvider` を `packages/vscode-extension` の `Annotator` 経由で動かします)。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
-- **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、実際にテストしているのがVS Code拡張機能そのものであるため `packages/vscode-extension` の内側に置かれ、そのパッケージ自身の `tsc` パスでコンパイルされます。
+- **ユニットテスト**はVitestで実行され、パッケージごとに1つのプロジェクトに分かれています(リポジトリルートの `vitest.config.ts` が `test.projects` で両者をまとめています)。[`packages/core/test/*.test.ts`](packages/core/test/) はプロバイダー・キャッシュ・フォーマット関連のソースを直接importします — コンパイル不要で、実際の `vscode` もほとんど必要としません。これらのテストは特定のエディタではなく、インメモリのフェイクホスト([`test/support/fakeHost.ts`](packages/core/test/support/fakeHost.ts))を通じて `ProviderHost`/`FileSystemLike`/`UriLike` の抽象化そのものをテストしているためです。`config.ts`/`log.ts`/`format.ts` の中で依然として実際の `vscode` API を値として呼び出す一部分(`workspace.getConfiguration`、`window.createOutputChannel`、`MarkdownString`)は、`vitest.config.ts` の `resolve.alias` で `"vscode"` としてエイリアスした小さなスタブ([`test/support/vscodeStub.ts`](packages/core/test/support/vscodeStub.ts))経由で動きます。[`packages/vscode-extension/test/unit/*.test.ts`](packages/vscode-extension/test/unit/) は `Annotator` と `extension.ts` を、同じエイリアス方式によるより本格的な独自の `vscode` スタブ(`Uri`/デコレーション/コマンドなども含む)に対してテストし、加えてビルド済みの実際の `dist/extension.js` が存在する場合はそれも、そのテストファイルだけに限定した `Module._load` パッチ経由で読み込みます。バンドル自体が拡張機能を壊すことがあり、実際に出荷されるものをソースの代わりに動作確認できるのはそのrequire()だけだからです。
+- **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。Vitestではなく、そのパッケージ自身の `tsc` パス(`npm run build-tests`)でコンパイルされます。Vitestは実際の拡張機能ホストのプロセス内では実行できないためです。
 
 [`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、[`index.test.js`](test/unit/index.test.js)(npm/JSR)、[`crates.test.js`](test/unit/crates.test.js)(Cargo)、[`moonbit.test.js`](test/unit/moonbit.test.js)(MoonBit)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) のフィクスチャを共通で使っています。
 
 ## リリース
 

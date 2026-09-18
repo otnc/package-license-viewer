@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "description": "Node-based language server sharing @plv/core's license resolution with non-VS-Code editors (Vim/Neovim).",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "compile": "npm --prefix ../core run compile && node esbuild.js",
     "watch": "npm --prefix ../core run compile && node esbuild.js --watch",

@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.4.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -14,8 +17,7 @@
     "watch:vscode": "npm run watch -w package-license-viewer",
     "check-types": "npm run check-types --workspaces --if-present",
     "lint": "eslint .",
-    "build-tests": "npm run build-tests -w package-license-viewer",
-    "test": "npm run build-tests && node --test test/unit/index.test.js test/unit/annotator.test.js test/unit/crates.test.js test/unit/moonbit.test.js",
+    "test": "vitest run",
     "test:integration": "npm run test:integration -w package-license-viewer",
     "package": "npm run package -w package-license-viewer",
     "publish": "npm run publish -w package-license-viewer",
@@ -32,6 +34,7 @@
     "kiritan": "^0.4.0",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0"
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.1"
   }
 }
