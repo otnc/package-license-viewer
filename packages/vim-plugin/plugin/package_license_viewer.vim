@@ -1,7 +1,5 @@
 " package_license_viewer.vim - inline dependency license annotations
-" Runs on plain Vim (8.1.1880+/9.x, via job + textprop) and on Neovim
-" (via the lua/ layer, which takes over transport and rendering where
-" Neovim can do strictly more — see doc/package_license_viewer.txt).
+" Runs on plain Vim (8.1.1880+/9.x, via job + textprop) and on Neovim (via the lua/ layer, which takes over transport and rendering where Neovim can do strictly more — see doc/package_license_viewer.txt).
 
 if exists('g:loaded_package_license_viewer')
   finish
@@ -16,17 +14,13 @@ if !exists('g:package_license_viewer_node_command')
   let g:package_license_viewer_node_command = 'node'
 endif
 
-" Path to the bundled LSP server (dist/lspServer.js). Left unset by default so it is resolved
-" lazily, relative to this plugin's own location — see package_license_viewer#ServerPath().
+" Path to the bundled LSP server (dist/lspServer.js). Left unset by default so it is resolved lazily, relative to this plugin's own location — see package_license_viewer#ServerPath().
 if !exists('g:package_license_viewer_server_path')
   let g:package_license_viewer_server_path = ''
 endif
 
 if has('nvim')
-  " Neovim can do strictly more than plain Vim for transport (vim.lsp.start(), a real LSP
-  " client) and rendering (nvim_buf_set_extmark(), multi-colour virtual text in one mark), so
-  " the Lua layer owns both end to end instead of sharing the VimScript job/textprop path below
-  " — see doc/package_license_viewer.txt.
+  " Neovim can do strictly more than plain Vim for transport (vim.lsp.start(), a real LSP client) and rendering (nvim_buf_set_extmark(), multi-colour virtual text in one mark), so the Lua layer owns both end to end instead of sharing the VimScript job/textprop path below — see doc/package_license_viewer.txt.
   command! PackageLicenseViewerToggle lua require('package_license_viewer').toggle()
   command! PackageLicenseViewerRefresh lua require('package_license_viewer').refresh()
   command! PackageLicenseViewerClearCache lua require('package_license_viewer').clear_cache()

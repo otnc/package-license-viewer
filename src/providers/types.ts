@@ -1,7 +1,5 @@
 /**
- * Minimal view of a text document, shaped like `vscode.TextDocument` but without depending on
- * `vscode` — so a provider's public contract works the same whether the host is VS Code, an LSP
- * server, or a test. VS Code's own `TextDocument` satisfies this once its `uri` is stringified.
+ * Minimal view of a text document, shaped like `vscode.TextDocument` but without depending on `vscode` — so a provider's public contract works the same whether the host is VS Code, an LSP server, or a test. VS Code's own `TextDocument` satisfies this once its `uri` is stringified.
  */
 export interface TextDocumentLike {
   /** The document's URI as a string, e.g. `file:///path/to/package.json` */
@@ -33,10 +31,7 @@ export interface UriLike {
 }
 
 /**
- * Minimal view of `vscode.workspace.fs`, normalized so a missing file always rejects with
- * `code: "ENOENT"` — Node's own convention — regardless of which host implements it. This is
- * what keeps `installed.ts`, `lockfile/index.ts` and `crates/workspace.ts` free of any real
- * filesystem access of their own, so a future non-VS-Code host only has to implement this.
+ * Minimal view of `vscode.workspace.fs`, normalized so a missing file always rejects with `code: "ENOENT"` — Node's own convention — regardless of which host implements it. This is what keeps `installed.ts`, `lockfile/index.ts` and `crates/workspace.ts` free of any real filesystem access of their own, so a future non-VS-Code host only has to implement this.
  */
 export interface FileSystemLike {
   readFile(uri: UriLike): Promise<Uint8Array>;
@@ -44,11 +39,7 @@ export interface FileSystemLike {
 }
 
 /**
- * What a provider needs from its host to touch the filesystem — the last piece that kept
- * `providers/npm/index.ts`, `providers/jsr/index.ts` and `providers/crates/index.ts` importing
- * `vscode` directly. VS Code supplies `vscodeFileSystem` (`src/vscodeFs.ts`) and
- * `vscode.Uri.parse`; a non-VS-Code host (an LSP server, a test) supplies its own `FileSystemLike`
- * and a plain URI parser instead. `createProviders()` takes one and threads it through.
+ * What a provider needs from its host to touch the filesystem — the last piece that kept `providers/npm/index.ts`, `providers/jsr/index.ts` and `providers/crates/index.ts` importing `vscode` directly. VS Code supplies `vscodeFileSystem` (`src/vscodeFs.ts`) and `vscode.Uri.parse`; a non-VS-Code host (an LSP server, a test) supplies its own `FileSystemLike` and a plain URI parser instead. `createProviders()` takes one and threads it through.
  */
 export interface ProviderHost {
   readonly fs: FileSystemLike;

@@ -1,7 +1,4 @@
-" Vim's half of the plugin: a minimal LSP client over job/channel, and rendering with
-" prop_add()/popup_atcursor(). Not used on Neovim — see plugin/package_license_viewer.vim and
-" lua/package_license_viewer/init.lua, which replace this entirely with vim.lsp.start() and
-" nvim_buf_set_extmark().
+" Vim's half of the plugin: a minimal LSP client over job/channel, and rendering with prop_add()/popup_atcursor(). Not used on Neovim — see plugin/package_license_viewer.vim and lua/package_license_viewer/init.lua, which replace this entirely with vim.lsp.start() and nvim_buf_set_extmark().
 
 let s:job = v:null
 let s:channel = v:null
@@ -142,7 +139,8 @@ endfunction
 
 function! s:HandleMessage(msg) abort
   if has_key(a:msg, 'id') && has_key(a:msg, 'method')
-    return " a request from the server; nothing here needs to answer one
+    " a request from the server; nothing here needs to answer one
+    return
   endif
   if has_key(a:msg, 'id')
     let id = a:msg.id

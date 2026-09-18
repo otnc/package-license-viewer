@@ -1,9 +1,4 @@
--- Neovim's half of the plugin. Neovim can do strictly more than plain Vim here, so this
--- replaces the VimScript transport (job/channel) and rendering (prop_add) entirely instead of
--- sharing them: vim.lsp.start() is a real LSP client (didOpen/didChange/version tracking,
--- hover merged with any other attached client, all handled for us), and
--- nvim_buf_set_extmark() puts every coloured segment of one annotation in a single mark
--- instead of the three separate text properties the Vim side needs.
+-- Neovim's half of the plugin. Neovim can do strictly more than plain Vim here, so this replaces the VimScript transport (job/channel) and rendering (prop_add) entirely instead of sharing them: vim.lsp.start() is a real LSP client (didOpen/didChange/version tracking, hover merged with any other attached client, all handled for us), and nvim_buf_set_extmark() puts every coloured segment of one annotation in a single mark instead of the three separate text properties the Vim side needs.
 
 local M = {}
 
@@ -88,9 +83,7 @@ function M.toggle()
   end
 end
 
---- Neovim's LSP client tracks document versions itself and has no public "resend didChange"
---- API, so a forced refresh restarts the server (dropping its in-memory license cache too) and
---- re-attaches — simple, and rare enough to not matter that it is not the cheapest option.
+--- Neovim's LSP client tracks document versions itself and has no public "resend didChange" API, so a forced refresh restarts the server (dropping its in-memory license cache too) and re-attaches — simple, and rare enough to not matter that it is not the cheapest option.
 function M.clear_cache()
   if client_id then
     vim.lsp.stop_client(client_id, true)

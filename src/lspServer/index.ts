@@ -115,8 +115,7 @@ async function publishAnnotations(document: TextDocument): Promise<void> {
   });
 }
 
-// onDidChangeContent already fires once on open with the full initial content, so a separate
-// onDidOpen handler would resolve everything twice.
+// onDidChangeContent already fires once on open with the full initial content, so a separate onDidOpen handler would resolve everything twice.
 documents.onDidChangeContent((event) => void publishAnnotations(event.document));
 
 connection.onHover(async ({ textDocument, position }) => {
