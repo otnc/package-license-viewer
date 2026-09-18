@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, expect, onTestFinished, test, vi } from "vitest";
 import { LicenseCache } from "../src/cache";
+import { getSetting } from "../src/config";
 import { buildHover } from "../src/format";
+import { RequestLimiter } from "../src/net";
 import { CratesLicenseProvider } from "../src/providers/crates";
-import { CratesClient, CratesRateLimiter } from "../src/providers/crates/client";
+import { CratesClient } from "../src/providers/crates/client";
 import { selectLocked } from "../src/providers/crates/lockfile";
 import { dependencySpec, parseManifest } from "../src/providers/crates/parse";
 import {
@@ -311,7 +313,8 @@ test("Cargo client treats - and _ as the same crate name, and skips a lone bad r
 
 test("Cargo rate limiter spaces actual starts, skips queued cancellation and checks disabled settings", async () => {
   vi.useFakeTimers({ toFake: ["Date", "setTimeout"], now: 1000 });
-  const limiter = new CratesRateLimiter();
+  // Same construction as providers/crates/client.ts's module-level `limiter`.
+  const limiter = new RequestLimiter(1000, 60_000, () => getSetting("crates.useRegistry", true));
   const starts: number[] = [];
   const send = async () => {
     starts.push(Date.now());

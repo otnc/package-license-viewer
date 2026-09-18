@@ -1,6 +1,6 @@
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
-import { fetchJson } from "../../net";
+import { checkCancelled, fetchJson, RequestLimiter } from "../../net";
 import { CancellationTokenSource } from "../cancellation";
 import type { CancellationLike } from "../types";
 import { record } from "./parse";
@@ -40,53 +40,8 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
   };
 }
 
-function checkCancelled(token: CancellationLike): void {
-  if (token.isCancellationRequested) throw new Error("cancelled");
-}
-
-function wait(ms: number, token: CancellationLike): Promise<void> {
-  checkCancelled(token);
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      sub.dispose();
-      resolve();
-    }, ms);
-    const sub = token.onCancellationRequested(() => {
-      clearTimeout(timer);
-      sub.dispose();
-      reject(new Error("cancelled"));
-    });
-  });
-}
-
 /** Shared across all Cargo clients in this extension host; spaces actual send starts. */
-export class CratesRateLimiter {
-  private tail: Promise<void> = Promise.resolve();
-  private nextStart = 0;
-
-  run<T>(token: CancellationLike, send: () => Promise<T>): Promise<T> {
-    const result = this.tail.then(async () => {
-      checkCancelled(token);
-      while (Date.now() < this.nextStart) await wait(this.nextStart - Date.now(), token);
-      checkCancelled(token);
-      if (!getSetting("crates.useRegistry", true)) throw new Error("registry lookups disabled");
-      this.nextStart = Date.now() + 1000;
-      try {
-        return await send();
-      } catch (error) {
-        if (error instanceof Error && error.message.startsWith("HTTP 429 "))
-          this.nextStart = Math.max(this.nextStart, Date.now() + 60_000);
-        throw error;
-      }
-    });
-    this.tail = result.then(
-      () => undefined,
-      () => undefined
-    );
-    return result;
-  }
-}
-const limiter = new CratesRateLimiter();
+const limiter = new RequestLimiter(1000, 60_000, () => getSetting("crates.useRegistry", true));
 interface Pending {
   promise: Promise<unknown>;
   cts: CancellationTokenSource;

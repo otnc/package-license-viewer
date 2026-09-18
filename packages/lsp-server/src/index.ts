@@ -18,6 +18,7 @@ import {
   initLog,
   invalidateConfigCache,
   log,
+  runWithConcurrency,
   type CancellationLike,
   type DependencyEntry,
   type LicenseInfo,
@@ -108,6 +109,7 @@ async function resolveEntry(
   try {
     return await provider.resolve(entry, doc, token);
   } catch (error) {
+    log.warn(`resolve failed for ${entry.name}: ${String(error)}`);
     return { source: "unknown", detail: String(error) };
   }
 }
@@ -156,16 +158,19 @@ async function publishAnnotations(document: TextDocument): Promise<void> {
   }
 
   const config = getConfig();
-  const results: AnnotationEntry[] = await Promise.all(
-    entries.map(async (entry) => {
-      const info = await resolveEntry(provider, entry, doc, cts.token);
-      return {
-        line: entry.line,
-        name: entry.name,
-        segments: formatAnnotationSegments(config, entry, info),
-      };
-    })
-  );
+  const results: AnnotationEntry[] = new Array(entries.length);
+  const tasks = entries.map((entry, index) => async () => {
+    const info = await resolveEntry(provider, entry, doc, cts.token);
+    results[index] = {
+      line: entry.line,
+      name: entry.name,
+      segments: formatAnnotationSegments(config, entry, info),
+    };
+  });
+  // Bounded the same way annotator.ts bounds VS Code's resolution passes — otherwise a
+  // manifest with many dependencies fires every registry request at once on every edit,
+  // regardless of maxConcurrentRequests.
+  await runWithConcurrency(tasks, config.maxConcurrentRequests);
 
   if (finishResolution(uri, cts)) {
     void connection.sendNotification("packageLicenseViewer/annotations", {
@@ -175,15 +180,48 @@ async function publishAnnotations(document: TextDocument): Promise<void> {
   }
 }
 
-// onDidChangeContent already fires once on open with the full initial content, so a separate onDidOpen handler would resolve everything twice.
-documents.onDidChangeContent((event) => void publishAnnotations(event.document));
+/** How long to wait after the last keystroke before re-resolving, mirroring annotator.ts */
+const DEBOUNCE_MS = 300;
+/** A document's first content event (its open) resolves almost immediately instead of waiting out the typing debounce */
+const COALESCE_MS = 25;
 
-documents.onDidClose((event) => {
-  inflightByUri.get(event.document.uri)?.cancel();
-  inflightByUri.delete(event.document.uri);
+const changeTimers = new Map<string, NodeJS.Timeout>();
+const openedUris = new Set<string>();
+
+// onDidChangeContent already fires once on open with the full initial content, so a separate onDidOpen handler would resolve everything twice.
+documents.onDidChangeContent((event) => {
+  const uri = event.document.uri;
+  const existing = changeTimers.get(uri);
+  if (existing) {
+    clearTimeout(existing);
+  }
+  const immediate = !openedUris.has(uri);
+  openedUris.add(uri);
+  changeTimers.set(
+    uri,
+    setTimeout(
+      () => {
+        changeTimers.delete(uri);
+        void publishAnnotations(event.document);
+      },
+      immediate ? COALESCE_MS : DEBOUNCE_MS
+    )
+  );
 });
 
-connection.onHover(async ({ textDocument, position }) => {
+documents.onDidClose((event) => {
+  const uri = event.document.uri;
+  inflightByUri.get(uri)?.cancel();
+  inflightByUri.delete(uri);
+  const timer = changeTimers.get(uri);
+  if (timer) {
+    clearTimeout(timer);
+    changeTimers.delete(uri);
+  }
+  openedUris.delete(uri);
+});
+
+connection.onHover(async ({ textDocument, position }, token) => {
   const document = documents.get(textDocument.uri);
   if (!document) {
     return null;
@@ -203,8 +241,10 @@ connection.onHover(async ({ textDocument, position }) => {
   if (!entry) {
     return null;
   }
-  const cts = new CancellationTokenSource();
-  const info = await resolveEntry(provider, entry, doc, cts.token);
+  // Reuses the client's own request-scoped cancellation token — the editor cancels it for us
+  // (e.g. the cursor moves away before a rate-limited lookup finishes) instead of this handler
+  // needing to create and dispose its own CancellationTokenSource for every hover.
+  const info = await resolveEntry(provider, entry, doc, token);
   const markdown = buildHover(entry, info);
   return markdown ? { contents: { kind: "markdown" as const, value: markdown.value } } : null;
 });

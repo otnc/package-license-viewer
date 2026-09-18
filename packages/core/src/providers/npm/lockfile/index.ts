@@ -79,22 +79,26 @@ export class LockfileResolver {
   private async discover(startDir: UriLike): Promise<LockIndex[]> {
     let dir = startDir;
     for (let depth = 0; depth < MAX_WALK_UP; depth++) {
-      const found: LockIndex[] = [];
-      for (const [fileName, parse] of LOCKFILES) {
-        const uri = joinUriPath(dir, fileName);
-        const text = await this.readTextFile(uri);
-        if (text === undefined) {
-          continue;
-        }
-        try {
-          const index = parse(text);
-          if (index.exact.size > 0 || index.byName.size > 0) {
-            found.push(index);
+      // The candidates are unrelated files, so reading them in parallel is safe — "earlier
+      // entries win" only has to hold for the *order* of `found`, which Promise.all preserves
+      // regardless of which read actually finishes first.
+      const reads = await Promise.all(
+        LOCKFILES.map(async ([fileName, parse]) => {
+          const uri = joinUriPath(dir, fileName);
+          const text = await this.readTextFile(uri);
+          if (text === undefined) {
+            return undefined;
           }
-        } catch (error) {
-          log.warn(`lockfile: failed to parse ${uri.path}: ${String(error)}`);
-        }
-      }
+          try {
+            const index = parse(text);
+            return index.exact.size > 0 || index.byName.size > 0 ? index : undefined;
+          } catch (error) {
+            log.warn(`lockfile: failed to parse ${uri.path}: ${String(error)}`);
+            return undefined;
+          }
+        })
+      );
+      const found = reads.filter((index): index is LockIndex => index !== undefined);
       if (found.length > 0) {
         log.debug(`lockfile: using ${found.map((i) => i.kind).join(", ")} from ${dir.path}`);
         return found;

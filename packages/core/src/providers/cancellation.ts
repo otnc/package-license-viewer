@@ -7,6 +7,10 @@ export class CancellationTokenSource {
   readonly token: CancellationLike = {
     isCancellationRequested: false,
     onCancellationRequested: (listener: (e: unknown) => unknown): DisposableLike => {
+      if (this.token.isCancellationRequested) {
+        listener(undefined);
+        return { dispose: () => {} };
+      }
       this.listeners.add(listener);
       return { dispose: () => this.listeners.delete(listener) };
     },

@@ -1,6 +1,6 @@
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
-import { fetchJson, NotFoundError } from "../../net";
+import { checkCancelled, fetchJson, NotFoundError, record, RequestLimiter } from "../../net";
 import type { CancellationLike } from "../types";
 import { normalizeLicense } from "./installed";
 import { isModuleVersion, isRegistryModuleName } from "./spec";
@@ -27,63 +27,14 @@ export function modulePageUrl(name: string, version: string): string {
   return `https://mooncakes.io/docs/${name}@${version}`;
 }
 
-function record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function checkCancelled(token: CancellationLike): void {
-  if (token.isCancellationRequested) throw new Error("cancelled");
-}
-
-function wait(ms: number, token: CancellationLike): Promise<void> {
-  checkCancelled(token);
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => {
-      subscription.dispose();
-      resolve();
-    }, ms);
-    const subscription = token.onCancellationRequested(() => {
-      clearTimeout(timer);
-      subscription.dispose();
-      reject(new Error("cancelled"));
-    });
-  });
-}
-
 /**
  * Spaces out requests across every MoonBit client in this extension host.
 
  * mooncakes.io publishes no rate limit, so this stays deliberately gentle rather than filling `maxConcurrentRequests` slots at once against a small community registry, and backs off for a minute without retrying if it ever answers 429.
  */
-class SendLimiter {
-  private tail: Promise<void> = Promise.resolve();
-  private nextStart = 0;
-
-  run<T>(token: CancellationLike, send: () => Promise<T>): Promise<T> {
-    const result = this.tail.then(async () => {
-      checkCancelled(token);
-      while (Date.now() < this.nextStart) await wait(this.nextStart - Date.now(), token);
-      checkCancelled(token);
-      if (!getSetting("moonbit.useRegistry", true)) throw new Error("registry lookups disabled");
-      this.nextStart = Date.now() + SEND_SPACING_MS;
-      try {
-        return await send();
-      } catch (error) {
-        if (error instanceof Error && error.message.startsWith("HTTP 429 ")) {
-          this.nextStart = Math.max(this.nextStart, Date.now() + RATE_LIMIT_BACKOFF_MS);
-        }
-        throw error;
-      }
-    });
-    this.tail = result.then(
-      () => undefined,
-      () => undefined
-    );
-    return result;
-  }
-}
-
-const limiter = new SendLimiter();
+const limiter = new RequestLimiter(SEND_SPACING_MS, RATE_LIMIT_BACKOFF_MS, () =>
+  getSetting("moonbit.useRegistry", true)
+);
 
 /**
  * Reads module metadata from mooncakes.io.
