@@ -25,6 +25,7 @@ const { formatAnnotation, formatAnnotationSegments, buildHover } = require(
 const lock = require(path.join(OUT, "providers/npm/lockfile/parsers.js"));
 const { LicenseCache } = require(path.join(OUT, "cache.js"));
 const { NpmLicenseProvider } = require(path.join(OUT, "providers/npm/index.js"));
+const { vscodeProviderHost } = require(path.join(OUT, "vscodeFs.js"));
 
 const noCancel = {
   isCancellationRequested: false,
@@ -130,7 +131,7 @@ test("parseSpec recognises the jsr: specifier pnpm/Yarn write", () => {
 });
 
 test("resolve() skips a jsr: specifier whose name is not scoped, rather than sending it to npmjs.org", async () => {
-  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
   const document = fakeDocument("{}", "d:/project/package.json");
   const info = await provider.resolve(
     { name: "not-scoped", spec: "jsr:^1.0.0", section: "dependencies", line: 0 },
@@ -142,7 +143,7 @@ test("resolve() skips a jsr: specifier whose name is not scoped, rather than sen
 
 // A `catalog:` reference has no version of its own to send to npmjs.org — only pnpm-lock.yaml's importers section knows what it resolved to. Previously it was misclassified as `unresolvable` (alongside file:/workspace:/git) and silently skipped instead of ever being looked up there (issue #1).
 test("resolve() reports a catalog: reference as unknown, not skipped, when no lockfile answers it", async () => {
-  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
   const document = fakeDocument("{}", "d:/project/package.json");
   const info = await provider.resolve(
     { name: "typescript", spec: "catalog:", section: "devDependencies", line: 0 },
@@ -165,7 +166,7 @@ test("resolve() links a catalog: dependency resolved from node_modules to npmjs.
     throw new Error("not found");
   };
   try {
-    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
     const document = fakeDocument("{}", "d:/project/package.json");
     const info = await provider.resolve(
       { name: "@types/node", spec: "catalog:", section: "devDependencies", line: 0 },
@@ -196,7 +197,7 @@ test("resolve() surfaces engines.node from an installed package", async () => {
     throw new Error("not found");
   };
   try {
-    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
     const document = fakeDocument("{}", "d:/project/package.json");
     const info = await provider.resolve(
       { name: "typescript", spec: "^5.0.0", section: "dependencies", line: 0 },
@@ -359,7 +360,7 @@ test("parsePnpmWorkspaceYaml ignores unrelated top-level sections", () => {
 });
 
 test("NpmLicenseProvider.supports recognises pnpm-workspace.yaml, not other yaml files", () => {
-  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
   assert.equal(provider.supports(fakeDocument("catalog:\n", "d:/repo/pnpm-workspace.yaml")), true);
   assert.equal(provider.supports(fakeDocument("foo: bar\n", "d:/repo/other.yaml")), false);
 });

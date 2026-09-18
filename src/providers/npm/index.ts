@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import semver from "semver";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
@@ -14,9 +13,9 @@ import type {
   DependencyEntry,
   LicenseInfo,
   LicenseProvider,
+  ProviderHost,
   TextDocumentLike,
 } from "../types";
-import { vscodeFileSystem } from "../../vscodeFs";
 import { InstalledPackageLookup } from "./installed";
 import { LockfileResolver } from "./lockfile";
 import { normalizeLicense, normalizeNodeEngine } from "./manifest";
@@ -49,18 +48,23 @@ const DEFAULT_SECTIONS = [
 export class NpmLicenseProvider implements LicenseProvider {
   readonly id = "npm";
 
-  private readonly installed = new InstalledPackageLookup(vscodeFileSystem);
-  private readonly lockfiles = new LockfileResolver(vscodeFileSystem);
+  private readonly installed: InstalledPackageLookup;
+  private readonly lockfiles: LockfileResolver;
   private readonly registry: NpmRegistryClient;
   private readonly jsr: JsrClient;
 
-  constructor(cache: LicenseCache) {
+  constructor(
+    cache: LicenseCache,
+    private readonly host: ProviderHost
+  ) {
+    this.installed = new InstalledPackageLookup(host.fs);
+    this.lockfiles = new LockfileResolver(host.fs);
     this.registry = new NpmRegistryClient(cache);
     this.jsr = new JsrClient(cache);
   }
 
   supports(document: TextDocumentLike): boolean {
-    const path = vscode.Uri.parse(document.uri).path;
+    const path = this.host.parseUri(document.uri).path;
     if (path.endsWith("/package.json")) {
       // Never annotate a package.json that lives inside node_modules
       return !path.includes("/node_modules/");
@@ -76,7 +80,7 @@ export class NpmLicenseProvider implements LicenseProvider {
   }
 
   parse(document: TextDocumentLike): DependencyEntry[] {
-    const path = vscode.Uri.parse(document.uri).path;
+    const path = this.host.parseUri(document.uri).path;
     if (path.endsWith("/pnpm-workspace.yaml") || path.endsWith("/pnpm-workspace.yml")) {
       return parsePnpmWorkspaceYaml(document);
     }
@@ -100,7 +104,7 @@ export class NpmLicenseProvider implements LicenseProvider {
     document: TextDocumentLike,
     token: CancellationLike
   ): Promise<LicenseInfo> {
-    const uri = vscode.Uri.parse(document.uri);
+    const uri = this.host.parseUri(document.uri);
     const parsed = parseSpec(entry.name, entry.spec);
 
     // JSR-flavored dependencies show up two ways in a package.json:

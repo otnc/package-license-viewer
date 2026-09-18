@@ -4,11 +4,12 @@ import { LicenseCache } from "./cache";
 import { CONFIG_SECTION, invalidateConfigCache } from "./config";
 import { initLog, log } from "./log";
 import { createProviders } from "./providers";
+import { vscodeProviderHost } from "./vscodeFs";
 
 export function activate(context: vscode.ExtensionContext): void {
   const channel = initLog();
   const cache = new LicenseCache(context.globalState);
-  const providers = createProviders(cache);
+  const providers = createProviders(cache, vscodeProviderHost);
   const annotator = new Annotator(providers);
 
   context.subscriptions.push(

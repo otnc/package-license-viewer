@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { FileSystemLike, UriLike } from "./providers/types";
+import type { FileSystemLike, ProviderHost, UriLike } from "./providers/types";
 
 /** Adapts `vscode.workspace.fs` to `FileSystemLike`, normalizing a missing file to Node's `ENOENT` convention instead of vscode's own `FileNotFound`. */
 export const vscodeFileSystem: FileSystemLike = {
@@ -17,6 +17,12 @@ export const vscodeFileSystem: FileSystemLike = {
       throw normalizeMissing(error);
     }
   },
+};
+
+/** The `ProviderHost` every provider runs against inside the VS Code extension. */
+export const vscodeProviderHost: ProviderHost = {
+  fs: vscodeFileSystem,
+  parseUri: (uri: string): UriLike => vscode.Uri.parse(uri),
 };
 
 function normalizeMissing(error: unknown): unknown {

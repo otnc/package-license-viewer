@@ -6,6 +6,7 @@ import { buildHover } from "../../format";
 import { createProviders, findProvider } from "../../providers";
 import { CratesLicenseProvider } from "../../providers/crates";
 import { workspaceManifestUri } from "../../providers/crates/workspace";
+import { vscodeProviderHost } from "../../vscodeFs";
 
 const noCancel: vscode.CancellationToken = {
   isCancellationRequested: false,
@@ -93,7 +94,7 @@ suite("Cargo-only workspace", () => {
         false
       );
       const doc = toTextDocumentLike(document);
-      const providers = createProviders(cache);
+      const providers = createProviders(cache, vscodeProviderHost);
       const provider = findProvider(providers, doc);
       assert.ok(provider instanceof CratesLicenseProvider);
       const entries = provider.parse(doc);

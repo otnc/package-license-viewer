@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import { NotFoundError } from "../../net";
@@ -9,6 +8,7 @@ import type {
   DependencyEntry,
   LicenseInfo,
   LicenseProvider,
+  ProviderHost,
   TextDocumentLike,
 } from "../types";
 import { JsrClient, parseJsrPackageName } from "./client";
@@ -26,13 +26,16 @@ export class JsrLicenseProvider implements LicenseProvider {
   private readonly jsr: JsrClient;
   private readonly npm: NpmRegistryClient;
 
-  constructor(cache: LicenseCache) {
+  constructor(
+    cache: LicenseCache,
+    private readonly host: ProviderHost
+  ) {
     this.jsr = new JsrClient(cache);
     this.npm = new NpmRegistryClient(cache);
   }
 
   supports(document: TextDocumentLike): boolean {
-    const uri = vscode.Uri.parse(document.uri);
+    const uri = this.host.parseUri(document.uri);
     return isDenoManifest(uri) && !uri.path.includes("/node_modules/");
   }
 

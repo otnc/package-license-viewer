@@ -44,6 +44,19 @@ export interface FileSystemLike {
 }
 
 /**
+ * What a provider needs from its host to touch the filesystem — the last piece that kept
+ * `providers/npm/index.ts`, `providers/jsr/index.ts` and `providers/crates/index.ts` importing
+ * `vscode` directly. VS Code supplies `vscodeFileSystem` (`src/vscodeFs.ts`) and
+ * `vscode.Uri.parse`; a non-VS-Code host (an LSP server, a test) supplies its own `FileSystemLike`
+ * and a plain URI parser instead. `createProviders()` takes one and threads it through.
+ */
+export interface ProviderHost {
+  readonly fs: FileSystemLike;
+  /** Parse a `TextDocumentLike.uri` string into a `UriLike` the host's `fs` understands. */
+  parseUri(uri: string): UriLike;
+}
+
+/**
  * One dependency taken from a manifest.
 
  * The shape is deliberately ecosystem-agnostic: adding support for PyPI, crates.io and friends should only mean writing a new provider, never touching the code that renders, schedules or caches.

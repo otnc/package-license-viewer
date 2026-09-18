@@ -15,7 +15,7 @@ const { selectLocked } = require("../../../out/providers/crates/lockfile");
 const { LicenseCache } = require("../../../out/cache");
 const { buildHover } = require("../../../out/format");
 const { Annotator } = require("../../../out/annotator");
-const { vscodeFileSystem } = require("../../../out/vscodeFs");
+const { vscodeFileSystem, vscodeProviderHost } = require("../../../out/vscodeFs");
 const noCancel = {
   isCancellationRequested: false,
   onCancellationRequested: () => ({ dispose() {} }),
@@ -112,7 +112,7 @@ test("Cargo provider inherits at the nearest root, isolates cache keys, and neve
   });
   const cache = makeCache();
   t.after(() => cache.dispose());
-  const provider = new CratesLicenseProvider(cache);
+  const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const doc = (text, path = "/root/member/Cargo.toml") => fakeDocument(text, path);
   const resolve = (d) => provider.resolve(provider.parse(d)[0], d, noCancel);
   files.set(
@@ -392,7 +392,7 @@ test("Cargo explicit workspace roots and separate lockfiles use distinct public 
   t.mock.method(global, "fetch", () => {
     throw new Error("unexpected network");
   });
-  const provider = new CratesLicenseProvider(cache);
+  const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const a = fakeDocument('[dependencies]\nalias={package="real",version="1"}', "/a/Cargo.toml");
   const b = fakeDocument(
     '[package]\nworkspace="../b"\n[dependencies]\nalias.workspace=true',
@@ -425,7 +425,7 @@ test("Cargo resolution integrates with Annotator Refresh and independent manifes
   const cache = makeCache();
   t.after(() => cache.dispose());
   cache.set("crates:versions:v1:real", [{ version: "1.0.0", license: "MIT", yanked: false }]);
-  const provider = new CratesLicenseProvider(cache);
+  const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const editor = fakeEditor(
     fakeDocument('[dependencies]\na={package="real",version="1"}', "/project/Cargo.toml")
   );
@@ -675,7 +675,7 @@ test("an active Cargo update retries a cancelled shared lookup without a third e
     return { ok: true, json: async () => ({ versions: [apiVersion("1.0.0")] }) };
   });
   const cache = makeCache();
-  const provider = new CratesLicenseProvider(cache);
+  const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const document = fakeDocument('[dependencies]\nreal="1"', "/reupdate/Cargo.toml");
   const editor = fakeEditor(document);
   setVisibleEditors([editor]);
@@ -771,7 +771,7 @@ test("Refresh during Cargo HTTP retries after the invalidated request settles", 
     return { ok: true, json: async () => ({ versions: [apiVersion("1.0.0")] }) };
   });
   const cache = makeCache();
-  const provider = new CratesLicenseProvider(cache);
+  const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const document = fakeDocument('[dependencies]\nreal="1"', "/refresh/Cargo.toml");
   const editor = fakeEditor(document);
   setVisibleEditors([editor]);
@@ -828,7 +828,7 @@ test("root replace Package IDs exclude only the referenced crates.io name", asyn
       `[workspace]\n[dependencies]\nalias={package="real",version="1"}\nunrelated="1"\n[replace]\n"${id}"={path="../private"}`,
       "/replace/Cargo.toml"
     );
-    const provider = new CratesLicenseProvider(cache);
+    const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
     const [entry, unrelated] = provider.parse(document);
     assert.equal(
       (await provider.resolve(entry, document, noCancel)).source,
@@ -897,7 +897,7 @@ test("root patches recognize trailing index slashes without suppressing other so
       `[workspace]\n[dependencies]\nreal="1"\nother="1"\n[patch."${source}"]\nalias={package="real",path="local"}`,
       "/patch/Cargo.toml"
     );
-    const provider = new CratesLicenseProvider(cache);
+    const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
     const [entry, other] = provider.parse(document);
     assert.equal(
       (await provider.resolve(entry, document, noCancel)).source,

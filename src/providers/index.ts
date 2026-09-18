@@ -2,7 +2,7 @@ import type { LicenseCache } from "../cache";
 import { CratesLicenseProvider } from "./crates";
 import { JsrLicenseProvider } from "./jsr";
 import { NpmLicenseProvider } from "./npm";
-import type { LicenseProvider, TextDocumentLike } from "./types";
+import type { LicenseProvider, ProviderHost, TextDocumentLike } from "./types";
 
 export * from "./types";
 
@@ -10,14 +10,14 @@ export * from "./types";
  * Build the set of providers.
 
  * To support another ecosystem, implement `LicenseProvider` and add it to this array — no other file needs to change. For example:
- *   new PypiLicenseProvider(cache)   // requirements.txt / pyproject.toml
+ *   new PypiLicenseProvider(cache, host)   // requirements.txt / pyproject.toml
  * Remember to add the language to `activationEvents` in package.json as well.
  */
-export function createProviders(cache: LicenseCache): LicenseProvider[] {
+export function createProviders(cache: LicenseCache, host: ProviderHost): LicenseProvider[] {
   return [
-    new NpmLicenseProvider(cache),
-    new JsrLicenseProvider(cache),
-    new CratesLicenseProvider(cache),
+    new NpmLicenseProvider(cache, host),
+    new JsrLicenseProvider(cache, host),
+    new CratesLicenseProvider(cache, host),
   ];
 }
 

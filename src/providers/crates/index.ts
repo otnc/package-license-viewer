@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import type {
@@ -6,10 +5,10 @@ import type {
   DependencyEntry,
   LicenseInfo,
   LicenseProvider,
+  ProviderHost,
   TextDocumentLike,
 } from "../types";
 import { joinUriPath } from "../uri";
-import { vscodeFileSystem } from "../../vscodeFs";
 import { CratesClient } from "./client";
 import { selectLocked } from "./lockfile";
 import { CargoEntry, parseManifest } from "./parse";
@@ -18,13 +17,17 @@ import { CargoWorkspace } from "./workspace";
 
 export class CratesLicenseProvider implements LicenseProvider {
   readonly id = "crates";
-  private readonly workspace = new CargoWorkspace(vscodeFileSystem);
+  private readonly workspace: CargoWorkspace;
   private readonly client: CratesClient;
-  constructor(cache: LicenseCache) {
+  constructor(
+    cache: LicenseCache,
+    private readonly host: ProviderHost
+  ) {
+    this.workspace = new CargoWorkspace(host.fs);
     this.client = new CratesClient(cache);
   }
   supports(document: TextDocumentLike): boolean {
-    return vscode.Uri.parse(document.uri).path.endsWith("/Cargo.toml");
+    return this.host.parseUri(document.uri).path.endsWith("/Cargo.toml");
   }
   isEnabled(): boolean {
     return getSetting("crates.enabled", true);
@@ -53,7 +56,7 @@ export class CratesLicenseProvider implements LicenseProvider {
       return { source: spec.kind, detail: spec.reason };
     const manifest = parseManifest(document.getText(), document.uri);
     if (!manifest) return { source: "unknown", detail: "invalid Cargo manifest" };
-    const root = await this.workspace.root(vscode.Uri.parse(document.uri), manifest);
+    const root = await this.workspace.root(this.host.parseUri(document.uri), manifest);
     if (root.kind === "unknown") return { source: "unknown", detail: root.reason };
     if (spec.kind === "workspace") {
       const inherited = root.manifest.entries.find(

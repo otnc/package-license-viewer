@@ -5,6 +5,7 @@ import { LicenseCache } from "../../cache";
 import { createProviders, findProvider, type LicenseProvider } from "../../providers";
 import { JsrLicenseProvider } from "../../providers/jsr";
 import { NpmLicenseProvider } from "../../providers/npm";
+import { vscodeProviderHost } from "../../vscodeFs";
 
 const EXTENSION_ID = "otoneko1102.package-license-viewer";
 
@@ -64,7 +65,7 @@ suite("provider dispatch", () => {
   let providers: LicenseProvider[];
 
   suiteSetup(() => {
-    providers = createProviders(new LicenseCache(memoryMemento()));
+    providers = createProviders(new LicenseCache(memoryMemento()), vscodeProviderHost);
   });
 
   test("package.json goes to the npm provider", async () => {
@@ -87,7 +88,7 @@ suite("provider dispatch", () => {
 
 suite("parsing a real document", () => {
   test("dependencies are found on the right lines", async () => {
-    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+    const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
     const document = await vscode.workspace.openTextDocument(workspaceUri("package.json"));
     const entries = provider.parse(toTextDocumentLike(document));
 
@@ -119,7 +120,7 @@ suite("parsing a real document", () => {
   });
 
   test("deno.json imports are found", async () => {
-    const provider = new JsrLicenseProvider(new LicenseCache(memoryMemento()));
+    const provider = new JsrLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
     const document = await vscode.workspace.openTextDocument(workspaceUri("deno.json"));
     const entries = provider.parse(toTextDocumentLike(document));
     assert.deepEqual(
@@ -136,7 +137,7 @@ suite("resolving offline", () => {
   let doc: ReturnType<typeof toTextDocumentLike>;
 
   suiteSetup(async () => {
-    provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()));
+    provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), vscodeProviderHost);
     document = await vscode.workspace.openTextDocument(workspaceUri("package.json"));
     doc = toTextDocumentLike(document);
   });
