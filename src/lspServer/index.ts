@@ -109,14 +109,37 @@ async function resolveEntry(
   }
 }
 
+// One in-flight resolution per document at a time. A later edit cancels whatever the previous
+// one was still waiting on (aborting its still-pending network requests too, since
+// resolveEntry's token reaches all the way into fetchJson's AbortController) and its result is
+// dropped even if it manages to finish anyway — otherwise a slow, now-stale resolution could
+// still win the race and overwrite the newer, correct annotations with old ones.
+const inflightByUri = new Map<string, CancellationTokenSource>();
+
+function startResolution(uri: string): CancellationTokenSource {
+  inflightByUri.get(uri)?.cancel();
+  const cts = new CancellationTokenSource();
+  inflightByUri.set(uri, cts);
+  return cts;
+}
+
+function finishResolution(uri: string, cts: CancellationTokenSource): boolean {
+  if (inflightByUri.get(uri) === cts) {
+    inflightByUri.delete(uri);
+  }
+  cts.dispose();
+  return !cts.token.isCancellationRequested;
+}
+
 async function publishAnnotations(document: TextDocument): Promise<void> {
+  const uri = document.uri;
+  const cts = startResolution(uri);
   const doc = toTextDocumentLike(document);
   const provider = getConfig().enabled ? findProvider(providers, doc) : undefined;
   if (!provider || !provider.isEnabled()) {
-    void connection.sendNotification("packageLicenseViewer/annotations", {
-      uri: document.uri,
-      entries: [],
-    });
+    if (finishResolution(uri, cts)) {
+      void connection.sendNotification("packageLicenseViewer/annotations", { uri, entries: [] });
+    }
     return;
   }
 
@@ -124,11 +147,11 @@ async function publishAnnotations(document: TextDocument): Promise<void> {
   try {
     entries = provider.parse(doc);
   } catch (error) {
-    log.warn(`parse failed for ${document.uri}: ${String(error)}`);
+    log.warn(`parse failed for ${uri}: ${String(error)}`);
+    finishResolution(uri, cts);
     return;
   }
 
-  const cts = new CancellationTokenSource();
   const config = getConfig();
   const results: AnnotationEntry[] = await Promise.all(
     entries.map(async (entry) => {
@@ -141,14 +164,21 @@ async function publishAnnotations(document: TextDocument): Promise<void> {
     })
   );
 
-  void connection.sendNotification("packageLicenseViewer/annotations", {
-    uri: document.uri,
-    entries: results.filter((entry) => entry.segments !== undefined),
-  });
+  if (finishResolution(uri, cts)) {
+    void connection.sendNotification("packageLicenseViewer/annotations", {
+      uri,
+      entries: results.filter((entry) => entry.segments !== undefined),
+    });
+  }
 }
 
 // onDidChangeContent already fires once on open with the full initial content, so a separate onDidOpen handler would resolve everything twice.
 documents.onDidChangeContent((event) => void publishAnnotations(event.document));
+
+documents.onDidClose((event) => {
+  inflightByUri.get(event.document.uri)?.cancel();
+  inflightByUri.delete(event.document.uri);
+});
 
 connection.onHover(async ({ textDocument, position }) => {
   const document = documents.get(textDocument.uri);

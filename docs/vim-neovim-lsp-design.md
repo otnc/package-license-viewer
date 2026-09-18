@@ -84,7 +84,8 @@ No change to the extension point itself: a new ecosystem is still "implement `Li
 - [x] `packages/vim-plugin/lua`: Neovim transport/rendering overrides (`vim.lsp.start()` + `nvim_buf_set_extmark()`), verified on Neovim 0.12
 - [x] Docs: `:help` file for the Vim/Neovim plugin (`packages/vim-plugin/doc/package_license_viewer.txt`)
 - [x] README section pointing at the Vim/Neovim plugin (the Editors table)
-- [x] Settings sync (`g:package_license_viewer_settings` / Neovim's `vim.lsp.start({ settings = ... })`, flattened server-side into the same `packageLicenseViewer.<key>` shape `vscode.workspace.getConfiguration` reads) — still no debounce/cancellation of in-flight resolutions on rapid edits on the plain Vim side
+- [x] Settings sync (`g:package_license_viewer_settings` / Neovim's `vim.lsp.start({ settings = ... })`, flattened server-side into the same `packageLicenseViewer.<key>` shape `vscode.workspace.getConfiguration` reads)
+- [x] Cancellation of in-flight resolutions on rapid edits — the server tracks one `CancellationTokenSource` per document URI and cancels the previous one on every `publishAnnotations` call, so a slow stale resolution can never overwrite newer, correct annotations. Verified with a race-condition test: an edit fired immediately after the first, with no delay, published exactly one notification with the final content, never the stale intermediate one — both against plain `tsc` output and the esbuild bundle
 - [ ] Bundle `dist/lspServer.js` with the plugin (or document a build step) instead of requiring `npm run compile:lsp` from the repository root
 - [ ] CI: lint/test the new packages; package the Vim plugin for `vim-plug`/`packer`/`lazy.nvim`
 - [ ] Physical `packages/core`/`packages/lsp-server` npm-workspaces split — deferred; touches CI/release.yml/vsce packaging on the live Marketplace extension
