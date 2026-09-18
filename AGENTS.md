@@ -15,6 +15,6 @@ npm run docs:check   # verify nothing is left missing/stale
 
 A skill with the full Kiritan operating manual (directive syntax, CLI commands, common mistakes) is installed at [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) — load it before editing anything under `i18n/`.
 
-## Everything else
+## Read CONTRIBUTING.md before changing code
 
-The architecture, how to add a new ecosystem (`LicenseProvider`), local development and release process are documented in [CONTRIBUTING.md](CONTRIBUTING.md) — read the base source at [`i18n/CONTRIBUTING.base.md`](i18n/CONTRIBUTING.base.md) if you intend to change it.
+[CONTRIBUTING.md](CONTRIBUTING.md) is the source of truth for how this project is worked on — read it before making a code change, not just when something breaks. It covers the architecture, how to add a new ecosystem (`LicenseProvider`), which of the two test tiers a change belongs in (unit tests in `test/*.test.js` vs. integration tests in `src/test/integration/*.test.ts` — see its "Testing" section), commit message conventions (English or Japanese, Conventional Commits type prefix), local development and the release process. Read the base source at [`i18n/CONTRIBUTING.base.md`](i18n/CONTRIBUTING.base.md) if you intend to change any of it.

@@ -10,6 +10,8 @@ Code comments and documentation (README, this file, etc.) are in English, so the
 
 Commit messages, issues and pull requests may be written in either English or Japanese, whichever you're more comfortable with — don't let the language be a reason not to contribute.
 
+Whichever language you write the rest of the subject in, keep the [Conventional Commits](https://www.conventionalcommits.org/) type prefix (`feat:`, `fix:`, `docs:`, `chore:`, …) in English — `CHANGELOG.md` is generated straight from it (see Changelog below), and the generator only recognizes the English type names.
+
 ## Architecture
 
 Everything hangs off one interface, [`LicenseProvider`](src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`src/providers/index.ts`](src/providers/index.ts); nothing else needs to change to add one.
@@ -105,6 +107,15 @@ The lockfiles in [`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) were pro
 Compile before unit tests to exercise the bundle rather than skip that check. Cargo's integration suite launches a separate Cargo-only workspace with TOML associated to plaintext. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
 
 Run `npm run format` before committing; CI enforces `format:check` and `lint`.
+
+## Testing
+
+Two tiers, on purpose — not an inconsistency to clean up:
+
+- **Unit tests** ([`test/*.test.js`](test/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`test/vscode-stub.js`](test/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
+- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly.
+
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/`, following whichever of [`index.test.js`](test/index.test.js) (npm/JSR) or [`crates.test.js`](test/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
 
 ## Releasing
 
