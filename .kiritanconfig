@@ -8,9 +8,7 @@ export default defineConfig({
   ],
   // {base}.md at the project root for the default locale (README.md, CONTRIBUTING.md), {base}.{locale}.md for every other locale (README.ja.md, CONTRIBUTING.ja.md).
   naming: { template: "{base}.{locale}.{ext}" },
-  // The switcher goes right after the H1. Both base files keep their H1 outside the
-  // per-locale blocks (so it's one shared heading node the switcher can anchor after),
-  // with its per-locale text supplied through these variables.
+  // The switcher goes right after the H1. Both base files keep their H1 outside the per-locale blocks (so it's one shared heading node the switcher can anchor after), with its per-locale text supplied through these variables.
   switcher: { position: "after-heading" },
   interpolation: {
     variables: {
