@@ -49,6 +49,9 @@ jobs:
           OLD="$(node -p "require('./package.json').version")"
           npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version >/dev/null
           NEW="$(node -p "require('./package.json').version")"
+          # packages/vscode-extension/package.json is what vsce actually reads, so it has to be
+          # kept in lockstep with the monorepo root's version rather than bumped independently.
+          npm version "$NEW" --no-git-tag-version --allow-same-version -w package-license-viewer >/dev/null
           echo "version=v${NEW}" >> "$GITHUB_OUTPUT"
           echo "raw=${NEW}" >> "$GITHUB_OUTPUT"
           echo "vsix=package-license-viewer-${NEW}.vsix" >> "$GITHUB_OUTPUT"
@@ -70,7 +73,7 @@ jobs:
 
       # vsce package runs vscode:prepublish, which type-checks and does the production build
       - name: Package extension
-        run: npx vsce package --out "${{ steps.bump.outputs.vsix }}"
+        run: npm run package -w package-license-viewer -- --out "../../${{ steps.bump.outputs.vsix }}"
 
       - uses: actions/upload-artifact@v4
         with:
