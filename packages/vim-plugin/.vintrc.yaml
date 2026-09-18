@@ -1,0 +1,5 @@
+policies:
+  # Several strings here need "\r\n"-style escapes (LSP's Content-Length framing), which single
+  # quotes can't express, so this Google-style preference doesn't fit this file.
+  ProhibitUnnecessaryDoubleQuote:
+    enabled: false

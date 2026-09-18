@@ -4,7 +4,7 @@ const globals = require("globals");
 
 module.exports = tseslint.config(
   {
-    ignores: ["out/**", "dist/**", "test/fixtures/**", "*.vsix", ".vscode-test/**"],
+    ignores: ["**/out/**", "**/dist/**", "test/fixtures/**", "*.vsix", "**/.vscode-test/**"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

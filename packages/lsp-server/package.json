@@ -1,0 +1,23 @@
+{
+  "name": "@plv/lsp-server",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Node-based language server sharing @plv/core's license resolution with non-VS-Code editors (Vim/Neovim).",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "compile": "npm --prefix ../core run compile && node esbuild.js",
+    "watch": "npm --prefix ../core run compile && node esbuild.js --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@plv/core": "*",
+    "vscode-languageserver": "^10.1.1",
+    "vscode-languageserver-textdocument": "^1.0.14"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.28.2"
+  }
+}

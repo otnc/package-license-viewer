@@ -1,0 +1,153 @@
+*package_license_viewer.txt*  Inline dependency license annotations
+
+CONTENTS                                    *package_license_viewer-contents*
+
+    1. Introduction ............... |package_license_viewer-introduction|
+    2. Requirements ............... |package_license_viewer-requirements|
+    3. Installation ................ |package_license_viewer-installation|
+    4. Commands .................... |package_license_viewer-commands|
+    5. Configuration ............... |package_license_viewer-configuration|
+    6. Neovim vs. Vim .............. |package_license_viewer-neovim|
+    7. Known limitations ........... |package_license_viewer-limitations|
+
+==============================================================================
+1. Introduction                          *package_license_viewer-introduction*
+
+Shows the license of every dependency inline at the end of the line, in
+`package.json`, `deno.json`/`import_map.json`, `pnpm-workspace.yaml` and
+`Cargo.toml` — the same license resolution the "Package License Viewer" VS
+Code extension uses, running here as a Node-based language server
+(`packages/lsp-server/dist/lspServer.js`) instead.
+
+==============================================================================
+2. Requirements                          *package_license_viewer-requirements*
+
+- Node.js 22+ on `$PATH` (or set |g:package_license_viewer_node_command|).
+- The language server built: from the repository root, >
+    npm install
+    npm run compile:lsp
+<
+  This produces `packages/lsp-server/dist/lspServer.js`. It is not published as a separate,
+  pre-built artifact yet, so a plugin manager's build hook (see
+  |package_license_viewer-installation|) is the easiest way to keep it
+  built without a manual step.
+- Plain Vim: 9.0+, with |+job|, |+channel| and |+textprop| (`:version` shows
+  these). Neovim: 0.8+, for `vim.lsp.start()`.
+
+==============================================================================
+3. Installation                          *package_license_viewer-installation*
+
+This plugin's source lives inside the main extension's repository, at
+`packages/vim-plugin` — point your plugin manager's runtime path there,
+and give it a build hook that runs |package_license_viewer-requirements|'s
+`npm install && npm run compile:lsp` once, in the repository root, on
+install and update. Three examples: >
+
+    -- lazy.nvim (no built-in `rtp` option like vim-plug/packer, so the
+    -- config function has to both append the path and source `plugin/`
+    -- itself — appending to 'runtimepath' alone does not auto-source it)
+    {
+      "otnc/package-license-viewer",
+      config = function()
+        vim.opt.rtp:append(vim.fn.stdpath("data") .. "/lazy/package-license-viewer/packages/vim-plugin")
+        vim.cmd("runtime! plugin/package_license_viewer.vim")
+      end,
+      build = "npm install && npm run compile:lsp",
+    }
+
+    " vim-plug (Vim or Neovim)
+    Plug 'otnc/package-license-viewer', {'rtp': 'packages/vim-plugin', 'do': 'npm install && npm run compile:lsp'}
+
+    -- packer.nvim
+    use({
+      "otnc/package-license-viewer",
+      rtp = "packages/vim-plugin",
+      run = "npm install && npm run compile:lsp",
+    })
+<
+If your plugin manager has no build-hook concept, run the two commands
+by hand from wherever it cloned the repository, and re-run them after
+every update.
+
+==============================================================================
+4. Commands                                   *package_license_viewer-commands*
+
+                                            *:PackageLicenseViewerToggle*
+:PackageLicenseViewerToggle     Turn annotations on or off.
+
+                                            *:PackageLicenseViewerRefresh*
+:PackageLicenseViewerRefresh    Re-resolve every attached buffer.
+
+                                            *:PackageLicenseViewerClearCache*
+:PackageLicenseViewerClearCache
+                                 Drop the server's in-memory license cache
+                                 (restarts the language server).
+
+==============================================================================
+5. Configuration                        *package_license_viewer-configuration*
+
+                                        *g:package_license_viewer_enabled*
+g:package_license_viewer_enabled       (default: `1`)
+    Set to `0` to start with annotations off.
+
+                                    *g:package_license_viewer_node_command*
+g:package_license_viewer_node_command  (default: `'node'`)
+    The Node.js executable used to run the language server.
+
+                                    *g:package_license_viewer_server_path*
+g:package_license_viewer_server_path   (default: `''`)
+    Path to `lspServer.js`. Left empty, it is resolved relative to this
+    plugin's own location (`<repo>/packages/lsp-server/dist/lspServer.js`)
+    — set this if you install the server somewhere else.
+
+                                      *g:package_license_viewer_settings*
+g:package_license_viewer_settings      (default: `{}`)
+    Sent to the server nested exactly like the extension's own
+    `packageLicenseViewer.*` settings, e.g.: >
+        let g:package_license_viewer_settings = {
+          \ 'format': '${license} (${source})',
+          \ 'npm': {'useRegistry': v:false},
+          \ }
+<
+    On Neovim this is sent automatically whenever the server (re)starts.
+    On plain Vim, edit this and run |:PackageLicenseViewerRefresh| to send
+    it — there is no file-watching, so nothing else picks up a change on
+    its own.
+
+==============================================================================
+6. Neovim vs. Vim                              *package_license_viewer-neovim*
+
+On Neovim, |lua/package_license_viewer/init.lua| replaces the transport and
+rendering entirely instead of sharing plain Vim's:
+
+- Transport: `vim.lsp.start()` — a real LSP client with its own document
+  version tracking, instead of the hand-rolled job/channel JSON-RPC framing
+  `autoload/package_license_viewer.vim` implements for plain Vim.
+- Hover: the standard `vim.lsp.buf.hover()`, merged with any other
+  language server attached to the buffer.
+- Rendering: one |nvim_buf_set_extmark()| per annotation, its `virt_text`
+  holding every coloured segment together. Plain Vim needs three separate
+  |prop_add()| calls per line instead (`plv_before`/`plv_license`/
+  `plv_after`), since a single text property only carries one highlight
+  group.
+
+Both share the same server and the same wire format
+(`packageLicenseViewer/annotations`), so behavior is otherwise identical.
+
+==============================================================================
+7. Known limitations                      *package_license_viewer-limitations*
+
+- `packages/lsp-server/dist/lspServer.js` is not published as a pre-built
+  artifact; it has to be built, ideally via a plugin manager's build hook
+  — see |package_license_viewer-installation|.
+- Settings only apply at startup (Neovim) or when you explicitly run
+  |:PackageLicenseViewerRefresh| after editing them (plain Vim) — see
+  |g:package_license_viewer_settings|. Neither editor watches for a change
+  to it on its own.
+- Plain Vim resolves and redraws on every |TextChanged| after a fixed
+  300ms debounce. The server itself cancels a document's still-running
+  resolution as soon as a newer edit arrives, so a slow, stale answer
+  can never overwrite a newer one — see `docs/vim-neovim-lsp-design.md`
+  in the main repository.
+
+vim:tw=78:ts=8:ft=help:norotate:

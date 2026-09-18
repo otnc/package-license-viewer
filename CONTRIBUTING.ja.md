@@ -1,0 +1,177 @@
+# 貢献について
+
+[English](CONTRIBUTING.md) | **日本語**
+
+見てくれてありがとうございます。このファイルではアーキテクチャ、新しいエコシステムの追加方法、ローカルでの実行方法、リリース手順について説明しています。拡張機能自体の機能については [README.md](README.md) を参照してください。
+
+## 言語について
+
+コードコメントとドキュメント(README、このファイルなど)は英語で書かれています。ソースコードを読む誰にとっても近づきやすいプロジェクトであるためです。
+
+コミットメッセージ、Issue、プルリクエストは英語・日本語どちらで書いても構いません。使いやすい方を選んでください — 言語がコントリビュートしない理由になってしまわないように。
+
+件名の残りをどちらの言語で書く場合でも、[Conventional Commits](https://www.conventionalcommits.org/) のタイププレフィックス(`feat:`、`fix:`、`docs:`、`chore:` など)は英語のまま書いてください。`CHANGELOG.md` はこの部分からそのまま生成されており(後述の「変更履歴」を参照)、生成ツールは英語のタイプ名しか認識しません。
+
+## アーキテクチャ
+
+すべては [`LicenseProvider`](packages/core/src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
+
+プロバイダーが気にする必要のないことは、すべて共通化されています。
+
+- [`packages/vscode-extension/src/annotator.ts`](packages/vscode-extension/src/annotator.ts) — デバウンス、キャンセル処理、並列数の制限、ちらつきのない再描画、デコレーションとホバーの描画
+- [`packages/core/src/cache.ts`](packages/core/src/cache.ts) — TTL付きの2段(メモリ + ディスク)キャッシュ
+- [`packages/core/src/net.ts`](packages/core/src/net.ts) — タイムアウトとキャンセルに対応したfetch、および小さな並列数リミッター
+
+npmプロバイダー([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](packages/core/src/providers/npm/installed.ts)、[`lockfile/`](packages/core/src/providers/npm/lockfile/)、[`registry.ts`](packages/core/src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
+
+各エコシステムが具体的にどうライセンスを解決するか(npm/JSRの優先順位、パッケージマネージャーごとのレイアウト、Cargoの探索経路)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
+
+### Cargoの実装
+
+Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
+
+`workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
+
+マニフェスト解決キーと公開バージョンのメタデータキーは分けて管理してください。前者はURI、エイリアス、セクション、ソース、要件、ワークスペースのコンテキストを含み、後者はドキュメント間で正確な公開メタデータを共有します。`invalidate()` は補助的な読み込みをクリアし、保留中のCargoリクエストをキャンセルします。Cargoコマンドの実行、アーカイブの読み込み、ソースキャッシュ、ファイルシステムウォッチャー、依存関係グラフのいずれもここには含まれません。
+
+### MoonBitの実装
+
+MoonBitの実装は [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/) にあります。moonは `moon.mod.json` を小さなDSLである `moon.mod` に置き換えている途中のため、両方をパースします。[`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) は[公開されている文法](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html)に対するトークナイザーで、必要な部分(トップレベルの `import` ブロック内の文字列、`key = "string"`、`key = [ … ]`)だけを読み取り、認識できないものはすべてスキップします。そのため、途中まで書きかけの文があっても、その上に書かれた依存関係が消えることはありません。[`parse.ts`](packages/core/src/providers/moonbit/parse.ts) は両方のフォーマットを同じエントリ形式に落とし込み、各 `import` の項目をmoonの `read_module_from_dsl` と同じように**最後の** `@` で分割します。
+
+宣言されたバージョンは正確な `semver::Version` であり、範囲指定ではありません。moonは[minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs)で解決するためです。ここでは範囲を解釈する処理は一切なく、`moon` コマンドも実行しません。解決順序は [`.mooncakes`](packages/core/src/providers/moonbit/installed.ts) → `moon.work` メンバー → [レジストリインデックス](packages/core/src/providers/moonbit/registryIndex.ts) → [mooncakes.io](packages/core/src/providers/moonbit/client.ts) で、最初の2つは `moon build` が展開したマニフェストから答えます。これは、minimal version selectionが実際にどこに着地したかを知っている唯一の情報源です。また、この2つは宣言されたバージョンを見る**前に**チェックされます — `moon.work` メンバーの `@version` はmoonにとって何が書かれていても無視されるため、先にバージョンを検証してしまうと、奇妙なプレースホルダーのバージョンを持つメンバーが「スキップ」ではなく「解決不能」として誤って報告されてしまいます。
+
+レジストリインデックスは、`moon update` が `$MOON_HOME/registry/index`(デフォルトは `~/.moon`)に維持しているクローンで、モジュールごとに1つのJSON Lines形式のファイルに、すべてのバージョン**とそのライセンス**が記録されています。これがインストール済みツールチェーンがオフラインで解決できる理由です。crates.ioクライアントが不正なバージョンレコードに対して行っているのと同様に、壊れた行はファイル全体を捨てるのではなく、その行だけを読み飛ばしてください。
+
+mooncakes.ioは `/api/v0/modules/<user>/<module>@<version>` にその release のメタデータを、`…/<user>/<module>` に最新版を返します。最新版は定義上変わり得るものなので、正確なバージョンを指定した回答だけがキャッシュされます。このルートには `moonbitlang/lex/runtime` のようなネストした名前の**ルートが存在せず**、インデックス自体はそれを保持しているにもかかわらずです。そのため、そのようなモジュールはディスクからのみ解決し、読み込みに失敗するホバーリンクを渡してはいけません。レジストリはレート制限を公開していないため、`maxConcurrentRequests` を埋め尽くすのではなく送信間隔を空け、HTTP 429が返ってきた場合はリトライせずに1分間送信を停止します。
+
+`moon` コマンドの実行、アーカイブのダウンロード、`.mbt` のパース、パッケージレベル(`moon.pkg`)の扱い、依存関係グラフのいずれもここには含まれません。
+
+## 別のエコシステムを追加する
+
+`LicenseProvider` を実装し、登録し、有効化と設定を接続します。
+
+```ts
+export class ExampleLicenseProvider implements LicenseProvider {
+  readonly id = "example";
+  supports(document) { /* マニフェストを認識する */ }
+  isEnabled() { return getSetting("example.enabled", true); }
+  parse(document) { /* → DependencyEntry[] (name, spec, section, line) */ }
+  cacheKey(entry) { /* 解決結果がドキュメント/ソースのコンテキストに依存する場合は含める */ }
+  async resolve(entry, document, token) { /* → LicenseInfo */ }
+}
+```
+
+[`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
+
+また、[README.md](README.md#サポート言語) の言語/パッケージマネージャー表にも行を追加してください(`README.md` ではなく [`i18n/README.base.md`](i18n/README.base.md) を編集します — 詳しくは後述の「ドキュメントとi18n」を参照)。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。
+
+### ホバータイトルをパッケージのレジストリページにリンクする
+
+npmやJSRと同様に、すべてのプロバイダーはホバータイトルをクリック可能にすることが期待されています — 単なるプレーンテキストのままにしないでください。`resolve()` から、レジストリのURL形式に合う方の `LicenseInfo` フィールドを設定してください。
+
+- `registryPackageName` — リンク先が本当に `https://www.npmjs.com/package/<name>/v/<version>` である場合(npmおよびnpm互換エイリアスのみ。それ以外はこれを設定すべきではありません)。
+- `packagePageUrl` — それ以外の正確なURL。例: `https://crates.io/crates/<name>/<version>` や `https://pypi.org/project/<name>/<version>/`。JSRはこちらを使用しています。
+
+[`packages/core/src/format.ts`](packages/core/src/format.ts) の `buildHover` はどちらか設定されている方を選び(両方設定されていれば `registryPackageName` が優先)、`` `name@version` `` というタイトルに自動的にリンクを付けます — このリンクを自分で組み立てないでください。設定する際に重要な点が2つあります。
+
+- **エイリアスを先に解決する。** リンクはローカルのマニフェストキーではなく、実際のレジストリパッケージを指す必要があります。npmプロバイダーが `registryPackageName` を設定する前に `npm:` エイリアスを実際のターゲットまで辿っている様子を参照してください(`packages/core/src/providers/npm/index.ts`)。
+- **そのレジストリに実在しないものにリンクしない。** `file:`/`git`/ローカルパスの依存関係や、確信が持てないものについては、404になり得るURLにリンクするより、両方のフィールドを未設定のままにしてください。
+
+レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
+
+Python、Ruby、Go、MoonBitへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされている各Issueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
+
+- PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
+- Go: `https://pkg.go.dev/<module>?tab=licenses` (JSON APIはなし。モジュールプロキシかスクレイピングが必要)
+
+## ドキュメントとi18n
+
+`README.md`、`README.ja.md`、`CONTRIBUTING.md`、`CONTRIBUTING.ja.md` は [Kiritan](https://github.com/otnc/kiritan) によって [`i18n/`](i18n/) 内のベースソースから生成されます — 生成後のファイルを直接編集しないでください。次のビルドで黙って上書きされます。代わりに `i18n/README.base.md` や `i18n/CONTRIBUTING.base.md` を編集してから、以下を実行してください。
+
+```sh
+npm run docs:build   # ローカライズされたドキュメントをすべて再生成する
+npm run docs:check   # 未翻訳・古くなった内容が残っていないか確認する
+```
+
+ディレクティブの構文やCLIリファレンスの詳細については、[AGENTS.md](AGENTS.md) と [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) にインストールされているKiritanのスキルを参照してください。
+
+## エージェント向けスキル
+
+AIコーディングエージェントは、[`skills` CLI](https://www.npmjs.com/package/skills)(`npx skills`)経由で [`.agents/skills/`](.agents/skills/) から追加の指示(「スキル」)を読み込みます。コミットされているのは `.agents/skills/` と [`skills-lock.json`](skills-lock.json) だけで、これが正本です。各エージェントが実際に参照する他の場所(`.claude/skills/`、`agent/skills/` など)は生成されたシンボリックリンクやコピーであり、gitignoreされています。クローン後は以下で復元してください。
+
+```sh
+npx skills experimental_install
+```
+
+新しいスキルを追加するには:
+
+```sh
+npx skills add <owner>/<repo> --agent '*' -y
+```
+
+これによりソースがクローンされ、正本のファイルが `.agents/skills/<name>/` にコピーされ、ローカルに存在する各エージェント用ディレクトリへシンボリックリンクまたはコピーが作られ、`skills-lock.json` にソースとそのハッシュが記録されます。コミットするのは `.agents/skills/` と `skills-lock.json` の変更だけにし、その他の生成されたエージェント用ディレクトリは追跡しないままにしてください([`.gitignore`](.gitignore) を参照)。
+
+## 開発
+
+```sh
+npm install
+npm run watch:vscode # esbuildをwatchモードで実行
+# VS CodeでF5を押すとExtension Development Hostが起動します
+```
+
+2つの起動構成が用意されています。**Run Extension** は空のExtension Development Hostを開きます。**Run Extension (MoonBit sample)** はその中で [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) を開きます。これは各フォーマットのマニフェストを1つずつと、展開済みの `.mooncakes` モジュールを持つ、2メンバー構成の `moon.work` です。そのため、ホストの起動が終わった瞬間に注釈が確認できます。どちらの場合も、ホスト内で `File > Open Folder` を実行すれば実際のプロジェクトに切り替えられます。
+
+```sh
+npm run format:check     # prettier --check .
+npm run lint             # eslint .
+npm run check-types      # tsc --noEmit
+npm test                 # 実際のロックファイルフィクスチャに対するユニットテスト
+npm run test:integration # 実際のVS Code内で拡張機能を実行するテスト
+npm run package           # .vsixをビルド
+```
+
+[`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) 内のロックファイルは、同じマニフェストに対して実際に `npm`、`pnpm`、`yarn`(classicとberry)、`bun` でインストールして生成したものです。そのため、パーサーは手書きのサンプルではなく実物に対してテストされています。
+
+`npm test` はTypeScriptのソースに対して直接Vitestを実行します。事前にコンパイルする必要はありません。`packages/vscode-extension` のテストスイートは、加えてビルド済みの `dist/extension.js` が存在する場合はそれも読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、ソースに対しては問題なく解決されても、拡張機能ホスト内では失敗することがあります。このチェックを黙ってスキップさせず実際に働かせるには、先に `npm run compile` を実行してください。
+
+CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml` と `moon.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
+
+コミット前に `npm run format` を実行してください。CIでは `format:check` と `lint` が強制されます。
+
+## テスト
+
+テストコードは2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
+
+- **ユニットテスト**はVitestで実行され、パッケージごとに1つのプロジェクトに分かれています(リポジトリルートの `vitest.config.ts` が `test.projects` で両者をまとめています)。[`packages/core/test/*.test.ts`](packages/core/test/) はプロバイダー・キャッシュ・フォーマット関連のソースを直接importします — コンパイル不要で、実際の `vscode` もほとんど必要としません。これらのテストは特定のエディタではなく、インメモリのフェイクホスト([`test/support/fakeHost.ts`](packages/core/test/support/fakeHost.ts))を通じて `ProviderHost`/`FileSystemLike`/`UriLike` の抽象化そのものをテストしているためです。`config.ts`/`log.ts`/`format.ts` の中で依然として実際の `vscode` API を値として呼び出す一部分(`workspace.getConfiguration`、`window.createOutputChannel`、`MarkdownString`)は、`vitest.config.ts` の `resolve.alias` で `"vscode"` としてエイリアスした小さなスタブ([`test/support/vscodeStub.ts`](packages/core/test/support/vscodeStub.ts))経由で動きます。[`packages/vscode-extension/test/unit/*.test.ts`](packages/vscode-extension/test/unit/) は `Annotator` と `extension.ts` を、同じエイリアス方式によるより本格的な独自の `vscode` スタブ(`Uri`/デコレーション/コマンドなども含む)に対してテストし、加えてビルド済みの実際の `dist/extension.js` が存在する場合はそれも、そのテストファイルだけに限定した `Module._load` パッチ経由で読み込みます。バンドル自体が拡張機能を壊すことがあり、実際に出荷されるものをソースの代わりに動作確認できるのはそのrequire()だけだからです。
+- **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。Vitestではなく、そのパッケージ自身の `tsc` パス(`npm run build-tests`)でコンパイルされます。Vitestは実際の拡張機能ホストのプロセス内では実行できないためです。
+
+[`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+
+プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) のフィクスチャを共通で使っています。
+
+## リリース
+
+[`.github/workflows/release.yml`](.github/workflows/release.yml) はActionsタブから手動で実行します。バージョン — バンプ用のキーワード(`patch`、`minor`、`major`、`prerelease`)か、`0.2.0` のような明示的なバージョン — を指定すると、残りはワークフローが行います。
+
+1. 型チェック、ユニットテスト、実際のVS Code上でのIntegrationテストスイートを実行
+2. `package.json` をバンプし、最後のタグ以降のConventional Commitsから `CHANGELOG.md` を更新
+3. `i18n/*.base.md` から `README.md`/`README.ja.md`/`CONTRIBUTING.md`/`CONTRIBUTING.ja.md` を再生成(`npm run docs:build`)。これにより、生成済みドキュメントがベースソースと同期しないままリリースされることがなくなります
+4. `.vsix` をビルド
+5. VS Code Marketplaceに公開
+6. コミット(手順3で再生成されたドキュメントも含む)、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
+
+`VSCE_PAT` が存在しない場合は公開が自動的にスキップされるため、トークンを取得する前でもこのワークフローを使用できます。<https://marketplace.visualstudio.com/manage> から、Marketplace → Manage スコープを持つAzure DevOpsのPATを取得し、リポジトリシークレットとして追加してください。
+
+### 変更履歴
+
+`CHANGELOG.md` は [git-cliff](https://git-cliff.org)(設定は [`cliff.toml`](cliff.toml))を使って、最後のタグ以降のコミットメッセージから[Conventional Commits](https://www.conventionalcommits.org/)のタイプ別に生成されます — `feat` → Added、`fix` → Fixed、`perf` → Performance、`refactor`/`revert` → Changed。それ以外(`chore`、`docs`、`test`、`style`、`ci`、`build`、`release`、マージコミット)は、これまで手書きで管理していた頃と同様に除外されます。コミットの件名はそのまま変更履歴の行としてほぼそのまま使われることを意識して書いてください。
+
+何も変更せずに次のリリースのエントリがどう見えるかをプレビューするには:
+
+```sh
+npx git-cliff --unreleased --tag vX.Y.Z
+```
+
+タグ付けは公開が成功した後にのみ行われるため、リリースが失敗してもタグが残ったままになることはありません。`dry_run` にチェックを入れると、公開・コミット・タグ付けを行わずにパイプライン全体をリハーサルできます。
+
+ローカルから公開するには、`.env.example` を `.env` にコピーし、`VSCE_PAT` を設定した上で `npm run publish`(オプションで `npm run publish -- patch`)を実行してください。
