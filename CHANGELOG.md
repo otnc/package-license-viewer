@@ -1,5 +1,30 @@
 # Change Log
 
+## [0.6.0]
+
+### Added
+
+- Add a minimal Node LSP server prototype (src/lspServer)
+- Add the Vim/Neovim plugin (packages/vim-plugin)
+- Sync packageLicenseViewer.* settings from the Vim/Neovim client
+- Cancel a document's in-flight resolution when a newer edit arrives
+
+
+### Changed
+
+- Decouple LicenseProvider from vscode.TextDocument/CancellationToken
+- Decouple installed/lockfile/Cargo-workspace lookups from vscode.workspace.fs
+- Consolidate test code under src/test/
+- Drop the remaining incidental vscode dependency from net/client code
+- Inject a ProviderHost instead of importing vscode in provider index.ts files
+- Split into packages/core, packages/vscode-extension and packages/lsp-server
+
+
+### Fixed
+
+- Replace retired shields.io VS Marketplace badges, add more skills
+- Correct cancellation, ClearCache and URI handling in the LSP/Vim path
+
 ## [0.5.0]
 
 ### Added
