@@ -1,6 +1,6 @@
 # Vim / Neovim support and a shared language server
 
-Status: draft / work in progress. This document lays out the plan for adding Vim and Neovim support alongside the existing VS Code extension, without duplicating the license-resolution logic that already exists for npm, JSR and Cargo.
+Status: implemented, except for Vim/Neovim CI (see Milestones). This document lays out the design behind Vim and Neovim support alongside the existing VS Code extension, without duplicating the license-resolution logic that already exists for npm, JSR and Cargo.
 
 ## Goals
 
@@ -78,14 +78,14 @@ No change to the extension point itself: a new ecosystem is still "implement `Li
 
 ## Milestones
 
-- [x] Editor-agnostic interfaces (`TextDocumentLike`, `CancellationLike`, `UriLike`, `FileSystemLike`, `ProviderHost`) — `src/providers/` has no `vscode` import left at all; VS Code extension keeps working unchanged on top of it
-- [x] `src/lspServer/`: wraps the same providers, `packageLicenseViewer/annotations` notification, hover — still living under `src/` rather than a separate `packages/core`/`packages/lsp-server` split (see "Not done yet" below)
-- [x] `packages/vim-plugin`: VimScript LSP client + `prop_add` rendering, verified against a real `dist/lspServer.js` on Vim 9.2 (job/channel/textprop)
+- [x] Editor-agnostic interfaces (`TextDocumentLike`, `CancellationLike`, `UriLike`, `FileSystemLike`, `ProviderHost`) — `packages/core/src/providers/` has no `vscode` import left at all; VS Code extension keeps working unchanged on top of it
+- [x] `packages/lsp-server`: wraps the same providers, `packageLicenseViewer/annotations` notification, hover
+- [x] `packages/vim-plugin`: VimScript LSP client + `prop_add` rendering, verified against a real `packages/lsp-server/dist/lspServer.js` on Vim 9.2 (job/channel/textprop)
 - [x] `packages/vim-plugin/lua`: Neovim transport/rendering overrides (`vim.lsp.start()` + `nvim_buf_set_extmark()`), verified on Neovim 0.12
 - [x] Docs: `:help` file for the Vim/Neovim plugin (`packages/vim-plugin/doc/package_license_viewer.txt`)
 - [x] README section pointing at the Vim/Neovim plugin (the Editors table)
 - [x] Settings sync (`g:package_license_viewer_settings` / Neovim's `vim.lsp.start({ settings = ... })`, flattened server-side into the same `packageLicenseViewer.<key>` shape `vscode.workspace.getConfiguration` reads)
 - [x] Cancellation of in-flight resolutions on rapid edits — the server tracks one `CancellationTokenSource` per document URI and cancels the previous one on every `publishAnnotations` call, so a slow stale resolution can never overwrite newer, correct annotations. Verified with a race-condition test: an edit fired immediately after the first, with no delay, published exactly one notification with the final content, never the stale intermediate one — both against plain `tsc` output and the esbuild bundle
-- [x] Document a build step instead of a silent manual requirement — `:help package_license_viewer`'s new Installation section gives working `lazy.nvim`/`vim-plug`/`packer.nvim` configs with a build hook that runs `npm install && npm run compile:lsp`. `dist/lspServer.js` itself is still not published as a pre-built artifact — that's a separate, bigger step (its own release/versioning story) than just documenting how to build it
-- [ ] CI: lint/test the new packages; package the Vim plugin for `vim-plug`/`packer`/`lazy.nvim`
-- [ ] Physical `packages/core`/`packages/lsp-server` npm-workspaces split — deferred; touches CI/release.yml/vsce packaging on the live Marketplace extension
+- [x] Document a build step instead of a silent manual requirement — `:help package_license_viewer`'s new Installation section gives working `lazy.nvim`/`vim-plug`/`packer.nvim` configs with a build hook that runs `npm install && npm run compile:lsp`. `packages/lsp-server/dist/lspServer.js` itself is still not published as a pre-built artifact — that's a separate, bigger step (its own release/versioning story) than just documenting how to build it
+- [x] Physical `packages/core`/`packages/vscode-extension`/`packages/lsp-server` npm-workspaces split — `packages/core` compiles to plain JS (`npm run compile -w @plv/core`) and is consumed both by `esbuild` (bundled into `dist/extension.js`/`dist/lspServer.js`) and directly at test time; `vsce package`/`vsce publish` run with `--no-dependencies` from `packages/vscode-extension` (esbuild already inlines every runtime dependency), and a `prepack.mjs` script copies the shared icon/README/CHANGELOG in from the repo root since vsce only packages files inside the extension's own directory
+- [ ] CI: lint/test the Vim plugin (VimScript/Lua); package it for `vim-plug`/`packer`/`lazy.nvim`

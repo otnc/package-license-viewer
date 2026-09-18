@@ -31,21 +31,21 @@ Whichever language you write the rest of the subject in, keep the [Conventional 
 :::kiritan{locale=en}
 ## Architecture
 
-Everything hangs off one interface, [`LicenseProvider`](src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`src/providers/index.ts`](src/providers/index.ts); nothing else needs to change to add one.
+Everything hangs off one interface, [`LicenseProvider`](packages/core/src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts); nothing else needs to change to add one.
 
 Everything a provider doesn't have to worry about is shared:
 
-- [`src/annotator.ts`](src/annotator.ts) — debouncing, cancellation, concurrency limits, flicker-free redrawing, decoration and hover rendering
-- [`src/cache.ts`](src/cache.ts) — the two-level (in-memory + on-disk) cache with a TTL
-- [`src/net.ts`](src/net.ts) — fetch with a timeout and cancellation, and a small concurrency limiter
+- [`packages/vscode-extension/src/annotator.ts`](packages/vscode-extension/src/annotator.ts) — debouncing, cancellation, concurrency limits, flicker-free redrawing, decoration and hover rendering
+- [`packages/core/src/cache.ts`](packages/core/src/cache.ts) — the two-level (in-memory + on-disk) cache with a TTL
+- [`packages/core/src/net.ts`](packages/core/src/net.ts) — fetch with a timeout and cancellation, and a small concurrency limiter
 
-The npm provider ([`src/providers/npm/`](src/providers/npm/)) resolves in three steps — `node_modules`, then the lockfile, then the registry — each in its own file ([`installed.ts`](src/providers/npm/installed.ts), [`lockfile/`](src/providers/npm/lockfile/), [`registry.ts`](src/providers/npm/registry.ts)). The JSR provider ([`src/providers/jsr/`](src/providers/jsr/)) reuses the npm registry client for `npm:` specifiers and routes `@jsr/scope__name` npm-compatibility names back to JSR.
+The npm provider ([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/)) resolves in three steps — `node_modules`, then the lockfile, then the registry — each in its own file ([`installed.ts`](packages/core/src/providers/npm/installed.ts), [`lockfile/`](packages/core/src/providers/npm/lockfile/), [`registry.ts`](packages/core/src/providers/npm/registry.ts)). The JSR provider ([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/)) reuses the npm registry client for `npm:` specifiers and routes `@jsr/scope__name` npm-compatibility names back to JSR.
 
 For exactly how each ecosystem resolves a license (npm/JSR precedence, package-manager layouts, Cargo's lookup path), see [docs/resolution-details.md](docs/resolution-details.md).
 
 ### Cargo implementation
 
-Cargo's implementation lives in [`src/providers/crates/`](src/providers/crates/). `parse.ts` uses the position-aware MIT-licensed `toml-eslint-parser` 0.10.0 (CommonJS, Node >=16 supported); keep the extension's minimum VS Code version when changing this dependency. TOML 1.0 declarations use their first line, or the dependency table header, as the annotation position. Invalid TOML yields no entries. Cargo requirements are interpreted independently of npm ranges; the saved Rust `semver::VersionReq` oracle and generated Cargo.lock fixture are described in [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md).
+Cargo's implementation lives in [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/). `parse.ts` uses the position-aware MIT-licensed `toml-eslint-parser` 0.10.0 (CommonJS, Node >=16 supported); keep the extension's minimum VS Code version when changing this dependency. TOML 1.0 declarations use their first line, or the dependency table header, as the annotation position. Invalid TOML yields no entries. Cargo requirements are interpreted independently of npm ranges; the saved Rust `semver::VersionReq` oracle and generated Cargo.lock fixture are described in [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md).
 
 `workspace.ts` and `lockfile.ts` only locate declarations and uniquely matching public versions. `client.ts` shares a send-start limiter (one request per second) across clients and uses `fetchJson` for HTTP. Its `/versions` request deliberately omits `per_page`: the [API implementation](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs) returns all versions in this mode. A response advertising another page is rejected instead of being treated as complete. The version records carry `license`, so candidate selection needs no request for each individual version. Exact locked versions use the per-version endpoint, including yanked versions. Transient failures are never written to `LicenseCache`; HTTP 429 delays subsequent sends for at least one minute without automatic retries.
 
@@ -55,21 +55,21 @@ Keep manifest resolution keys separate from public version metadata keys. The fo
 :::kiritan{locale=ja}
 ## アーキテクチャ
 
-すべては [`LicenseProvider`](src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`src/providers/index.ts`](src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
+すべては [`LicenseProvider`](packages/core/src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
 
 プロバイダーが気にする必要のないことは、すべて共通化されています。
 
-- [`src/annotator.ts`](src/annotator.ts) — デバウンス、キャンセル処理、並列数の制限、ちらつきのない再描画、デコレーションとホバーの描画
-- [`src/cache.ts`](src/cache.ts) — TTL付きの2段(メモリ + ディスク)キャッシュ
-- [`src/net.ts`](src/net.ts) — タイムアウトとキャンセルに対応したfetch、および小さな並列数リミッター
+- [`packages/vscode-extension/src/annotator.ts`](packages/vscode-extension/src/annotator.ts) — デバウンス、キャンセル処理、並列数の制限、ちらつきのない再描画、デコレーションとホバーの描画
+- [`packages/core/src/cache.ts`](packages/core/src/cache.ts) — TTL付きの2段(メモリ + ディスク)キャッシュ
+- [`packages/core/src/net.ts`](packages/core/src/net.ts) — タイムアウトとキャンセルに対応したfetch、および小さな並列数リミッター
 
-npmプロバイダー([`src/providers/npm/`](src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](src/providers/npm/installed.ts)、[`lockfile/`](src/providers/npm/lockfile/)、[`registry.ts`](src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`src/providers/jsr/`](src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
+npmプロバイダー([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](packages/core/src/providers/npm/installed.ts)、[`lockfile/`](packages/core/src/providers/npm/lockfile/)、[`registry.ts`](packages/core/src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
 
 各エコシステムが具体的にどうライセンスを解決するか(npm/JSRの優先順位、パッケージマネージャーごとのレイアウト、Cargoの探索経路)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
 ### Cargoの実装
 
-Cargoの実装は [`src/providers/crates/`](src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
+Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
 
 `workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
 
@@ -92,7 +92,7 @@ export class ExampleLicenseProvider implements LicenseProvider {
 }
 ```
 
-Register it in [`src/providers/index.ts`](src/providers/index.ts) and add the language to `activationEvents` in `package.json`.
+Register it in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) and add the language to `activationEvents` in [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json).
 
 Also add a row to the language/package-manager table in [README.md](README.md#supported-languages) (edit [`i18n/README.base.md`](i18n/README.base.md), not `README.md` — see "Documentation and i18n" below), and remove the corresponding "planned" row if there's a tracking issue for it.
 
@@ -103,9 +103,9 @@ Every provider is expected to make the hover title clickable, the same way npm a
 - `registryPackageName` — when the target really is `https://www.npmjs.com/package/<name>/v/<version>` (npm and npm-compatible aliases only; nothing else should set this).
 - `packagePageUrl` — the exact URL for anything else, e.g. `https://crates.io/crates/<name>/<version>` or `https://pypi.org/project/<name>/<version>/`. This is what JSR uses.
 
-`buildHover` in [`src/format.ts`](src/format.ts) picks whichever is set (`registryPackageName` wins if somehow both are) and wraps it around the `` `name@version` `` title automatically — do not build that link yourself. Two things matter when you set it:
+`buildHover` in [`packages/core/src/format.ts`](packages/core/src/format.ts) picks whichever is set (`registryPackageName` wins if somehow both are) and wraps it around the `` `name@version` `` title automatically — do not build that link yourself. Two things matter when you set it:
 
-- **Resolve aliases first.** The link must point at the actual registry package, not the local manifest key — see how the npm provider follows an `npm:` alias to its real target before setting `registryPackageName` (`src/providers/npm/index.ts`).
+- **Resolve aliases first.** The link must point at the actual registry package, not the local manifest key — see how the npm provider follows an `npm:` alias to its real target before setting `registryPackageName` (`packages/core/src/providers/npm/index.ts`).
 - **Never link something that isn't really on that registry.** A `file:`/`git`/local-path dependency, or one you're not confident about, should leave both fields unset rather than link to a URL that might 404.
 
 If the registry also exposes a genuine, separately-declared homepage, put that in `homepage` as usual — `buildHover` already drops the `Homepage` line when it would just repeat the title link (as it does for JSR, which has no separate homepage of its own).
@@ -132,7 +132,7 @@ export class ExampleLicenseProvider implements LicenseProvider {
 }
 ```
 
-[`src/providers/index.ts`](src/providers/index.ts) に登録し、`package.json` の `activationEvents` に対象の言語を追加してください。
+[`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
 
 また、[README.md](README.md#サポート言語) の言語/パッケージマネージャー表にも行を追加してください(`README.md` ではなく [`i18n/README.base.md`](i18n/README.base.md) を編集します — 詳しくは後述の「ドキュメントとi18n」を参照)。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。
 
@@ -143,9 +143,9 @@ npmやJSRと同様に、すべてのプロバイダーはホバータイトル�
 - `registryPackageName` — リンク先が本当に `https://www.npmjs.com/package/<name>/v/<version>` である場合(npmおよびnpm互換エイリアスのみ。それ以外はこれを設定すべきではありません)。
 - `packagePageUrl` — それ以外の正確なURL。例: `https://crates.io/crates/<name>/<version>` や `https://pypi.org/project/<name>/<version>/`。JSRはこちらを使用しています。
 
-[`src/format.ts`](src/format.ts) の `buildHover` はどちらか設定されている方を選び(両方設定されていれば `registryPackageName` が優先)、`` `name@version` `` というタイトルに自動的にリンクを付けます — このリンクを自分で組み立てないでください。設定する際に重要な点が2つあります。
+[`packages/core/src/format.ts`](packages/core/src/format.ts) の `buildHover` はどちらか設定されている方を選び(両方設定されていれば `registryPackageName` が優先)、`` `name@version` `` というタイトルに自動的にリンクを付けます — このリンクを自分で組み立てないでください。設定する際に重要な点が2つあります。
 
-- **エイリアスを先に解決する。** リンクはローカルのマニフェストキーではなく、実際のレジストリパッケージを指す必要があります。npmプロバイダーが `registryPackageName` を設定する前に `npm:` エイリアスを実際のターゲットまで辿っている様子を参照してください(`src/providers/npm/index.ts`)。
+- **エイリアスを先に解決する。** リンクはローカルのマニフェストキーではなく、実際のレジストリパッケージを指す必要があります。npmプロバイダーが `registryPackageName` を設定する前に `npm:` エイリアスを実際のターゲットまで辿っている様子を参照してください(`packages/core/src/providers/npm/index.ts`)。
 - **そのレジストリに実在しないものにリンクしない。** `file:`/`git`/ローカルパスの依存関係や、確信が持てないものについては、404になり得るURLにリンクするより、両方のフィールドを未設定のままにしてください。
 
 レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
@@ -223,7 +223,7 @@ npx skills add <owner>/<repo> --agent '*' -y
 
 ```sh
 npm install
-npm run watch      # esbuild in watch mode
+npm run watch:vscode # esbuild in watch mode
 # press F5 in VS Code to launch the Extension Development Host
 ```
 
@@ -250,7 +250,7 @@ Run `npm run format` before committing; CI enforces `format:check` and `lint`.
 
 ```sh
 npm install
-npm run watch      # esbuildをwatchモードで実行
+npm run watch:vscode # esbuildをwatchモードで実行
 # VS CodeでF5を押すとExtension Development Hostが起動します
 ```
 
@@ -275,27 +275,27 @@ npm run package           # .vsixをビルド
 :::kiritan{locale=en}
 ## Testing
 
-All test code lives under [`src/test/`](src/test/), in two tiers — different tools on purpose, not an inconsistency:
+Test code is split across two tiers — different tools on purpose, not an inconsistency:
 
-- **Unit tests** ([`src/test/unit/*.test.js`](src/test/unit/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js)) and the compiled `out/` output — no `tsc`-for-tests step, no real VS Code, no mocha. Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
-- **Integration tests** ([`src/test/integration/*.test.ts`](src/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly, and they're compiled by the same `tsc` pass as the extension itself (they're inside `src/`) rather than a separate one.
+- **Unit tests** ([`test/unit/*.test.js`](test/unit/)) run with plain Node's built-in `node:test`, against a hand-written `vscode` stub ([`test/unit/vscode-stub.js`](test/unit/vscode-stub.js)) and the compiled `out/` output of `packages/core` and `packages/vscode-extension` (`npm run build-tests`) — no `tsc`-for-tests step beyond that, no real VS Code, no mocha. They live at the repository root, outside either package, because they exercise both together (e.g. `crates.test.js` drives `packages/core`'s `CratesLicenseProvider` through `packages/vscode-extension`'s `Annotator`). Staying plain JavaScript is deliberate: it's what lets `npm test` run fast and exercise the actually-compiled output, catching the kind of bundling bug a TypeScript-only test run would miss (see "`npm test` also loads the bundled `dist/extension.js`" above).
+- **Integration tests** ([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're TypeScript because they use the real `vscode` module and its types directly, and they live inside `packages/vscode-extension` because that's genuinely what they exercise, compiled by that package's own `tsc` pass rather than a separate one.
 
-[`test/fixtures/`](test/fixtures/) stays at the repository root, outside `src/`, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
+[`test/fixtures/`](test/fixtures/) stays at the repository root, outside both packages, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
 
-When adding a provider or changing resolution logic, add a unit test next to the existing ones in `src/test/unit/`, following whichever of [`index.test.js`](src/test/unit/index.test.js) (npm/JSR) or [`crates.test.js`](src/test/unit/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in `test/unit/`, following whichever of [`index.test.js`](test/unit/index.test.js) (npm/JSR) or [`crates.test.js`](test/unit/crates.test.js) (Cargo) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — both suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/) and [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/).
 :::
 
 :::kiritan{locale=ja}
 ## テスト
 
-テストコードはすべて [`src/test/`](src/test/) 配下にまとめられており、その中で2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
+テストコードは2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
 
-- **ユニットテスト**([`src/test/unit/*.test.js`](src/test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
-- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、`src/` の内側にあるため別立てのコンパイルではなく拡張機能本体と同じ `tsc` のパスでコンパイルされます。
+- **ユニットテスト**([`test/unit/*.test.js`](test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`test/unit/vscode-stub.js`](test/unit/vscode-stub.js))と `packages/core` および `packages/vscode-extension` のコンパイル済み `out/` 成果物(`npm run build-tests`)に対して実行します。これ以上の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。両パッケージのどちらにも属さずリポジトリのルートに置かれているのは、両方をまたいでテストするためです(例えば `crates.test.js` は `packages/core` の `CratesLicenseProvider` を `packages/vscode-extension` の `Annotator` 経由で動かします)。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
+- **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、実際にテストしているのがVS Code拡張機能そのものであるため `packages/vscode-extension` の内側に置かれ、そのパッケージ自身の `tsc` パスでコンパイルされます。
 
-[`test/fixtures/`](test/fixtures/) はリポジトリのルート、`src/` の外側に置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+[`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`src/test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](src/test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](src/test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、`test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
 :::
 
 :::kiritan{locale=en}

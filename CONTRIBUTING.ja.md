@@ -14,21 +14,21 @@
 
 ## アーキテクチャ
 
-すべては [`LicenseProvider`](src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`src/providers/index.ts`](src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
+すべては [`LicenseProvider`](packages/core/src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
 
 プロバイダーが気にする必要のないことは、すべて共通化されています。
 
-- [`src/annotator.ts`](src/annotator.ts) — デバウンス、キャンセル処理、並列数の制限、ちらつきのない再描画、デコレーションとホバーの描画
-- [`src/cache.ts`](src/cache.ts) — TTL付きの2段(メモリ + ディスク)キャッシュ
-- [`src/net.ts`](src/net.ts) — タイムアウトとキャンセルに対応したfetch、および小さな並列数リミッター
+- [`packages/vscode-extension/src/annotator.ts`](packages/vscode-extension/src/annotator.ts) — デバウンス、キャンセル処理、並列数の制限、ちらつきのない再描画、デコレーションとホバーの描画
+- [`packages/core/src/cache.ts`](packages/core/src/cache.ts) — TTL付きの2段(メモリ + ディスク)キャッシュ
+- [`packages/core/src/net.ts`](packages/core/src/net.ts) — タイムアウトとキャンセルに対応したfetch、および小さな並列数リミッター
 
-npmプロバイダー([`src/providers/npm/`](src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](src/providers/npm/installed.ts)、[`lockfile/`](src/providers/npm/lockfile/)、[`registry.ts`](src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`src/providers/jsr/`](src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
+npmプロバイダー([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](packages/core/src/providers/npm/installed.ts)、[`lockfile/`](packages/core/src/providers/npm/lockfile/)、[`registry.ts`](packages/core/src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
 
 各エコシステムが具体的にどうライセンスを解決するか(npm/JSRの優先順位、パッケージマネージャーごとのレイアウト、Cargoの探索経路)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
 ### Cargoの実装
 
-Cargoの実装は [`src/providers/crates/`](src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
+Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
 
 `workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
 
@@ -49,7 +49,7 @@ export class ExampleLicenseProvider implements LicenseProvider {
 }
 ```
 
-[`src/providers/index.ts`](src/providers/index.ts) に登録し、`package.json` の `activationEvents` に対象の言語を追加してください。
+[`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
 
 また、[README.md](README.md#サポート言語) の言語/パッケージマネージャー表にも行を追加してください(`README.md` ではなく [`i18n/README.base.md`](i18n/README.base.md) を編集します — 詳しくは後述の「ドキュメントとi18n」を参照)。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。
 
@@ -60,9 +60,9 @@ npmやJSRと同様に、すべてのプロバイダーはホバータイトル�
 - `registryPackageName` — リンク先が本当に `https://www.npmjs.com/package/<name>/v/<version>` である場合(npmおよびnpm互換エイリアスのみ。それ以外はこれを設定すべきではありません)。
 - `packagePageUrl` — それ以外の正確なURL。例: `https://crates.io/crates/<name>/<version>` や `https://pypi.org/project/<name>/<version>/`。JSRはこちらを使用しています。
 
-[`src/format.ts`](src/format.ts) の `buildHover` はどちらか設定されている方を選び(両方設定されていれば `registryPackageName` が優先)、`` `name@version` `` というタイトルに自動的にリンクを付けます — このリンクを自分で組み立てないでください。設定する際に重要な点が2つあります。
+[`packages/core/src/format.ts`](packages/core/src/format.ts) の `buildHover` はどちらか設定されている方を選び(両方設定されていれば `registryPackageName` が優先)、`` `name@version` `` というタイトルに自動的にリンクを付けます — このリンクを自分で組み立てないでください。設定する際に重要な点が2つあります。
 
-- **エイリアスを先に解決する。** リンクはローカルのマニフェストキーではなく、実際のレジストリパッケージを指す必要があります。npmプロバイダーが `registryPackageName` を設定する前に `npm:` エイリアスを実際のターゲットまで辿っている様子を参照してください(`src/providers/npm/index.ts`)。
+- **エイリアスを先に解決する。** リンクはローカルのマニフェストキーではなく、実際のレジストリパッケージを指す必要があります。npmプロバイダーが `registryPackageName` を設定する前に `npm:` エイリアスを実際のターゲットまで辿っている様子を参照してください(`packages/core/src/providers/npm/index.ts`)。
 - **そのレジストリに実在しないものにリンクしない。** `file:`/`git`/ローカルパスの依存関係や、確信が持てないものについては、404になり得るURLにリンクするより、両方のフィールドを未設定のままにしてください。
 
 レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
@@ -103,7 +103,7 @@ npx skills add <owner>/<repo> --agent '*' -y
 
 ```sh
 npm install
-npm run watch      # esbuildをwatchモードで実行
+npm run watch:vscode # esbuildをwatchモードで実行
 # VS CodeでF5を押すとExtension Development Hostが起動します
 ```
 
@@ -126,14 +126,14 @@ npm run package           # .vsixをビルド
 
 ## テスト
 
-テストコードはすべて [`src/test/`](src/test/) 配下にまとめられており、その中で2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
+テストコードは2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
 
-- **ユニットテスト**([`src/test/unit/*.test.js`](src/test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`src/test/unit/vscode-stub.js`](src/test/unit/vscode-stub.js))とコンパイル済みの `out/` 配下の成果物に対して実行します。テスト用の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
-- **Integrationテスト**([`src/test/integration/*.test.ts`](src/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、`src/` の内側にあるため別立てのコンパイルではなく拡張機能本体と同じ `tsc` のパスでコンパイルされます。
+- **ユニットテスト**([`test/unit/*.test.js`](test/unit/))はNode標準の `node:test` を使い、手書きの `vscode` スタブ([`test/unit/vscode-stub.js`](test/unit/vscode-stub.js))と `packages/core` および `packages/vscode-extension` のコンパイル済み `out/` 成果物(`npm run build-tests`)に対して実行します。これ以上の `tsc` ビルドステップも、実際のVS Codeも、mochaも使いません。両パッケージのどちらにも属さずリポジトリのルートに置かれているのは、両方をまたいでテストするためです(例えば `crates.test.js` は `packages/core` の `CratesLicenseProvider` を `packages/vscode-extension` の `Annotator` 経由で動かします)。プレーンなJavaScriptのままにしているのは意図的です — これにより `npm test` が高速に動き、TypeScriptだけでテストしていたら見逃していたようなバンドル自体のバグも検出できます(前述の「`npm test` はビルド済みの `dist/extension.js` も読み込みます」を参照)。
+- **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。実際の `vscode` モジュールとその型を直接使うため、TypeScriptで書かれており、実際にテストしているのがVS Code拡張機能そのものであるため `packages/vscode-extension` の内側に置かれ、そのパッケージ自身の `tsc` パスでコンパイルされます。
 
-[`test/fixtures/`](test/fixtures/) はリポジトリのルート、`src/` の外側に置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+[`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、`src/test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](src/test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](src/test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、`test/unit/` 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近い方、[`index.test.js`](test/unit/index.test.js)(npm/JSR)か [`crates.test.js`](test/unit/crates.test.js)(Cargo)のどちらかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。両方のテストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/) と [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) のフィクスチャを共通で使っています。
 
 ## リリース
 
