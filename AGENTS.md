@@ -13,7 +13,7 @@ npm run docs:build   # regenerate every localized document
 npm run docs:check   # verify nothing is left missing/stale
 ```
 
-A skill with the full Kiritan operating manual (directive syntax, CLI commands, common mistakes) is installed at [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) — load it before editing anything under `i18n/`.
+A skill with the full Kiritan operating manual (directive syntax, CLI commands, common mistakes) is installed at [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) — load it before editing anything under `i18n/`. See CONTRIBUTING.md's "Agent skills" section for how skills are installed and kept in sync (`npx skills add`/`experimental_install`) before adding or updating one yourself.
 
 ## Read CONTRIBUTING.md before changing code
 
