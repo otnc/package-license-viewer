@@ -1,5 +1,6 @@
-import * as vscode from "vscode";
 import { log } from "../../../log";
+import type { FileSystemLike, UriLike } from "../../types";
+import { joinUriPath } from "../../uri";
 import {
   type LockEntry,
   type LockIndex,
@@ -49,11 +50,9 @@ export interface LockfileHit extends LockEntry {
 export class LockfileResolver {
   private cache = new Map<string, { at: number; indexes: LockIndex[] }>();
 
-  async lookup(
-    manifestUri: vscode.Uri,
-    name: string,
-    spec: string
-  ): Promise<LockfileHit | undefined> {
+  constructor(private readonly fs: FileSystemLike) {}
+
+  async lookup(manifestUri: UriLike, name: string, spec: string): Promise<LockfileHit | undefined> {
     for (const index of await this.load(manifestUri)) {
       const entry = lookupInIndex(index, name, spec);
       if (entry) {
@@ -63,8 +62,8 @@ export class LockfileResolver {
     return undefined;
   }
 
-  private async load(manifestUri: vscode.Uri): Promise<LockIndex[]> {
-    const startDir = vscode.Uri.joinPath(manifestUri, "..");
+  private async load(manifestUri: UriLike): Promise<LockIndex[]> {
+    const startDir = joinUriPath(manifestUri, "..");
     const cacheKey = startDir.toString();
     const cached = this.cache.get(cacheKey);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
@@ -77,13 +76,13 @@ export class LockfileResolver {
   }
 
   /** Find the nearest directory holding a lockfile and read everything in it */
-  private async discover(startDir: vscode.Uri): Promise<LockIndex[]> {
+  private async discover(startDir: UriLike): Promise<LockIndex[]> {
     let dir = startDir;
     for (let depth = 0; depth < MAX_WALK_UP; depth++) {
       const found: LockIndex[] = [];
       for (const [fileName, parse] of LOCKFILES) {
-        const uri = vscode.Uri.joinPath(dir, fileName);
-        const text = await readTextFile(uri);
+        const uri = joinUriPath(dir, fileName);
+        const text = await this.readTextFile(uri);
         if (text === undefined) {
           continue;
         }
@@ -101,7 +100,7 @@ export class LockfileResolver {
         return found;
       }
 
-      const parent = vscode.Uri.joinPath(dir, "..");
+      const parent = joinUriPath(dir, "..");
       if (parent.path === dir.path) {
         break;
       }
@@ -113,18 +112,18 @@ export class LockfileResolver {
   invalidate(): void {
     this.cache.clear();
   }
-}
 
-async function readTextFile(uri: vscode.Uri): Promise<string | undefined> {
-  try {
-    const stat = await vscode.workspace.fs.stat(uri);
-    if (stat.size > MAX_SIZE_BYTES) {
-      log.warn(`lockfile: skipping ${uri.path} (${stat.size} bytes)`);
+  private async readTextFile(uri: UriLike): Promise<string | undefined> {
+    try {
+      const stat = await this.fs.stat(uri);
+      if (stat.size > MAX_SIZE_BYTES) {
+        log.warn(`lockfile: skipping ${uri.path} (${stat.size} bytes)`);
+        return undefined;
+      }
+      const bytes = await this.fs.readFile(uri);
+      return new TextDecoder("utf-8").decode(bytes);
+    } catch {
       return undefined;
     }
-    const bytes = await vscode.workspace.fs.readFile(uri);
-    return new TextDecoder("utf-8").decode(bytes);
-  } catch {
-    return undefined;
   }
 }

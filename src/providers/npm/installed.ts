@@ -1,5 +1,6 @@
-import * as vscode from "vscode";
 import { parse as parseJsonc } from "jsonc-parser";
+import type { FileSystemLike, UriLike } from "../types";
+import { joinUriPath } from "../uri";
 import type { NpmManifest } from "./manifest";
 
 /** Remember lookups briefly so typing does not re-read node_modules on every keystroke */
@@ -9,7 +10,7 @@ const MAX_WALK_UP = 12;
 
 export interface InstalledPackage {
   readonly manifest: NpmManifest;
-  readonly uri: vscode.Uri;
+  readonly uri: UriLike;
 }
 
 /**
@@ -27,8 +28,10 @@ export interface InstalledPackage {
 export class InstalledPackageLookup {
   private cache = new Map<string, { at: number; hit: InstalledPackage | undefined }>();
 
-  async find(manifestUri: vscode.Uri, name: string): Promise<InstalledPackage | undefined> {
-    const startDir = vscode.Uri.joinPath(manifestUri, "..");
+  constructor(private readonly fs: FileSystemLike) {}
+
+  async find(manifestUri: UriLike, name: string): Promise<InstalledPackage | undefined> {
+    const startDir = joinUriPath(manifestUri, "..");
     const cacheKey = `${startDir.toString()}|${name}`;
     const cached = this.cache.get(cacheKey);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
@@ -38,18 +41,13 @@ export class InstalledPackageLookup {
     let dir = startDir;
     let hit: InstalledPackage | undefined;
     for (let depth = 0; depth < MAX_WALK_UP; depth++) {
-      const candidate = vscode.Uri.joinPath(
-        dir,
-        "node_modules",
-        ...name.split("/"),
-        "package.json"
-      );
-      const manifest = await readManifest(candidate);
+      const candidate = joinUriPath(dir, "node_modules", ...name.split("/"), "package.json");
+      const manifest = await this.readManifest(candidate);
       if (manifest) {
         hit = { manifest, uri: candidate };
         break;
       }
-      const parent = vscode.Uri.joinPath(dir, "..");
+      const parent = joinUriPath(dir, "..");
       if (parent.path === dir.path) {
         break;
       }
@@ -63,14 +61,14 @@ export class InstalledPackageLookup {
   invalidate(): void {
     this.cache.clear();
   }
-}
 
-async function readManifest(uri: vscode.Uri): Promise<NpmManifest | undefined> {
-  try {
-    const bytes = await vscode.workspace.fs.readFile(uri);
-    return parseJsonc(new TextDecoder("utf-8").decode(bytes)) as NpmManifest;
-  } catch {
-    // Missing or unreadable simply means "not found"
-    return undefined;
+  private async readManifest(uri: UriLike): Promise<NpmManifest | undefined> {
+    try {
+      const bytes = await this.fs.readFile(uri);
+      return parseJsonc(new TextDecoder("utf-8").decode(bytes)) as NpmManifest;
+    } catch {
+      // Missing or unreadable simply means "not found"
+      return undefined;
+    }
   }
 }

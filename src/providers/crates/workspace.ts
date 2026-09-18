@@ -1,15 +1,13 @@
-import * as vscode from "vscode";
+import type { FileSystemLike, UriLike } from "../types";
+import { joinUriPath } from "../uri";
 import { parseManifest, type CargoManifest } from "./parse";
 
 type ReadResult = { kind: "found"; text: string } | { kind: "missing" } | { kind: "failed" };
 export type RootResult =
-  { kind: "found"; uri: vscode.Uri; manifest: CargoManifest } | { kind: "unknown"; reason: string };
+  { kind: "found"; uri: UriLike; manifest: CargoManifest } | { kind: "unknown"; reason: string };
 
 /** Resolve manifest paths in the document's filesystem, preserving its URI identity. */
-export function workspaceManifestUri(
-  directory: vscode.Uri,
-  reference: string
-): vscode.Uri | undefined {
+export function workspaceManifestUri(directory: UriLike, reference: string): UriLike | undefined {
   const drive = /^\/[A-Za-z]:/.exec(directory.path)?.[0];
   const absoluteDrive = /^[A-Za-z]:[\\/]/.test(reference);
   // Drive-relative and UNC/device paths need filesystem context we do not infer.
@@ -21,23 +19,25 @@ export function workspaceManifestUri(
     ? directory.with({ path: `/${path}` })
     : path.startsWith("/")
       ? directory.with({ path: `${drive ?? ""}${path}` })
-      : vscode.Uri.joinPath(directory, path);
-  return vscode.Uri.joinPath(root, "Cargo.toml");
+      : joinUriPath(directory, path);
+  return joinUriPath(root, "Cargo.toml");
 }
 
 /** Short-lived auxiliary reads. Refresh invalidates promises without letting old reads repopulate them. */
 export class CargoWorkspace {
   private readonly files = new Map<string, { at: number; result: Promise<ReadResult> }>();
 
+  constructor(private readonly fs: FileSystemLike) {}
+
   invalidate(): void {
     this.files.clear();
   }
 
-  read(uri: vscode.Uri): Promise<ReadResult> {
+  read(uri: UriLike): Promise<ReadResult> {
     const key = uri.toString();
     const cached = this.files.get(key);
     if (cached && Date.now() - cached.at < 5000) return cached.result;
-    const result = vscode.workspace.fs
+    const result = this.fs
       .readFile(uri)
       .then(
         (bytes): ReadResult => ({
@@ -49,7 +49,7 @@ export class CargoWorkspace {
             typeof error === "object" &&
             error !== null &&
             "code" in error &&
-            error.code === "FileNotFound"
+            error.code === "ENOENT"
               ? "missing"
               : "failed",
         })
@@ -62,10 +62,10 @@ export class CargoWorkspace {
     return Promise.resolve(result);
   }
 
-  async root(uri: vscode.Uri, current: CargoManifest): Promise<RootResult> {
+  async root(uri: UriLike, current: CargoManifest): Promise<RootResult> {
     if (current.invalidWorkspace) return { kind: "unknown", reason: "invalid workspace reference" };
     if (current.workspace) return { kind: "found", uri, manifest: current };
-    const directory = vscode.Uri.joinPath(uri, "..");
+    const directory = joinUriPath(uri, "..");
     if (current.workspacePath !== undefined) {
       const target = workspaceManifestUri(directory, current.workspacePath);
       if (!target) return { kind: "unknown", reason: "unsupported workspace path" };
@@ -76,10 +76,10 @@ export class CargoWorkspace {
         ? { kind: "found", uri: target, manifest }
         : { kind: "unknown", reason: "explicit workspace root could not be read" };
     }
-    let dir = vscode.Uri.joinPath(directory, "..");
+    let dir = joinUriPath(directory, "..");
     if (dir.path === directory.path) return { kind: "found", uri, manifest: current };
     for (let depth = 0; depth < 64 && dir.path !== directory.path; depth++) {
-      const target = vscode.Uri.joinPath(dir, "Cargo.toml");
+      const target = joinUriPath(dir, "Cargo.toml");
       const read = await this.read(target);
       if (read.kind === "failed")
         return { kind: "unknown", reason: "workspace ancestor could not be read" };
@@ -89,7 +89,7 @@ export class CargoWorkspace {
           return { kind: "unknown", reason: "invalid ancestor manifest" };
         if (manifest.workspace) return { kind: "found", uri: target, manifest };
       }
-      const parent = vscode.Uri.joinPath(dir, "..");
+      const parent = joinUriPath(dir, "..");
       if (parent.path === dir.path) return { kind: "found", uri, manifest: current };
       dir = parent;
     }

@@ -16,6 +16,7 @@ import type {
   LicenseProvider,
   TextDocumentLike,
 } from "../types";
+import { vscodeFileSystem } from "../../vscodeFs";
 import { InstalledPackageLookup } from "./installed";
 import { LockfileResolver } from "./lockfile";
 import { normalizeLicense, normalizeNodeEngine } from "./manifest";
@@ -48,8 +49,8 @@ const DEFAULT_SECTIONS = [
 export class NpmLicenseProvider implements LicenseProvider {
   readonly id = "npm";
 
-  private readonly installed = new InstalledPackageLookup();
-  private readonly lockfiles = new LockfileResolver();
+  private readonly installed = new InstalledPackageLookup(vscodeFileSystem);
+  private readonly lockfiles = new LockfileResolver(vscodeFileSystem);
   private readonly registry: NpmRegistryClient;
   private readonly jsr: JsrClient;
 

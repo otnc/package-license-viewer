@@ -56,7 +56,10 @@ suite("Cargo-only workspace", () => {
         assert.equal(workspaceManifestUri(local, reference), undefined, reference);
     }
     if (process.platform === "win32")
-      assert.equal(workspaceManifestUri(local, "D:\\ws")?.fsPath, "d:\\ws\\Cargo.toml");
+      assert.equal(
+        (workspaceManifestUri(local, "D:\\ws") as vscode.Uri | undefined)?.fsPath,
+        "d:\\ws\\Cargo.toml"
+      );
   });
   test("activates automatically before any document or command is opened", async () => {
     assert.equal(vscode.window.visibleTextEditors.length, 0);

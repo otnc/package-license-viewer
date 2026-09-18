@@ -8,6 +8,8 @@ import type {
   LicenseProvider,
   TextDocumentLike,
 } from "../types";
+import { joinUriPath } from "../uri";
+import { vscodeFileSystem } from "../../vscodeFs";
 import { CratesClient } from "./client";
 import { selectLocked } from "./lockfile";
 import { CargoEntry, parseManifest } from "./parse";
@@ -16,7 +18,7 @@ import { CargoWorkspace } from "./workspace";
 
 export class CratesLicenseProvider implements LicenseProvider {
   readonly id = "crates";
-  private readonly workspace = new CargoWorkspace();
+  private readonly workspace = new CargoWorkspace(vscodeFileSystem);
   private readonly client: CratesClient;
   constructor(cache: LicenseCache) {
     this.client = new CratesClient(cache);
@@ -72,7 +74,7 @@ export class CratesLicenseProvider implements LicenseProvider {
       return { source: "unknown", detail: "invalid Cargo version requirement" };
     let locked: string | undefined;
     if (getSetting("crates.useLockfiles", true)) {
-      const read = await this.workspace.read(vscode.Uri.joinPath(root.uri, "..", "Cargo.lock"));
+      const read = await this.workspace.read(joinUriPath(root.uri, "..", "Cargo.lock"));
       if (read.kind === "found") {
         const selection = selectLocked(read.text, spec.name, requirement);
         if (selection.kind === "selected") locked = selection.version;

@@ -15,6 +15,7 @@ const { selectLocked } = require("../out/providers/crates/lockfile");
 const { LicenseCache } = require("../out/cache");
 const { buildHover } = require("../out/format");
 const { Annotator } = require("../out/annotator");
+const { vscodeFileSystem } = require("../out/vscodeFs");
 const noCancel = {
   isCancellationRequested: false,
   onCancellationRequested: () => ({ dispose() {} }),
@@ -704,7 +705,7 @@ test("explicit absolute Cargo workspace roots are not appended to the member dir
   });
   const { CargoWorkspace } = require("../out/providers/crates/workspace");
   const document = fakeDocument('[package]\nworkspace="/ws"', "/app/Cargo.toml");
-  const result = await new CargoWorkspace().root(
+  const result = await new CargoWorkspace(vscodeFileSystem).root(
     stub.Uri.file("/app/Cargo.toml"),
     parseManifest(document.getText(), document.uri.toString())
   );
@@ -853,7 +854,7 @@ test("Windows UNC variants stop before any workspace file read", async (t) => {
     const directory = stub.Uri.file("/C:/app");
     assert.equal(workspaceManifestUri(directory, reference), undefined, reference);
     const document = fakeDocument(`[package]\nworkspace='${reference}'`, "/C:/app/Cargo.toml");
-    const root = await new CargoWorkspace().root(
+    const root = await new CargoWorkspace(vscodeFileSystem).root(
       stub.Uri.file("/C:/app/Cargo.toml"),
       parseManifest(document.getText(), document.uri.toString())
     );

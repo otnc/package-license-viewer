@@ -23,6 +23,26 @@ export interface CancellationLike {
   onCancellationRequested(listener: (e: unknown) => unknown): DisposableLike;
 }
 
+/** Minimal view of `vscode.Uri` — a real `vscode.Uri` satisfies this as-is. */
+export interface UriLike {
+  readonly scheme: string;
+  readonly authority: string;
+  readonly path: string;
+  toString(): string;
+  with(change: { path?: string }): UriLike;
+}
+
+/**
+ * Minimal view of `vscode.workspace.fs`, normalized so a missing file always rejects with
+ * `code: "ENOENT"` — Node's own convention — regardless of which host implements it. This is
+ * what keeps `installed.ts`, `lockfile/index.ts` and `crates/workspace.ts` free of any real
+ * filesystem access of their own, so a future non-VS-Code host only has to implement this.
+ */
+export interface FileSystemLike {
+  readFile(uri: UriLike): Promise<Uint8Array>;
+  stat(uri: UriLike): Promise<{ readonly size: number }>;
+}
+
 /**
  * One dependency taken from a manifest.
 
