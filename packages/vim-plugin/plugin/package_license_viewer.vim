@@ -19,6 +19,11 @@ if !exists('g:package_license_viewer_server_path')
   let g:package_license_viewer_server_path = ''
 endif
 
+" Sent to the server as-is, nested exactly like the packageLicenseViewer.* settings VS Code has — e.g. {'npm': {'registry': 'https://registry.npmjs.org'}}. Empty by default, which just means every setting keeps the server's own defaults.
+if !exists('g:package_license_viewer_settings')
+  let g:package_license_viewer_settings = {}
+endif
+
 if has('nvim')
   " Neovim can do strictly more than plain Vim for transport (vim.lsp.start(), a real LSP client) and rendering (nvim_buf_set_extmark(), multi-colour virtual text in one mark), so the Lua layer owns both end to end instead of sharing the VimScript job/textprop path below — see doc/package_license_viewer.txt.
   command! PackageLicenseViewerToggle lua require('package_license_viewer').toggle()

@@ -8,7 +8,7 @@ import {
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { LicenseCache } from "../cache";
-import { getConfig } from "../config";
+import { getConfig, invalidateConfigCache } from "../config";
 import { buildHover, formatAnnotationSegments } from "../format";
 import { initLog, log } from "../log";
 import { CancellationTokenSource } from "../providers/cancellation";
@@ -28,9 +28,27 @@ initLog();
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 
-// TODO: sync from workspace/configuration once a real client exists to test it against
-const clientSettings: Record<string, unknown> = {};
+// The client sends its settings as a nested object matching packageLicenseViewer's own shape (e.g. { enabled: true, npm: { registry: "..." } }), flattened here into the "packageLicenseViewer.<key>" strings vscodeShim's workspace.getConfiguration() expects — the same shape a real vscode.WorkspaceConfiguration would be read through.
+let clientSettings: Record<string, unknown> = {};
 setSettingsSource(() => clientSettings);
+
+function flattenSettings(prefix: string, value: unknown, out: Record<string, unknown>): void {
+  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+      flattenSettings(`${prefix}.${key}`, child, out);
+    }
+  } else {
+    out[prefix] = value;
+  }
+}
+
+/** Applies a fresh settings object from the client, replacing whatever was there before. */
+function applySettings(nested: unknown): void {
+  const flattened: Record<string, unknown> = {};
+  flattenSettings("packageLicenseViewer", nested ?? {}, flattened);
+  clientSettings = flattened;
+  invalidateConfigCache();
+}
 
 const memory = new Map<string, unknown>();
 const cache = new LicenseCache({
@@ -43,15 +61,29 @@ const cache = new LicenseCache({
 
 const providers = createProviders(cache, nodeProviderHost);
 
-connection.onInitialize(() => ({
-  capabilities: {
-    textDocumentSync: TextDocumentSyncKind.Incremental,
-    hoverProvider: true,
-  },
-}));
+connection.onInitialize((params) => {
+  const options = params.initializationOptions as { settings?: unknown } | undefined;
+  if (options?.settings) {
+    applySettings(options.settings);
+  }
+  return {
+    capabilities: {
+      textDocumentSync: TextDocumentSyncKind.Incremental,
+      hoverProvider: true,
+    },
+  };
+});
 
 connection.onInitialized(() => {
   log.info("Package License Viewer language server initialized");
+});
+
+// Neovim's vim.lsp.start({ settings = ... }) sends this automatically on attach and again on every change; the VimScript client sends it whenever the user updates g:package_license_viewer_settings. Either way, every already-open document is worth re-resolving since a changed setting (npm.registry, format, …) can change every annotation.
+connection.onDidChangeConfiguration((params) => {
+  applySettings(params.settings);
+  for (const document of documents.all()) {
+    void publishAnnotations(document);
+  }
 });
 
 connection.onExit(() => {

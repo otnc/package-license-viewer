@@ -56,7 +56,12 @@ function! s:EnsureServer() abort
     return
   endif
   let s:channel = job_getchannel(s:job)
-  call s:SendRequest('initialize', {'processId': getpid(), 'rootUri': v:null, 'capabilities': {}}, function('s:OnInitializeResponse'))
+  call s:SendRequest('initialize', {
+    \ 'processId': getpid(),
+    \ 'rootUri': v:null,
+    \ 'capabilities': {},
+    \ 'initializationOptions': {'settings': g:package_license_viewer_settings},
+    \ }, function('s:OnInitializeResponse'))
 endfunction
 
 function! s:OnInitializeResponse(response) abort
@@ -240,7 +245,9 @@ function! package_license_viewer#OnChange() abort
   let s:change_timer = timer_start(300, {-> s:DidChange(bufnr)})
 endfunction
 
+" Re-sends g:package_license_viewer_settings too, so editing it and running :PackageLicenseViewerRefresh is how a setting change actually takes effect — there is no file-watching for it.
 function! package_license_viewer#Refresh() abort
+  call s:AfterInit({-> s:SendNotification('workspace/didChangeConfiguration', {'settings': g:package_license_viewer_settings})})
   for key in keys(s:attached)
     call s:DidChange(str2nr(key))
   endfor

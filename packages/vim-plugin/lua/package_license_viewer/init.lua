@@ -59,6 +59,8 @@ function M.attach(bufnr)
     name = "package_license_viewer",
     cmd = server_cmd(),
     root_dir = vim.fn.getcwd(),
+    -- vim.lsp.start() sends this as workspace/didChangeConfiguration on attach for us; nested exactly like the packageLicenseViewer.* settings VS Code has, e.g. { npm = { registry = "..." } }.
+    settings = vim.g.package_license_viewer_settings or {},
     handlers = {
       ["packageLicenseViewer/annotations"] = on_annotations,
     },
@@ -103,6 +105,9 @@ function M.setup()
   end
   if vim.g.package_license_viewer_node_command == nil then
     vim.g.package_license_viewer_node_command = "node"
+  end
+  if vim.g.package_license_viewer_settings == nil then
+    vim.g.package_license_viewer_settings = {}
   end
 
   local group = vim.api.nvim_create_augroup("package_license_viewer", { clear = true })

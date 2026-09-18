@@ -62,6 +62,20 @@ g:package_license_viewer_server_path   (default: `''`)
     this plugin's own location (`<repo>/dist/lspServer.js`) — set this if
     you install the server somewhere else.
 
+                                      *g:package_license_viewer_settings*
+g:package_license_viewer_settings      (default: `{}`)
+    Sent to the server nested exactly like the extension's own
+    `packageLicenseViewer.*` settings, e.g.: >
+        let g:package_license_viewer_settings = {
+          \ 'format': '${license} (${source})',
+          \ 'npm': {'useRegistry': v:false},
+          \ }
+<
+    On Neovim this is sent automatically whenever the server (re)starts.
+    On plain Vim, edit this and run |:PackageLicenseViewerRefresh| to send
+    it — there is no file-watching, so nothing else picks up a change on
+    its own.
+
 ==============================================================================
 5. Neovim vs. Vim                              *package_license_viewer-neovim*
 
@@ -87,9 +101,10 @@ Both share the same server and the same wire format
 
 - `dist/lspServer.js` is not bundled with this plugin directory yet; it has
   to be built from the repository root (see |package_license_viewer-requirements|).
-- No settings sync from `workspace/configuration` yet — the server uses
-  its defaults regardless of `packageLicenseViewer.*` settings a real
-  editor's configuration would otherwise carry.
+- Settings only apply at startup (Neovim) or when you explicitly run
+  |:PackageLicenseViewerRefresh| after editing them (plain Vim) — see
+  |g:package_license_viewer_settings|. Neither editor watches for a change
+  to it on its own.
 - Plain Vim resolves and redraws on every |TextChanged| after a fixed
   300ms debounce, with no cancellation of an in-flight resolution that a
   later edit has already made stale (unlike the VS Code extension's
