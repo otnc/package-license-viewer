@@ -43,11 +43,14 @@ and give it a build hook that runs |package_license_viewer-requirements|'s
 `npm install && npm run compile:lsp` once, in the repository root, on
 install and update. Three examples: >
 
-    -- lazy.nvim
+    -- lazy.nvim (no built-in `rtp` option like vim-plug/packer, so the
+    -- config function has to both append the path and source `plugin/`
+    -- itself — appending to 'runtimepath' alone does not auto-source it)
     {
       "otnc/package-license-viewer",
       config = function()
         vim.opt.rtp:append(vim.fn.stdpath("data") .. "/lazy/package-license-viewer/packages/vim-plugin")
+        vim.cmd("runtime! plugin/package_license_viewer.vim")
       end,
       build = "npm install && npm run compile:lsp",
     }
