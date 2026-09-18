@@ -1,7 +1,8 @@
-import * as vscode from "vscode";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import { fetchJson } from "../../net";
+import { CancellationTokenSource } from "../cancellation";
+import type { CancellationLike } from "../types";
 import { record } from "./parse";
 import { compareVersions, matchesRequirement, validVersion, type Requirement } from "./spec";
 
@@ -39,11 +40,11 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
   };
 }
 
-function checkCancelled(token: vscode.CancellationToken): void {
+function checkCancelled(token: CancellationLike): void {
   if (token.isCancellationRequested) throw new Error("cancelled");
 }
 
-function wait(ms: number, token: vscode.CancellationToken): Promise<void> {
+function wait(ms: number, token: CancellationLike): Promise<void> {
   checkCancelled(token);
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -63,7 +64,7 @@ export class CratesRateLimiter {
   private tail: Promise<void> = Promise.resolve();
   private nextStart = 0;
 
-  run<T>(token: vscode.CancellationToken, send: () => Promise<T>): Promise<T> {
+  run<T>(token: CancellationLike, send: () => Promise<T>): Promise<T> {
     const result = this.tail.then(async () => {
       checkCancelled(token);
       while (Date.now() < this.nextStart) await wait(this.nextStart - Date.now(), token);
@@ -88,7 +89,7 @@ export class CratesRateLimiter {
 const limiter = new CratesRateLimiter();
 interface Pending {
   promise: Promise<unknown>;
-  cts: vscode.CancellationTokenSource;
+  cts: CancellationTokenSource;
   users: number;
 }
 
@@ -105,11 +106,11 @@ export class CratesClient {
     this.pending.clear();
   }
 
-  private async json(url: string, token: vscode.CancellationToken): Promise<unknown> {
+  private async json(url: string, token: CancellationLike): Promise<unknown> {
     checkCancelled(token);
     let pending = this.pending.get(url);
     if (!pending) {
-      const cts = new vscode.CancellationTokenSource();
+      const cts = new CancellationTokenSource();
       const promise = limiter.run(cts.token, () => fetchJson<unknown>(url, cts.token));
       pending = { promise, cts, users: 0 };
       this.pending.set(url, pending);
@@ -148,7 +149,7 @@ export class CratesClient {
     name: string,
     requirement: Requirement,
     locked: string | undefined,
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<MetadataResult> {
     const epoch = this.epoch;
     const key = (v: string) => `crates:metadata:v1:${name}@${v}`;

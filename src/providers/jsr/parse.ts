@@ -1,6 +1,5 @@
-import * as vscode from "vscode";
 import { type Node, parseTree } from "jsonc-parser";
-import type { DependencyEntry, TextDocumentLike } from "../types";
+import type { DependencyEntry, TextDocumentLike, UriLike } from "../types";
 
 /** A specifier a Deno manifest can express that we know how to resolve */
 export interface DenoSpecifier {
@@ -12,7 +11,7 @@ export interface DenoSpecifier {
 }
 
 /** Is this a Deno or import-map manifest? */
-export function isDenoManifest(uri: vscode.Uri): boolean {
+export function isDenoManifest(uri: UriLike): boolean {
   const fileName = uri.path.split("/").pop() ?? "";
   return (
     fileName === "deno.json" ||

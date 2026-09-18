@@ -1,8 +1,8 @@
-import * as vscode from "vscode";
 import semver from "semver";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import { NotFoundError, fetchJson } from "../../net";
+import type { CancellationLike } from "../types";
 import { type NpmManifest, normalizeLicense, normalizeNodeEngine } from "./manifest";
 import { encodePackageName } from "./spec";
 
@@ -44,7 +44,7 @@ export class NpmRegistryClient {
     name: string,
     spec: string,
     kind: "range" | "tag",
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<string | undefined> {
     // An exact version needs no metadata at all
     if (kind === "range") {
@@ -90,7 +90,7 @@ export class NpmRegistryClient {
   async fetchLicense(
     name: string,
     version: string,
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<FetchedManifest> {
     const encoded = encodePackageName(name);
     // Versioned so that adding a field to FetchedManifest (as nodeEngine was) can't be masked for up to a week by a still-fresh cache entry from before that field existed.

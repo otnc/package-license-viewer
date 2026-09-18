@@ -1,9 +1,8 @@
-import * as vscode from "vscode";
 import semver from "semver";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import { NotFoundError, fetchJson } from "../../net";
-import type { LicenseInfo } from "../types";
+import type { CancellationLike, LicenseInfo } from "../types";
 
 /** The body of `https://jsr.io/@scope/name/meta.json` */
 interface JsrPackageMeta {
@@ -64,11 +63,7 @@ export class JsrClient {
   }
 
   /** Resolve one JSR package */
-  async resolve(
-    id: JsrPackageId,
-    spec: string,
-    token: vscode.CancellationToken
-  ): Promise<LicenseInfo> {
+  async resolve(id: JsrPackageId, spec: string, token: CancellationLike): Promise<LicenseInfo> {
     try {
       const version = await this.resolveVersion(id, spec, token);
       if (!version) {
@@ -103,7 +98,7 @@ export class JsrClient {
   private async resolveVersion(
     id: JsrPackageId,
     spec: string,
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<string | undefined> {
     const trimmed = spec.trim();
     const exact = semver.valid(trimmed, { loose: true });
@@ -148,7 +143,7 @@ export class JsrClient {
   async fetchLicense(
     id: JsrPackageId,
     version: string,
-    token: vscode.CancellationToken
+    token: CancellationLike
   ): Promise<string | undefined> {
     const cacheKey = `jsr:license:${id.scope}/${id.name}@${version}`;
     const cached = this.cache.get<string | null>(cacheKey);

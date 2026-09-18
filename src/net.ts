@@ -1,6 +1,6 @@
-import * as vscode from "vscode";
 import { getConfig } from "./config";
 import { log } from "./log";
+import type { CancellationLike } from "./providers/types";
 
 /** The registry answered 404, i.e. the package or version does not exist */
 export class NotFoundError extends Error {
@@ -16,7 +16,7 @@ export class NotFoundError extends Error {
  */
 export async function fetchJson<T>(
   url: string,
-  token: vscode.CancellationToken,
+  token: CancellationLike,
   accept = "application/json"
 ): Promise<T> {
   const timeoutMs = getConfig().requestTimeoutMs;
