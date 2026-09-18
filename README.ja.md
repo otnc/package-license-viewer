@@ -2,6 +2,12 @@
 
 [English](README.md) | **日本語**
 
+[![VS Code Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/otoneko1102.package-license-viewer?label=VS%20Code)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
+[![VS Code Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/otoneko1102.package-license-viewer?label=Installs)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
+[![Vim/NeoVim](https://img.shields.io/badge/Vim%2FNeoVim-work%20in%20progress-yellow)](docs/vim-neovim-lsp-design.md)
+[![CI](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/otnc/package-license-viewer)](LICENSE)
+
 依存パッケージ1つ1つのライセンスを、行末にインラインで表示します。ライセンス部分は色分けされるので、一目で見分けられます。
 
 ```jsonc

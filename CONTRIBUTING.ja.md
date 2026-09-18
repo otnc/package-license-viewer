@@ -1,4 +1,4 @@
-# コントリビューション
+# 貢献について
 
 [English](CONTRIBUTING.md) | **日本語**
 

@@ -15,7 +15,7 @@ export default defineConfig({
   interpolation: {
     variables: {
       readmeTitle: { en: "Package License Viewer", ja: "Package License Viewer" },
-      contributingTitle: { en: "Contributing", ja: "コントリビューション" },
+      contributingTitle: { en: "Contributing", ja: "貢献について" },
     },
   },
 });
