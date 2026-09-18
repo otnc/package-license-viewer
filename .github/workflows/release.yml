@@ -64,6 +64,10 @@ jobs:
         if: ${{ !inputs.dry_run && steps.bump.outputs.changed == 'true' }}
         run: npx git-cliff --unreleased --tag "${{ steps.bump.outputs.version }}" --prepend CHANGELOG.md
 
+      # Regenerates README.md/README.ja.md/CONTRIBUTING.md/CONTRIBUTING.ja.md from i18n/*.base.md, so a release never ships with generated docs that drifted out of sync with their base source. Its output is included in the release commit below (git commit -am).
+      - name: Build documentation
+        run: npm run docs:build
+
       # vsce package runs vscode:prepublish, which type-checks and does the production build
       - name: Package extension
         run: npx vsce package --out "${{ steps.bump.outputs.vsix }}"
@@ -84,8 +88,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Only commit when the bump actually changed package.json; otherwise just tag and release.
-          if [ "${{ steps.bump.outputs.changed }}" = "true" ]; then
+          # Only commit when the bump actually changed package.json, or the docs build above produced a diff (i18n/*.base.md changed since the last release but nobody ran npm run docs:build locally); otherwise just tag and release.
+          if [ "${{ steps.bump.outputs.changed }}" = "true" ] || ! git diff --quiet; then
             git commit -am "release: ${{ steps.bump.outputs.version }}"
           fi
           if ! git rev-parse -q --verify "refs/tags/${{ steps.bump.outputs.version }}" >/dev/null; then

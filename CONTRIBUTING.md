@@ -141,9 +141,10 @@ When adding a provider or changing resolution logic, add a unit test next to the
 
 1. type-check, unit tests, and the integration suite in a real VS Code
 2. bump `package.json`, and update `CHANGELOG.md` from Conventional Commits since the last tag
-3. build the `.vsix`
-4. publish to the VS Code Marketplace
-5. commit, tag and push, then create the GitHub Release with the `.vsix` attached
+3. regenerate `README.md`/`README.ja.md`/`CONTRIBUTING.md`/`CONTRIBUTING.ja.md` from `i18n/*.base.md` (`npm run docs:build`), so a release never ships with generated docs that drifted out of sync
+4. build the `.vsix`
+5. publish to the VS Code Marketplace
+6. commit (including any documentation rebuilt in step 3), tag and push, then create the GitHub Release with the `.vsix` attached
 
 Publishing is skipped automatically when `VSCE_PAT` is absent, so the workflow is usable before you have a token. Get one from <https://marketplace.visualstudio.com/manage> — an Azure DevOps PAT with the Marketplace → Manage scope — and add it as a repository secret.
 

@@ -305,9 +305,10 @@ When adding a provider or changing resolution logic, add a unit test next to the
 
 1. type-check, unit tests, and the integration suite in a real VS Code
 2. bump `package.json`, and update `CHANGELOG.md` from Conventional Commits since the last tag
-3. build the `.vsix`
-4. publish to the VS Code Marketplace
-5. commit, tag and push, then create the GitHub Release with the `.vsix` attached
+3. regenerate `README.md`/`README.ja.md`/`CONTRIBUTING.md`/`CONTRIBUTING.ja.md` from `i18n/*.base.md` (`npm run docs:build`), so a release never ships with generated docs that drifted out of sync
+4. build the `.vsix`
+5. publish to the VS Code Marketplace
+6. commit (including any documentation rebuilt in step 3), tag and push, then create the GitHub Release with the `.vsix` attached
 
 Publishing is skipped automatically when `VSCE_PAT` is absent, so the workflow is usable before you have a token. Get one from <https://marketplace.visualstudio.com/manage> — an Azure DevOps PAT with the Marketplace → Manage scope — and add it as a repository secret.
 
@@ -333,9 +334,10 @@ To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, a
 
 1. 型チェック、ユニットテスト、実際のVS Code上でのIntegrationテストスイートを実行
 2. `package.json` をバンプし、最後のタグ以降のConventional Commitsから `CHANGELOG.md` を更新
-3. `.vsix` をビルド
-4. VS Code Marketplaceに公開
-5. コミット、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
+3. `i18n/*.base.md` から `README.md`/`README.ja.md`/`CONTRIBUTING.md`/`CONTRIBUTING.ja.md` を再生成(`npm run docs:build`)。これにより、生成済みドキュメントがベースソースと同期しないままリリースされることがなくなります
+4. `.vsix` をビルド
+5. VS Code Marketplaceに公開
+6. コミット(手順3で再生成されたドキュメントも含む)、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
 
 `VSCE_PAT` が存在しない場合は公開が自動的にスキップされるため、トークンを取得する前でもこのワークフローを使用できます。<https://marketplace.visualstudio.com/manage> から、Marketplace → Manage スコープを持つAzure DevOpsのPATを取得し、リポジトリシークレットとして追加してください。
 

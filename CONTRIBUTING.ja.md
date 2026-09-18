@@ -141,9 +141,10 @@ npm run package           # .vsixをビルド
 
 1. 型チェック、ユニットテスト、実際のVS Code上でのIntegrationテストスイートを実行
 2. `package.json` をバンプし、最後のタグ以降のConventional Commitsから `CHANGELOG.md` を更新
-3. `.vsix` をビルド
-4. VS Code Marketplaceに公開
-5. コミット、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
+3. `i18n/*.base.md` から `README.md`/`README.ja.md`/`CONTRIBUTING.md`/`CONTRIBUTING.ja.md` を再生成(`npm run docs:build`)。これにより、生成済みドキュメントがベースソースと同期しないままリリースされることがなくなります
+4. `.vsix` をビルド
+5. VS Code Marketplaceに公開
+6. コミット(手順3で再生成されたドキュメントも含む)、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
 
 `VSCE_PAT` が存在しない場合は公開が自動的にスキップされるため、トークンを取得する前でもこのワークフローを使用できます。<https://marketplace.visualstudio.com/manage> から、Marketplace → Manage スコープを持つAzure DevOpsのPATを取得し、リポジトリシークレットとして追加してください。
 
