@@ -1,10 +1,9 @@
 import { getStaticTOMLValue, parseTOML, type AST } from "toml-eslint-parser";
+import { record } from "../../net";
 import type { DependencyEntry } from "../types";
 import { matchesRequirement, parseRequirement } from "./spec";
 
-export function record(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+export { record };
 
 export type CargoSpec =
   | { kind: "registry"; name: string; requirement: string }

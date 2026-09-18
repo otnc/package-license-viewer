@@ -169,12 +169,17 @@ function! s:UriFromPath(path) abort
   if p =~# '^[A-Za-z]:/'
     let p = '/' . p
   endif
+  " '%' has to be escaped first so it doesn't re-encode the '%20' this also
+  " introduces for spaces — a literal '%' left as-is breaks the server's
+  " decodeURIComponent() round-trip (e.g. a "100%done" directory name).
+  let p = substitute(p, '%', '%25', 'g')
   return 'file://' . substitute(p, ' ', '%20', 'g')
 endfunction
 
 function! s:PathFromUri(uri) abort
   let p = substitute(a:uri, '^file://', '', '')
   let p = substitute(p, '%20', ' ', 'g')
+  let p = substitute(p, '%25', '%', 'g')
   if p =~# '^/[A-Za-z]:/'
     let p = p[1:]
   endif
@@ -257,8 +262,20 @@ endfunction
 function! package_license_viewer#ClearCache() abort
   if s:job isnot v:null
     call job_stop(s:job)
+    " job_stop() is async and job_status() may still report 'run' right after
+    " it returns, so clear this synchronously instead of waiting for s:OnExit —
+    " otherwise s:EnsureServer() below would see the dying job as still running
+    " and skip starting a fresh one, leaving every already-attached buffer
+    " (which Attach() no longer re-initializes) stuck with no server.
+    let s:job = v:null
+    let s:channel = v:null
+    let s:server_initialized = 0
   endif
-  call package_license_viewer#Refresh()
+  call s:EnsureServer()
+  for key in keys(s:attached)
+    let bufnr = str2nr(key)
+    call s:AfterInit({-> s:DidOpen(bufnr)})
+  endfor
 endfunction
 
 function! package_license_viewer#Toggle() abort
