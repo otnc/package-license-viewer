@@ -78,9 +78,13 @@ No change to the extension point itself: a new ecosystem is still "implement `Li
 
 ## Milestones
 
-- [ ] Extract `packages/core` (providers, cache, format, net) behind editor-agnostic interfaces; VS Code extension keeps working unchanged on top of it
-- [ ] `packages/lsp-server`: wrap `core`, custom annotation notification, hover
-- [ ] `packages/vim-plugin`: VimScript LSP client + `textprop` rendering, working on Vim 9+
-- [ ] `packages/vim-plugin/lua`: Neovim transport/rendering overrides
-- [ ] Docs: README section + `:help` file for the Vim/Neovim plugin
+- [x] Editor-agnostic interfaces (`TextDocumentLike`, `CancellationLike`, `UriLike`, `FileSystemLike`, `ProviderHost`) — `src/providers/` has no `vscode` import left at all; VS Code extension keeps working unchanged on top of it
+- [x] `src/lspServer/`: wraps the same providers, `packageLicenseViewer/annotations` notification, hover — still living under `src/` rather than a separate `packages/core`/`packages/lsp-server` split (see "Not done yet" below)
+- [x] `packages/vim-plugin`: VimScript LSP client + `prop_add` rendering, verified against a real `dist/lspServer.js` on Vim 9.2 (job/channel/textprop)
+- [x] `packages/vim-plugin/lua`: Neovim transport/rendering overrides (`vim.lsp.start()` + `nvim_buf_set_extmark()`), verified on Neovim 0.12
+- [x] Docs: `:help` file for the Vim/Neovim plugin (`packages/vim-plugin/doc/package_license_viewer.txt`)
+- [ ] README section pointing at the Vim/Neovim plugin (today it only links here)
+- [ ] Settings sync from `workspace/configuration`; debounce/cancellation of in-flight resolutions on rapid edits (plain Vim side)
+- [ ] Bundle `dist/lspServer.js` with the plugin (or document a build step) instead of requiring `npm run compile:lsp` from the repository root
 - [ ] CI: lint/test the new packages; package the Vim plugin for `vim-plug`/`packer`/`lazy.nvim`
+- [ ] Physical `packages/core`/`packages/lsp-server` npm-workspaces split — deferred; touches CI/release.yml/vsce packaging on the live Marketplace extension
