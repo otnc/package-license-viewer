@@ -1,3 +1,4 @@
+scriptencoding utf-8
 " package_license_viewer.vim - inline dependency license annotations
 " Runs on plain Vim (8.1.1880+/9.x, via job + textprop) and on Neovim (via the lua/ layer, which takes over transport and rendering where Neovim can do strictly more — see doc/package_license_viewer.txt).
 

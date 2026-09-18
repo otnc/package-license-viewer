@@ -41,6 +41,63 @@ jobs:
       - run: npm ci
       - run: xvfb-run -a npm run test:integration
 
+  # Lints and smoke-tests packages/vim-plugin, the only part of the repo not covered by the
+  # Node-based jobs above.
+  vim-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run compile:lsp
+
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y vim neovim lua-check
+
+      # vim-vint depends on setuptools' pkg_resources, which recent setuptools no longer ships,
+      # so it's pinned below <81 here rather than left to whatever pip's resolver picks by default.
+      - name: Install vint
+        run: |
+          python3 -m venv /tmp/vint-venv
+          /tmp/vint-venv/bin/pip install "setuptools<81" vim-vint
+
+      # vint and luacheck both auto-discover their config (.vintrc.yaml / .luacheckrc) by
+      # searching upward from the current directory, so both run from inside the package.
+      - name: Lint VimScript
+        working-directory: packages/vim-plugin
+        run: /tmp/vint-venv/bin/vint autoload plugin test
+
+      - name: Lint Lua
+        working-directory: packages/vim-plugin
+        run: luacheck lua test/smoke_nvim.lua
+
+      # Headless smoke tests: open test/fixtures/workspace/package.json (useRegistry disabled)
+      # through each editor's real transport and assert the plv-local-pkg line gets its "MIT"
+      # annotation — the same fixture the VS Code integration suite uses, so it never needs the
+      # network and stays deterministic.
+      - name: Vim smoke test
+        env:
+          PLV_LSP_SERVER_PATH: ${{ github.workspace }}/packages/lsp-server/dist/lspServer.js
+          PLV_VIM_PLUGIN_DIR: ${{ github.workspace }}/packages/vim-plugin
+          PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
+          PLV_RESULT_FILE: /tmp/plv-vim-result.txt
+        run: |
+          vim -u DEFAULTS -N -Es -S packages/vim-plugin/test/smoke_vim.vim
+          grep -qx PASS /tmp/plv-vim-result.txt || (echo "::error::Vim smoke test did not find the expected annotation" && exit 1)
+
+      - name: Neovim smoke test
+        env:
+          PLV_LSP_SERVER_PATH: ${{ github.workspace }}/packages/lsp-server/dist/lspServer.js
+          PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
+          PLV_RESULT_FILE: /tmp/plv-nvim-result.txt
+        run: |
+          nvim --headless -u NONE --cmd "set rtp+=${{ github.workspace }}/packages/vim-plugin" -c "luafile packages/vim-plugin/test/smoke_nvim.lua"
+          grep -qx PASS /tmp/plv-nvim-result.txt || (echo "::error::Neovim smoke test did not find the expected annotation" && exit 1)
+
   package:
     runs-on: ubuntu-latest
     steps:

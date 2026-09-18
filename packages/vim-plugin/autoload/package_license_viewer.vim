@@ -1,3 +1,4 @@
+scriptencoding utf-8
 " Vim's half of the plugin: a minimal LSP client over job/channel, and rendering with prop_add()/popup_atcursor(). Not used on Neovim — see plugin/package_license_viewer.vim and lua/package_license_viewer/init.lua, which replace this entirely with vim.lsp.start() and nvim_buf_set_extmark().
 
 let s:job = v:null
