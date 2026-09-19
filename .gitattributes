@@ -1,1 +1,4 @@
 * text=auto eol=lf
+
+# Installed agent skills (npx skills add) — keep out of GitHub language stats
+.agents/** linguist-vendored
