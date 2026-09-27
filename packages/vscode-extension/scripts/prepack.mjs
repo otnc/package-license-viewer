@@ -14,3 +14,4 @@ mkdirSync(join(packageRoot, "images"), { recursive: true });
 copyFileSync(join(repoRoot, "images", "icon.png"), join(packageRoot, "images", "icon.png"));
 copyFileSync(join(repoRoot, "README.md"), join(packageRoot, "README.md"));
 copyFileSync(join(repoRoot, "CHANGELOG.md"), join(packageRoot, "CHANGELOG.md"));
+copyFileSync(join(repoRoot, "LICENSE"), join(packageRoot, "LICENSE"));
