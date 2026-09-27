@@ -291,9 +291,47 @@ test("disabled annotations stay hidden when an earlier lookup completes", async 
   }
 });
 
+/**
+ * schedule() bails out before setting a debounce timer for a document no provider recognizes,
+ * so an unrelated file edited in a large workspace never accumulates timers (see annotator.ts
+ * and issue #21). A document a provider previously claimed still has to go through update(), so a
+ * settings change that stops a document from being supported (a provider or the extension being
+ * disabled) still clears its now-stale decorations instead of leaving them stuck.
+ */
+test("schedule skips a document no provider recognizes, without creating a timer", async () => {
+  const provider = new SlowProvider(0);
+  provider.supports = () => false;
+  const { document, editor, annotator } = setup(provider);
+  const internals = annotator as unknown as AnnotatorInternals;
+
+  internals.schedule(document, true);
+  await sleep(50);
+
+  expect(editor.lastDecorations).toBeUndefined();
+  expect(internals.debounceTimers.size).toBe(0);
+  annotator.dispose();
+});
+
+test("schedule still clears decorations once a previously-annotated document stops being supported", async () => {
+  const provider = new SlowProvider(0);
+  const { document, editor, annotator } = setup(provider);
+  const internals = annotator as unknown as AnnotatorInternals;
+
+  await internals.update(document);
+  expect(editor.lastDecorations!.length).toBe(DEPENDENCY_COUNT);
+
+  provider.isEnabled = () => false;
+  internals.schedule(document, true);
+  await sleep(50);
+
+  expect(editor.lastDecorations!.length).toBe(0);
+  annotator.dispose();
+});
+
 /** The private members these tests reach into directly, to exercise sharing/invalidation without waiting on real timing. */
 interface AnnotatorInternals {
   update(document: TextDocumentLike): Promise<void>;
+  schedule(document: TextDocumentLike, immediate: boolean): void;
   resolveEntry(
     provider: SlowProvider,
     entry: DependencyEntry,
@@ -302,4 +340,5 @@ interface AnnotatorInternals {
   ): Promise<LicenseInfo>;
   results: Map<string, { info: LicenseInfo }>;
   inflight: Map<string, unknown>;
+  debounceTimers: Map<string, unknown>;
 }
