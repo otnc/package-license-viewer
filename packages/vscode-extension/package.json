@@ -39,6 +39,10 @@
   },
   "main": "./dist/extension.js",
   "activationEvents": [
+    "onLanguage:json",
+    "onLanguage:jsonc",
+    "onLanguage:yaml",
+    "onLanguage:toml",
     "workspaceContains:**/package.json",
     "workspaceContains:**/deno.json",
     "workspaceContains:**/deno.jsonc",
