@@ -20,6 +20,7 @@ local.kiritanconfig
 packages/vscode-extension/images/
 packages/vscode-extension/README.md
 packages/vscode-extension/CHANGELOG.md
+packages/vscode-extension/LICENSE
 
 # `.agents/skills/` is the single canonical copy of each installed skill;
 # every other agent-specific location is a generated symlink/copy — run
