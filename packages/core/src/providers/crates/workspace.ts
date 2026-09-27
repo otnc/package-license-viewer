@@ -1,6 +1,12 @@
+import { TtlCache } from "../../ttlCache";
 import type { FileSystemLike, UriLike } from "../types";
 import { joinUriPath } from "../uri";
 import { parseManifest, type CargoManifest } from "./parse";
+
+/** How long an auxiliary manifest read is reused before being read again */
+const CACHE_TTL_MS = 5000;
+/** Upper bound so a deep workspace search cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 500;
 
 type ReadResult = { kind: "found"; text: string } | { kind: "missing" } | { kind: "failed" };
 export type RootResult =
@@ -25,7 +31,7 @@ export function workspaceManifestUri(directory: UriLike, reference: string): Uri
 
 /** Short-lived auxiliary reads. Refresh invalidates promises without letting old reads repopulate them. */
 export class CargoWorkspace {
-  private readonly files = new Map<string, { at: number; result: Promise<ReadResult> }>();
+  private readonly files = new TtlCache<Promise<ReadResult>>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
 
   constructor(private readonly fs: FileSystemLike) {}
 
@@ -36,7 +42,7 @@ export class CargoWorkspace {
   read(uri: UriLike): Promise<ReadResult> {
     const key = uri.toString();
     const cached = this.files.get(key);
-    if (cached && Date.now() - cached.at < 5000) return cached.result;
+    if (cached) return cached.value;
     const result = this.fs
       .readFile(uri)
       .then(
@@ -58,8 +64,8 @@ export class CargoWorkspace {
         (value) => value,
         (): ReadResult => ({ kind: "failed" })
       );
-    this.files.set(key, { at: Date.now(), result: Promise.resolve(result) });
-    return Promise.resolve(result);
+    this.files.set(key, result);
+    return result;
   }
 
   async root(uri: UriLike, current: CargoManifest): Promise<RootResult> {
