@@ -109,7 +109,7 @@
           "type": "number",
           "default": 168,
           "minimum": 0,
-          "description": "How long resolved licenses are cached, in hours. 0 disables persistent caching."
+          "description": "How long resolved licenses are cached, in hours. 0 disables caching entirely, including for the rest of the current session."
         },
         "packageLicenseViewer.requestTimeoutMs": {
           "type": "number",

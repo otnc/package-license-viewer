@@ -33,12 +33,17 @@ export class LicenseCache {
   }
 
   get<T>(key: string): T | undefined {
+    const ttlHours = getConfig().cacheTtlHours;
+    if (ttlHours <= 0) {
+      // Disabled: never serve a cached value, even one from earlier in this session.
+      return undefined;
+    }
     const record = this.memory.get(key) as CacheRecord<T> | undefined;
     if (!record) {
       return undefined;
     }
-    const ttlMs = getConfig().cacheTtlHours * 60 * 60 * 1000;
-    if (ttlMs > 0 && Date.now() - record.t > ttlMs) {
+    const ttlMs = ttlHours * 60 * 60 * 1000;
+    if (Date.now() - record.t > ttlMs) {
       this.memory.delete(key);
       this.dirty = true;
       return undefined;
@@ -47,6 +52,10 @@ export class LicenseCache {
   }
 
   set<T>(key: string, value: T): void {
+    if (getConfig().cacheTtlHours <= 0) {
+      // Disabled: don't even hold it in memory, since get() would never return it anyway.
+      return;
+    }
     this.memory.set(key, { t: Date.now(), v: value });
     this.dirty = true;
     this.scheduleFlush();
