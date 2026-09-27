@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.6.2]
+
+### Fixed
+
+- Include LICENSE in the packaged .vsix (#30)
+
 ## [0.6.1]
 
 ### Added
