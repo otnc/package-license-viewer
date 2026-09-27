@@ -10,7 +10,7 @@ import type {
 } from "../types";
 import { joinUriPath } from "../uri";
 import { CratesClient } from "./client";
-import { selectLocked } from "./lockfile";
+import { parseLock, selectFromParsed, type ParsedLock } from "./lockfile";
 import { CargoEntry, parseManifest } from "./parse";
 import { parseRequirement } from "./spec";
 import { CargoWorkspace } from "./workspace";
@@ -19,6 +19,19 @@ export class CratesLicenseProvider implements LicenseProvider {
   readonly id = "crates";
   private readonly workspace: CargoWorkspace;
   private readonly client: CratesClient;
+  /**
+   * The last parse of each Cargo.lock, reused as long as its text has not changed.
+   *
+   * A manifest resolves one dependency at a time, but they all share the same Cargo.lock — without
+   * this, a manifest with many dependencies would re-parse that file (which, unlike Cargo.toml,
+   * also lists every transitive dependency) from scratch for every single one of them. Keyed by
+   * URI; per-workspace-root, so bounded by how many Cargo workspaces are open at once rather than
+   * by dependency or directory count the way the TtlCache-based provider caches are.
+   */
+  private readonly lockCache = new Map<
+    string,
+    { readonly text: string; readonly parsed: ParsedLock }
+  >();
   constructor(
     cache: LicenseCache,
     private readonly host: ProviderHost
@@ -43,6 +56,17 @@ export class CratesLicenseProvider implements LicenseProvider {
   invalidate(): void {
     this.workspace.invalidate();
     this.client.invalidate();
+    this.lockCache.clear();
+  }
+
+  private parsedLock(uriKey: string, text: string): ParsedLock {
+    const cached = this.lockCache.get(uriKey);
+    if (cached && cached.text === text) {
+      return cached.parsed;
+    }
+    const parsed = parseLock(text);
+    this.lockCache.set(uriKey, { text, parsed });
+    return parsed;
   }
 
   async resolve(
@@ -77,9 +101,11 @@ export class CratesLicenseProvider implements LicenseProvider {
       return { source: "unknown", detail: "invalid Cargo version requirement" };
     let locked: string | undefined;
     if (getSetting("crates.useLockfiles", true)) {
-      const read = await this.workspace.read(joinUriPath(root.uri, "..", "Cargo.lock"));
+      const lockUri = joinUriPath(root.uri, "..", "Cargo.lock");
+      const read = await this.workspace.read(lockUri);
       if (read.kind === "found") {
-        const selection = selectLocked(read.text, spec.name, requirement);
+        const parsed = this.parsedLock(lockUri.toString(), read.text);
+        const selection = selectFromParsed(parsed, spec.name, requirement);
         if (selection.kind === "selected") locked = selection.version;
       }
     }
