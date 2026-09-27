@@ -38,7 +38,7 @@ else
 
   augroup package_license_viewer
     autocmd!
-    autocmd BufReadPost,BufNewFile,BufFilePost *.json,*.jsonc,Cargo.toml,pnpm-workspace.yaml,pnpm-workspace.yml
+    autocmd BufReadPost,BufNewFile,BufFilePost *.json,*.jsonc,Cargo.toml,pnpm-workspace.yaml,pnpm-workspace.yml,moon.mod
       \ call package_license_viewer#Attach()
     autocmd TextChanged,TextChangedI * call package_license_viewer#OnChange()
     autocmd BufWritePost * call package_license_viewer#OnChange()
