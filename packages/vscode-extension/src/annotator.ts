@@ -60,6 +60,8 @@ export class Annotator implements vscode.Disposable {
   >();
   private readonly debounceTimers = new Map<string, NodeJS.Timeout>();
   private readonly cancellations = new Map<string, vscode.CancellationTokenSource>();
+  /** Documents a provider has claimed at least once, so schedule() knows decorations may need clearing */
+  private readonly annotated = new Set<string>();
   private readonly disposables: vscode.Disposable[] = [];
 
   constructor(private readonly providers: readonly LicenseProvider[]) {
@@ -83,7 +85,9 @@ export class Annotator implements vscode.Disposable {
         this.schedule(document, true);
       }),
       vscode.workspace.onDidCloseTextDocument((document) => {
-        this.cancel(document.uri.toString());
+        const key = document.uri.toString();
+        this.cancel(key);
+        this.annotated.delete(key);
       })
     );
   }
@@ -116,6 +120,15 @@ export class Annotator implements vscode.Disposable {
 
   private schedule(document: vscode.TextDocument, immediate: boolean): void {
     const key = document.uri.toString();
+    // Cheap early exit: bail out before touching debounceTimers/setTimeout at all when no
+    // provider recognizes this document and it was never annotated before, so editing an
+    // unrelated file in a large workspace (where activationEvents still had to load the
+    // extension for some other manifest) never accumulates timers. A document this provider
+    // previously claimed still has to go through update() so a settings change (a provider or
+    // the extension being disabled) gets its stale decorations cleared, not left stuck.
+    if (!this.annotated.has(key) && !findProvider(this.providers, toTextDocumentLike(document))) {
+      return;
+    }
     const existing = this.debounceTimers.get(key);
     if (existing) {
       clearTimeout(existing);
@@ -141,10 +154,12 @@ export class Annotator implements vscode.Disposable {
     const provider = config.enabled ? findProvider(this.providers, doc) : undefined;
     if (!provider) {
       this.cancel(key);
+      this.annotated.delete(key);
       this.setDecorations(editors, emptyAnnotationOptions());
       return;
     }
 
+    this.annotated.add(key);
     this.cancel(key);
     const cts = new vscode.CancellationTokenSource();
     this.cancellations.set(key, cts);
@@ -348,6 +363,7 @@ export class Annotator implements vscode.Disposable {
       clearTimeout(timer);
     }
     this.debounceTimers.clear();
+    this.annotated.clear();
     for (const key of [...this.cancellations.keys()]) {
       this.cancel(key);
     }
