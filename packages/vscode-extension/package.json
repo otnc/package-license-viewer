@@ -49,6 +49,7 @@
     "workspaceContains:**/jsr.json",
     "workspaceContains:**/jsr.jsonc",
     "workspaceContains:**/import_map.json",
+    "workspaceContains:**/importMap.json",
     "workspaceContains:**/Cargo.toml",
     "workspaceContains:**/moon.mod",
     "workspaceContains:**/moon.mod.json"
