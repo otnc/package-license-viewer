@@ -10,8 +10,8 @@ import type {
 } from "../types";
 import { joinUriPath } from "../uri";
 import { CratesClient } from "./client";
-import { selectLocked } from "./lockfile";
-import { CargoEntry, parseManifest } from "./parse";
+import { parseLock, selectFromParsed, type ParsedLock } from "./lockfile";
+import { CargoEntry, parseManifest, type CargoManifest } from "./parse";
 import { parseRequirement } from "./spec";
 import { CargoWorkspace } from "./workspace";
 
@@ -19,6 +19,32 @@ export class CratesLicenseProvider implements LicenseProvider {
   readonly id = "crates";
   private readonly workspace: CargoWorkspace;
   private readonly client: CratesClient;
+  /**
+   * The last parse of each Cargo.lock, reused as long as its text has not changed.
+   *
+   * A manifest resolves one dependency at a time, but they all share the same Cargo.lock — without
+   * this, a manifest with many dependencies would re-parse that file (which, unlike Cargo.toml,
+   * also lists every transitive dependency) from scratch for every single one of them. Keyed by
+   * URI; per-workspace-root, so bounded by how many Cargo workspaces are open at once rather than
+   * by dependency or directory count the way the TtlCache-based provider caches are.
+   */
+  private readonly lockCache = new Map<
+    string,
+    { readonly text: string; readonly parsed: ParsedLock }
+  >();
+  /**
+   * The last parse of each open Cargo.toml document, reused as long as its text has not changed.
+   *
+   * `parse()` runs once per document, but `resolve()` runs once per dependency and needs the
+   * manifest too (for `workspace`/`workspacePath`/`overrides`) — without this, a manifest with N
+   * dependencies parsed its own text N+1 times (once from `parse()`, again from every `resolve()`)
+   * instead of once. Bounded the same way `lockCache` is: by how many Cargo.toml documents this
+   * provider instance has touched, not by dependency count.
+   */
+  private readonly manifestCache = new Map<
+    string,
+    { readonly text: string; readonly manifest: CargoManifest | undefined }
+  >();
   constructor(
     cache: LicenseCache,
     private readonly host: ProviderHost
@@ -33,7 +59,7 @@ export class CratesLicenseProvider implements LicenseProvider {
     return getSetting("crates.enabled", true);
   }
   parse(document: TextDocumentLike): CargoEntry[] {
-    return parseManifest(document.getText(), document.uri)?.entries ?? [];
+    return this.parsedManifest(document.uri, document.getText())?.entries ?? [];
   }
   cacheKey(entry: DependencyEntry): string {
     return entry instanceof CargoEntry
@@ -43,6 +69,28 @@ export class CratesLicenseProvider implements LicenseProvider {
   invalidate(): void {
     this.workspace.invalidate();
     this.client.invalidate();
+    this.lockCache.clear();
+    this.manifestCache.clear();
+  }
+
+  private parsedLock(uriKey: string, text: string): ParsedLock {
+    const cached = this.lockCache.get(uriKey);
+    if (cached && cached.text === text) {
+      return cached.parsed;
+    }
+    const parsed = parseLock(text);
+    this.lockCache.set(uriKey, { text, parsed });
+    return parsed;
+  }
+
+  private parsedManifest(uriKey: string, text: string): CargoManifest | undefined {
+    const cached = this.manifestCache.get(uriKey);
+    if (cached && cached.text === text) {
+      return cached.manifest;
+    }
+    const manifest = parseManifest(text, uriKey);
+    this.manifestCache.set(uriKey, { text, manifest });
+    return manifest;
   }
 
   async resolve(
@@ -54,7 +102,7 @@ export class CratesLicenseProvider implements LicenseProvider {
     let spec = entry.declaration;
     if (spec.kind === "skipped" || spec.kind === "unknown")
       return { source: spec.kind, detail: spec.reason };
-    const manifest = parseManifest(document.getText(), document.uri);
+    const manifest = this.parsedManifest(document.uri, document.getText());
     if (!manifest) return { source: "unknown", detail: "invalid Cargo manifest" };
     const root = await this.workspace.root(this.host.parseUri(document.uri), manifest);
     if (root.kind === "unknown") return { source: "unknown", detail: root.reason };
@@ -77,9 +125,11 @@ export class CratesLicenseProvider implements LicenseProvider {
       return { source: "unknown", detail: "invalid Cargo version requirement" };
     let locked: string | undefined;
     if (getSetting("crates.useLockfiles", true)) {
-      const read = await this.workspace.read(joinUriPath(root.uri, "..", "Cargo.lock"));
+      const lockUri = joinUriPath(root.uri, "..", "Cargo.lock");
+      const read = await this.workspace.read(lockUri);
       if (read.kind === "found") {
-        const selection = selectLocked(read.text, spec.name, requirement);
+        const parsed = this.parsedLock(lockUri.toString(), read.text);
+        const selection = selectFromParsed(parsed, spec.name, requirement);
         if (selection.kind === "selected") locked = selection.version;
       }
     }

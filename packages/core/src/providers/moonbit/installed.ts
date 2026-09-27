@@ -1,4 +1,5 @@
 import { parse as parseJsonc } from "jsonc-parser";
+import { TtlCache } from "../../ttlCache";
 import type { FileSystemLike, UriLike } from "../types";
 import { joinUriPath } from "../uri";
 import { readStringArrayAssignment, readStringAssignment, tokenize } from "./dsl";
@@ -7,6 +8,8 @@ import { moduleSegments } from "./spec";
 
 /** Remember lookups briefly so typing does not re-read the filesystem on every keystroke */
 const CACHE_TTL_MS = 15_000;
+/** Upper bound so a workspace with many modules/directories cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 2000;
 /** How far up the directory tree to walk looking for `.mooncakes` or `moon.work` */
 const MAX_WALK_UP = 12;
 /** Directory moon unpacks dependencies into, next to the manifest that declares them */
@@ -111,20 +114,20 @@ export async function readText(fs: FileSystemLike, uri: UriLike): Promise<string
 
 /** Short-lived memo of one filesystem answer, so a burst of keystrokes reads the disk once */
 class TimedCache<T> {
-  private entries = new Map<string, { at: number; value: Promise<T> }>();
+  private cache = new TtlCache<Promise<T>>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
 
   get(key: string, compute: () => Promise<T>): Promise<T> {
-    const cached = this.entries.get(key);
-    if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
+    const cached = this.cache.get(key);
+    if (cached) {
       return cached.value;
     }
     const value = compute();
-    this.entries.set(key, { at: Date.now(), value });
+    this.cache.set(key, value);
     return value;
   }
 
   clear(): void {
-    this.entries.clear();
+    this.cache.clear();
   }
 }
 

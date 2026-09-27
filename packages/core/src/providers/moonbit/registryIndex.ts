@@ -1,6 +1,7 @@
 import * as os from "node:os";
 import * as path from "node:path";
 import semver from "semver";
+import { TtlCache } from "../../ttlCache";
 import type { ProviderHost } from "../types";
 import { fileUriFromPath, joinUriPath } from "../uri";
 import { normalizeLicense, readText } from "./installed";
@@ -8,6 +9,8 @@ import { isModuleVersion, moduleSegments } from "./spec";
 
 /** Remember a parsed index file briefly; one file holds every version of one module */
 const CACHE_TTL_MS = 30_000;
+/** Upper bound so a `moon.work` with many member modules cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 2000;
 
 /** One published release, as the registry index records it */
 export interface IndexedRelease {
@@ -24,7 +27,7 @@ export interface IndexedRelease {
  * It is a mirror, so it is only as fresh as the last `moon update`; a module or version it has never seen simply misses and the lookup falls through to the registry.
  */
 export class RegistryIndex {
-  private entries = new Map<string, { at: number; releases: Promise<IndexedRelease[]> }>();
+  private entries = new TtlCache<Promise<IndexedRelease[]>>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
 
   constructor(private readonly host: ProviderHost) {}
 
@@ -51,11 +54,11 @@ export class RegistryIndex {
 
   private releases(name: string): Promise<IndexedRelease[]> {
     const cached = this.entries.get(name);
-    if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
-      return cached.releases;
+    if (cached) {
+      return cached.value;
     }
     const releases = this.read(name);
-    this.entries.set(name, { at: Date.now(), releases });
+    this.entries.set(name, releases);
     return releases;
   }
 

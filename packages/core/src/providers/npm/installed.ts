@@ -1,10 +1,13 @@
 import { parse as parseJsonc } from "jsonc-parser";
+import { TtlCache } from "../../ttlCache";
 import type { FileSystemLike, UriLike } from "../types";
 import { joinUriPath } from "../uri";
 import type { NpmManifest } from "./manifest";
 
 /** Remember lookups briefly so typing does not re-read node_modules on every keystroke */
 const CACHE_TTL_MS = 15_000;
+/** Upper bound so a workspace with many packages and directories cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 2000;
 /** How far up the directory tree to walk */
 const MAX_WALK_UP = 12;
 
@@ -26,7 +29,7 @@ export interface InstalledPackage {
  * Parent directories are searched too, which is what makes hoisting and monorepos work.
  */
 export class InstalledPackageLookup {
-  private cache = new Map<string, { at: number; hit: InstalledPackage | undefined }>();
+  private cache = new TtlCache<InstalledPackage | undefined>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
 
   constructor(private readonly fs: FileSystemLike) {}
 
@@ -34,8 +37,8 @@ export class InstalledPackageLookup {
     const startDir = joinUriPath(manifestUri, "..");
     const cacheKey = `${startDir.toString()}|${name}`;
     const cached = this.cache.get(cacheKey);
-    if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
-      return cached.hit;
+    if (cached) {
+      return cached.value;
     }
 
     let dir = startDir;
@@ -54,7 +57,7 @@ export class InstalledPackageLookup {
       dir = parent;
     }
 
-    this.cache.set(cacheKey, { at: Date.now(), hit });
+    this.cache.set(cacheKey, hit);
     return hit;
   }
 
