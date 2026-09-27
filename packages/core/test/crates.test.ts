@@ -9,6 +9,7 @@ import { CratesLicenseProvider } from "../src/providers/crates";
 import { CratesClient } from "../src/providers/crates/client";
 import * as lockfile from "../src/providers/crates/lockfile";
 import { selectLocked } from "../src/providers/crates/lockfile";
+import * as cargoParse from "../src/providers/crates/parse";
 import { dependencySpec, parseManifest } from "../src/providers/crates/parse";
 import {
   compareVersions,
@@ -600,6 +601,29 @@ test("Cargo.lock is parsed once and reused across every dependency in the manife
   // gamma is absent from Cargo.lock, so this also exercises the "not found in the parsed index" path.
   expect((await provider.resolve(gamma, document, noCancel)).source).toBe("registry");
   expect(parseLockSpy).toHaveBeenCalledTimes(1);
+});
+
+test("a manifest's own Cargo.toml is parsed once and reused across every one of its dependencies", async () => {
+  const manifestText = '[dependencies]\nalpha="1"\nbeta="2"\ngamma="3"';
+  const host = fakeHost(new Map([["/manifest-once/Cargo.toml", manifestText]]));
+  const cache = makeCache();
+  onTestFinished(() => cache.dispose());
+  vi.spyOn(CratesClient.prototype, "metadata").mockImplementation(async () => ({
+    kind: "found",
+    metadata: { version: "1.0.0", license: "MIT", yanked: false },
+  }));
+  const provider = new CratesLicenseProvider(cache, host);
+  const document = fakeDocument(manifestText, "/manifest-once/Cargo.toml");
+
+  // parse() (as the annotator calls it) plus resolve() for every entry (as the annotator also
+  // does) must add up to exactly one real parse of this manifest's text.
+  const parseSpy = vi.spyOn(cargoParse, "parseManifest");
+  const entries = provider.parse(document);
+  expect(entries).toHaveLength(3);
+  for (const entry of entries) {
+    expect((await provider.resolve(entry, document, noCancel)).version).toBe("1.0.0");
+  }
+  expect(parseSpy).toHaveBeenCalledTimes(1);
 });
 
 test("root replace Package IDs exclude only the referenced crates.io name", async () => {
