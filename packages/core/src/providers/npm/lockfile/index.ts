@@ -1,4 +1,5 @@
 import { log } from "../../../log";
+import { TtlCache } from "../../../ttlCache";
 import type { FileSystemLike, UriLike } from "../../types";
 import { joinUriPath } from "../../uri";
 import {
@@ -16,6 +17,8 @@ export type { LockEntry, LockfileKind } from "./parsers";
 
 /** How long a parsed lockfile is reused before being read again */
 const CACHE_TTL_MS = 60_000;
+/** Upper bound so a multi-root workspace with many directories cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 500;
 /** How far up the directory tree to walk */
 const MAX_WALK_UP = 12;
 /** Refuse to read lockfiles larger than this (32MB) */
@@ -48,7 +51,7 @@ export interface LockfileHit extends LockEntry {
  * npm's lockfile also stores the license, in which case no network access is needed.
  */
 export class LockfileResolver {
-  private cache = new Map<string, { at: number; indexes: LockIndex[] }>();
+  private cache = new TtlCache<LockIndex[]>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
 
   constructor(private readonly fs: FileSystemLike) {}
 
@@ -66,12 +69,12 @@ export class LockfileResolver {
     const startDir = joinUriPath(manifestUri, "..");
     const cacheKey = startDir.toString();
     const cached = this.cache.get(cacheKey);
-    if (cached && Date.now() - cached.at < CACHE_TTL_MS) {
-      return cached.indexes;
+    if (cached) {
+      return cached.value;
     }
 
     const indexes = await this.discover(startDir);
-    this.cache.set(cacheKey, { at: Date.now(), indexes });
+    this.cache.set(cacheKey, indexes);
     return indexes;
   }
 

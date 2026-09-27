@@ -1,6 +1,12 @@
+import { TtlCache } from "../../ttlCache";
 import type { FileSystemLike, UriLike } from "../types";
 import { joinUriPath } from "../uri";
 import { parseManifest, type CargoManifest } from "./parse";
+
+/** How long an auxiliary manifest read is reused before being read again */
+const CACHE_TTL_MS = 5000;
+/** Upper bound so a deep workspace search cannot grow this without limit */
+const MAX_CACHE_ENTRIES = 500;
 
 type ReadResult = { kind: "found"; text: string } | { kind: "missing" } | { kind: "failed" };
 export type RootResult =
@@ -25,18 +31,41 @@ export function workspaceManifestUri(directory: UriLike, reference: string): Uri
 
 /** Short-lived auxiliary reads. Refresh invalidates promises without letting old reads repopulate them. */
 export class CargoWorkspace {
-  private readonly files = new Map<string, { at: number; result: Promise<ReadResult> }>();
+  private readonly files = new TtlCache<Promise<ReadResult>>(CACHE_TTL_MS, MAX_CACHE_ENTRIES);
+  /**
+   * The last parse of each ancestor Cargo.toml `root()` has read, reused as long as its text has
+   * not changed. Without this, resolving every dependency of every member of a large workspace
+   * re-parses the same root manifest (and any Cargo.toml in between) from scratch on every single
+   * one of them, since `root()` runs once per `resolve()` call. Bounded by how many distinct
+   * Cargo.toml files this walk has ever read, the same as `files` above.
+   */
+  private readonly manifests = new Map<
+    string,
+    { readonly text: string; readonly manifest: CargoManifest | undefined }
+  >();
 
   constructor(private readonly fs: FileSystemLike) {}
 
   invalidate(): void {
     this.files.clear();
+    this.manifests.clear();
+  }
+
+  private parsedManifest(uri: UriLike, text: string): CargoManifest | undefined {
+    const key = uri.toString();
+    const cached = this.manifests.get(key);
+    if (cached && cached.text === text) {
+      return cached.manifest;
+    }
+    const manifest = parseManifest(text, key);
+    this.manifests.set(key, { text, manifest });
+    return manifest;
   }
 
   read(uri: UriLike): Promise<ReadResult> {
     const key = uri.toString();
     const cached = this.files.get(key);
-    if (cached && Date.now() - cached.at < 5000) return cached.result;
+    if (cached) return cached.value;
     const result = this.fs
       .readFile(uri)
       .then(
@@ -58,8 +87,8 @@ export class CargoWorkspace {
         (value) => value,
         (): ReadResult => ({ kind: "failed" })
       );
-    this.files.set(key, { at: Date.now(), result: Promise.resolve(result) });
-    return Promise.resolve(result);
+    this.files.set(key, result);
+    return result;
   }
 
   async root(uri: UriLike, current: CargoManifest): Promise<RootResult> {
@@ -70,8 +99,7 @@ export class CargoWorkspace {
       const target = workspaceManifestUri(directory, current.workspacePath);
       if (!target) return { kind: "unknown", reason: "unsupported workspace path" };
       const read = await this.read(target);
-      const manifest =
-        read.kind === "found" ? parseManifest(read.text, target.toString()) : undefined;
+      const manifest = read.kind === "found" ? this.parsedManifest(target, read.text) : undefined;
       return manifest?.workspace && !manifest.invalidWorkspace
         ? { kind: "found", uri: target, manifest }
         : { kind: "unknown", reason: "explicit workspace root could not be read" };
@@ -84,7 +112,7 @@ export class CargoWorkspace {
       if (read.kind === "failed")
         return { kind: "unknown", reason: "workspace ancestor could not be read" };
       if (read.kind === "found") {
-        const manifest = parseManifest(read.text, target.toString());
+        const manifest = this.parsedManifest(target, read.text);
         if (!manifest || manifest.invalidWorkspace)
           return { kind: "unknown", reason: "invalid ancestor manifest" };
         if (manifest.workspace) return { kind: "found", uri: target, manifest };
