@@ -113,7 +113,14 @@ function M.setup()
   local group = vim.api.nvim_create_augroup("package_license_viewer", { clear = true })
   vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
     group = group,
-    pattern = { "*.json", "*.jsonc", "Cargo.toml", "pnpm-workspace.yaml", "pnpm-workspace.yml" },
+    pattern = {
+      "*.json",
+      "*.jsonc",
+      "Cargo.toml",
+      "pnpm-workspace.yaml",
+      "pnpm-workspace.yml",
+      "moon.mod",
+    },
     callback = function(args)
       M.attach(args.buf)
     end,

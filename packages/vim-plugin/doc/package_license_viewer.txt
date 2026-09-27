@@ -14,10 +14,11 @@ CONTENTS                                    *package_license_viewer-contents*
 1. Introduction                          *package_license_viewer-introduction*
 
 Shows the license of every dependency inline at the end of the line, in
-`package.json`, `deno.json`/`import_map.json`, `pnpm-workspace.yaml` and
-`Cargo.toml` — the same license resolution the "Package License Viewer" VS
-Code extension uses, running here as a Node-based language server
-(`packages/lsp-server/dist/lspServer.js`) instead.
+`package.json`, `deno.json`/`import_map.json`, `pnpm-workspace.yaml`,
+`Cargo.toml` and `moon.mod`/`moon.mod.json` — the same license resolution
+the "Package License Viewer" VS Code extension uses, running here as a
+Node-based language server (`packages/lsp-server/dist/lspServer.js`)
+instead.
 
 ==============================================================================
 2. Requirements                          *package_license_viewer-requirements*
