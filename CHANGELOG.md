@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.6.1]
+
+### Added
+
+- Update VSCode settings to enhance file watching and search exclusions
+- Update .gitattributes to exclude agent skills from GitHub language stats
+
+
+### Changed
+
+- Bound the in-memory caches providers keep for auxiliary reads (#27)
+
+
+### Fixed
+
+- Remove unnecessary git command timings setting from VSCode configuration
+- Disable formatOnSave in VSCode settings
+- Make cacheTtlHours = 0 disable the in-session memory cache too
+- Narrow activation and skip scheduling for documents no provider recognizes
+- Restore onLanguage activation so standalone documents still activate (#28)
+- Attach the vim/neovim plugin to moon.mod, not just moon.mod.json (#29)
+
 ## [0.6.0]
 
 ### Added
