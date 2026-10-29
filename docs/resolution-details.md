@@ -8,6 +8,7 @@ This is the detailed reference for how each supported ecosystem resolves a licen
 | `deno.json`, `deno.jsonc`, `jsr.json`, `import_map.json` | `imports` — both `jsr:` and `npm:` specifiers |
 | `pnpm-workspace.yaml` | `catalog:` and `catalogs:` — the actual ranges a workspace catalog resolves to |
 | `Cargo.toml` | `dependencies`, `dev-dependencies`, `build-dependencies`, their target-specific forms, and `workspace.dependencies` |
+| `go.mod` | `require`, single-line and block form, direct and `// indirect` alike, with `replace` applied |
 
 ## npm / JSR
 
@@ -75,3 +76,27 @@ No Cargo or Rust installation is required. The extension never runs Cargo comman
 Editing/saving the document, switching editors or Refresh triggers updates. Auxiliary file reads are cached for five seconds and annotation results for one minute; expiration alone does not trigger an update. After an external change to Cargo.lock or a workspace manifest, use Refresh for immediate re-evaluation, or wait for these caches to expire and trigger another editor update. Clear Cache also invalidates auxiliary reads. Cargo setting changes invalidate annotations.
 
 Opening a workspace containing `Cargo.toml` activates the extension even if TOML files are treated as plain text. Opening a standalone file without such a workspace requires a TOML language registration (or running the Refresh command). The extension contributes no TOML grammar or language server. VS Code 1.90 remains the minimum supported version.
+
+## Go
+
+```go
+require (
+	github.com/gorilla/mux v1.8.1                  // BSD-3-Clause
+	github.com/docker/docker v24.0.7+incompatible  // Apache-2.0 AND MIT
+	example.com/forked v1.0.0                      // MIT (as github.com/BurntSushi/toml v1.3.2)
+	example.com/local v0.1.0                       // (nothing: a local directory)
+)
+
+replace example.com/forked => github.com/BurntSushi/toml v1.3.2
+replace example.com/local => ../local
+```
+
+Comments above illustrate annotations, not changes the extension writes to files. Every `require` is read, in single-line and block form, whether or not it is marked `// indirect`. The version is taken exactly as written: the go command resolves with minimal version selection, and since Go 1.17 `go mod tidy` records every module the build needs in the main module's `go.mod` at the version it selected. Pseudo-versions and `+incompatible` versions are looked up like any other.
+
+`replace` directives in the same `go.mod` are applied first. A replacement of one exact version beats a replacement of every version, as in the go command. A module target is looked up as that module at its version, and the hover says so; a directory target (`./x`, `../x`, an absolute or Windows path) is skipped. `exclude`, `retract`, `tool` and `go.work` (including its own `replace` directives) are not interpreted.
+
+Licenses come from [deps.dev](https://deps.dev), one `GetVersion` request per module version. The Go module mirror carries no license metadata and pkg.go.dev has no API for it; deps.dev scans the modules the mirror serves. When it finds more than one license file in a module, the annotation joins them with `AND`, because each applies to part of the module. A license it found but could not identify (`non-standard`) shows as unknown. A found answer is cached; a miss is not, because a release published moments ago may not have been ingested yet. The hover title links to `https://pkg.go.dev/<module>@<version>`, and the homepage to the source repository deps.dev records.
+
+A module matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` is skipped without any request, so its path is never sent to deps.dev. Those variables are read the way the go command reads them: the process environment first, then the go env file `go env -w` writes (`$GOENV`, or `go/env` under the user config directory). Patterns are matched against leading path elements, as `module.MatchPrefixPatterns` does. A module path whose first element has no dot (a local-only or standard-library path) is reported as unknown.
+
+No Go installation is required. The extension never runs `go`, reads the module cache or `go.sum`, or opens license files. A `go.mod` extracted into the module cache (`…/<module>@<version>/go.mod`) is not annotated. Setting `go.useRegistry` to `false` stops requests while still using cached answers.

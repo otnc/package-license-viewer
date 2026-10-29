@@ -1,0 +1,8 @@
+{
+  "packageLicenseViewer.go.useRegistry": false,
+  "packageLicenseViewer.showResolvedVersion": true,
+  "packageLicenseViewer.unknownText": "unknown",
+  "files.associations": {
+    "go.mod": "plaintext"
+  }
+}

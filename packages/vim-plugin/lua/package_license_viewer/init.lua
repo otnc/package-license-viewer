@@ -120,6 +120,7 @@ function M.setup()
       "pnpm-workspace.yaml",
       "pnpm-workspace.yml",
       "moon.mod",
+      "go.mod",
     },
     callback = function(args)
       M.attach(args.buf)

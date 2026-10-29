@@ -46,6 +46,18 @@ mooncakes.ioは `/api/v0/modules/<user>/<module>@<version>` にその release �
 
 `moon` コマンドの実行、アーカイブのダウンロード、`.mbt` のパース、パッケージレベル(`moon.pkg`)の扱い、依存関係グラフのいずれもここには含まれません。
 
+### Goの実装
+
+Goの実装は [`packages/core/src/providers/go/`](packages/core/src/providers/go/) にあります。[`parse.ts`](packages/core/src/providers/go/parse.ts) は `golang.org/x/mod/modfile` の字句規則(1行に1ディレクティブ、`//` コメント、`verb ( … )` ブロック、ダブルクォートとバッククォートの文字列)に従い、`require` と `replace` だけを読みます。`replace` はパースの時点で適用します。goコマンドと同じく、バージョン指定の置き換えがワイルドカードの置き換えより優先されます。置き換え先がディレクトリならその requirement はスキップし、モジュールなら置き換え先のモジュールとして解決します。
+
+requirement のバージョンは正確なバージョンです。goコマンドはminimal version selectionを使い、Go 1.17以降はメインモジュールの `go.mod` に、ビルドに必要なすべてのモジュールが選ばれたバージョンで書かれるためです。範囲を解釈する処理はなく、`go` コマンドも実行しません。
+
+ライセンスは [`client.ts`](packages/core/src/providers/go/client.ts) から [deps.dev](https://docs.deps.dev/api/v3/) の `GetVersion` に問い合わせて取得します。モジュールミラーはライセンスのメタデータを配信しておらず、pkg.go.devにもそのためのAPIがないためです。`licenses` に複数のエントリがあるのはモジュール内にライセンスファイルが複数あるということなので、`AND` でつなぎます。`non-standard` は捨てます。キャッシュするのは見つかった回答だけです。公開直後のリリースは、まだdeps.devに取り込まれていないことがあります。ホバーから `https://pkg.go.dev/<module>@<version>` にリンクするのは、deps.devがそのバージョンについて回答した後だけです。回答があることが、そのモジュールが公開されている証拠になります。
+
+[`env.ts`](packages/core/src/providers/go/env.ts) は `GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` をプロセスの環境変数から、次にgoのenvファイル(`$GOENV`、または `os.UserConfigDir()` 配下の `go/env`)から読み、`module.MatchPrefixPatterns` と同じ方法で照合します。一致したモジュールはリクエストの前にスキップするので、プライベートモジュールのパスがマシンの外に出ることはありません。このチェックは必ずすべてのネットワーク呼び出しより前に置いてください。
+
+`go` コマンドの実行、モジュールキャッシュやライセンスファイルの読み込み、`go.sum`/`go.work` の扱い、依存関係グラフのいずれもここには含まれません。
+
 ## 別のエコシステムを追加する
 
 `LicenseProvider` を実装し、登録し、有効化と設定を接続します。
@@ -79,10 +91,10 @@ npmやJSRと同様に、すべてのプロバイダーはホバータイトル�
 
 レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
 
-Python、Ruby、Go、MoonBitへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされている各Issueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
+Python、Rubyへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされている各Issueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
-- Go: `https://pkg.go.dev/<module>?tab=licenses` (JSON APIはなし。モジュールプロキシかスクレイピングが必要)
+- [deps.dev](https://docs.deps.dev/api/v3/) の `GetVersion` は、Goと同じくPyPIとRubyGemsについても `licenses` を返します
 
 ## ドキュメントとi18n
 
@@ -134,7 +146,7 @@ npm run package           # .vsixをビルド
 
 `npm test` はTypeScriptのソースに対して直接Vitestを実行します。事前にコンパイルする必要はありません。`packages/vscode-extension` のテストスイートは、加えてビルド済みの `dist/extension.js` が存在する場合はそれも読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、ソースに対しては問題なく解決されても、拡張機能ホスト内では失敗することがあります。このチェックを黙ってスキップさせず実際に働かせるには、先に `npm run compile` を実行してください。
 
-CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml` と `moon.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
+Cargo、MoonBit、Goはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml`、`moon.mod`、`go.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
 
 コミット前に `npm run format` を実行してください。CIでは `format:check` と `lint` が強制されます。
 
@@ -147,7 +159,7 @@ CargoとMoonBitはそれぞれ専用のIntegrationテスト用ワークスペー
 
 [`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)、`go.test.ts`(Go)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/)、[`test/fixtures/go-workspace/`](test/fixtures/go-workspace/) のフィクスチャを共通で使っています。
 
 ## リリース
 

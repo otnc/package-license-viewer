@@ -55,11 +55,11 @@ Hover an annotation to see the resolved version, where the information came from
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
 | Deno / JSR | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
+| Go | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` requirements, with `replace` applied, resolved against deps.dev; no local Go install needed, and modules matching `GOPRIVATE` are never looked up |
 | Rust | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
 | MoonBit | ✅ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Python | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | | Planned — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
-| Go | ❌ | go mod | | Planned — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
 | Your language? | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
@@ -72,11 +72,11 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | [@otnc](https://github.com/otnc) | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | [@otnc](https://github.com/otnc) | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
+| Go | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` の requirement を `replace` を反映したうえでdeps.devと突き合わせて解決。ローカルにGoのインストールは不要で、`GOPRIVATE` に一致するモジュールは問い合わせない |
 | Rust | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
 | MoonBit | ✅ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
 | Python | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
-| Go | ❌ | go mod | | 対応予定 — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
 | あなたの言語? | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
@@ -158,6 +158,8 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.enabled` | `true` | Annotate dependency declarations in `moon.mod` / `moon.mod.json`. |
 | `packageLicenseViewer.moonbit.useRegistry` | `true` | Allow mooncakes.io requests. When disabled, installed modules, the local registry index and existing cached metadata are still used. |
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`, so an installed toolchain resolves without any request. |
+| `packageLicenseViewer.go.enabled` | `true` | Annotate the requirements in `go.mod`. |
+| `packageLicenseViewer.go.useRegistry` | `true` | Allow deps.dev requests. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used. |
 :::
 
 :::kiritan{locale=ja}
@@ -192,6 +194,8 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.enabled` | `true` | `moon.mod` / `moon.mod.json` の依存関係宣言に注釈を付けます。 |
 | `packageLicenseViewer.moonbit.useRegistry` | `true` | mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。 |
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
+| `packageLicenseViewer.go.enabled` | `true` | `go.mod` の requirement に注釈を付けます。 |
+| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 :::
 
 :::kiritan{locale=en}
