@@ -1,5 +1,6 @@
 import type { LicenseCache } from "../cache";
 import { CratesLicenseProvider } from "./crates";
+import { GoLicenseProvider } from "./go";
 import { JsrLicenseProvider } from "./jsr";
 import { MoonbitLicenseProvider } from "./moonbit";
 import { NpmLicenseProvider } from "./npm";
@@ -8,6 +9,7 @@ import type { LicenseProvider, ProviderHost, TextDocumentLike } from "./types";
 export * from "./types";
 export { CratesLicenseProvider } from "./crates";
 export { workspaceManifestUri } from "./crates/workspace";
+export { GoLicenseProvider } from "./go";
 export { JsrLicenseProvider } from "./jsr";
 export { MoonbitLicenseProvider } from "./moonbit";
 export { NpmLicenseProvider } from "./npm";
@@ -25,6 +27,7 @@ export function createProviders(cache: LicenseCache, host: ProviderHost): Licens
     new JsrLicenseProvider(cache, host),
     new CratesLicenseProvider(cache, host),
     new MoonbitLicenseProvider(cache, host),
+    new GoLicenseProvider(cache, host),
   ];
 }
 
