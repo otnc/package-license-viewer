@@ -46,6 +46,18 @@ mooncakes.io answers `/api/v0/modules/<user>/<module>@<version>` with that relea
 
 No `moon` invocation, archive download, `.mbt` parsing, package-level (`moon.pkg`) handling or dependency graph belongs here.
 
+### Go implementation
+
+Go's implementation lives in [`packages/core/src/providers/go/`](packages/core/src/providers/go/). [`parse.ts`](packages/core/src/providers/go/parse.ts) follows the lexical rules of `golang.org/x/mod/modfile` — one directive per line, `//` comments, `verb ( … )` blocks, quoted or raw strings — and reads only `require` and `replace`. `replace` is applied at parse time, an exact-version replacement winning over a wildcard one the way the go command picks; a directory target makes the requirement skipped, and a module target makes it resolve as that module.
+
+A required version is exact: the go command uses minimal version selection, and since Go 1.17 the main module's `go.mod` lists every module the build needs at its selected version. Nothing interprets ranges, and nothing runs `go`.
+
+Licenses come from [deps.dev](https://docs.deps.dev/api/v3/) (`GetVersion`), via [`client.ts`](packages/core/src/providers/go/client.ts): the module mirror serves no license metadata and pkg.go.dev has no API for it. Several entries in its `licenses` mean several license files in the module, so they are joined with `AND`; `non-standard` is dropped. Only found answers are cached — deps.dev may not have ingested a fresh release yet. The hover links to `https://pkg.go.dev/<module>@<version>` only after deps.dev has answered for that version, which is what shows the module is public.
+
+[`env.ts`](packages/core/src/providers/go/env.ts) reads `GOPRIVATE`, `GONOPROXY` and `GONOSUMDB` from the process environment, then from the go env file (`$GOENV`, or `go/env` under `os.UserConfigDir()`), and matches them like `module.MatchPrefixPatterns`. A matching module is skipped before any request, so a private module's path never leaves the machine. Keep that check ahead of every network call.
+
+No `go` invocation, module cache or license-file reading, `go.sum`/`go.work` handling or dependency graph belongs here.
+
 ## Adding another ecosystem
 
 Implement `LicenseProvider`, register it, and connect its activation and settings.
@@ -79,10 +91,10 @@ Every provider is expected to make the hover title clickable, the same way npm a
 
 If the registry also exposes a genuine, separately-declared homepage, put that in `homepage` as usual — `buildHover` already drops the `Homepage` line when it would just repeat the title link (as it does for JSR, which has no separate homepage of its own).
 
-Python, Ruby, Go and MoonBit support are planned but not implemented yet — see the open issues linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
+Python and Ruby support are planned but not implemented yet — see the open issues linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
-- Go: `https://pkg.go.dev/<module>?tab=licenses` (no JSON API; needs the module proxy or scraping)
+- [deps.dev](https://docs.deps.dev/api/v3/) answers `GetVersion` with `licenses` for PyPI and RubyGems too, as it does for Go
 
 ## Documentation and i18n
 
@@ -134,7 +146,7 @@ The lockfiles in [`test/fixtures/lockfiles/`](test/fixtures/lockfiles/) were pro
 
 `npm test` runs Vitest directly against TypeScript source — there is no compile step to run first for it. `packages/vscode-extension`'s suite additionally loads the bundled `dist/extension.js` when it exists, because bundling can break the extension on its own: a dependency whose entry point defers its `require()` calls to runtime resolves fine against source and then fails inside the extension host. Run `npm run compile` first to exercise that check instead of silently skipping it.
 
-Cargo and MoonBit each get their own integration workspace, with `Cargo.toml` and `moon.mod` associated to plaintext so that dispatch cannot quietly come to depend on a language registration. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
+Cargo, MoonBit and Go each get their own integration workspace, with `Cargo.toml`, `moon.mod` and `go.mod` associated to plaintext so that dispatch cannot quietly come to depend on a language registration. It checks automatic activation before opening a document or calling any extension command, then tests URI-based workspace/lockfile reads, cached metadata, Hover links, unsaved parsing and settings. Registry access is disabled in this fixture. To exercise the minimum host, set `PLV_VSCODE_VERSION=1.90.0` when running `npm run test:integration`; otherwise the current stable host is used.
 
 Run `npm run format` before committing; CI enforces `format:check` and `lint`.
 
@@ -147,7 +159,7 @@ Test code is split across two tiers — different tools on purpose, not an incon
 
 [`test/fixtures/`](test/fixtures/) stays at the repository root, outside both packages, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
 
-When adding a provider or changing resolution logic, add a unit test next to the existing ones in [`packages/core/test/`](packages/core/test/), following whichever of `npm.test.ts` (npm/JSR), `crates.test.ts` (Cargo) or `moonbit.test.ts` (MoonBit) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — the suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/), [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/) and [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/).
+When adding a provider or changing resolution logic, add a unit test next to the existing ones in [`packages/core/test/`](packages/core/test/), following whichever of `npm.test.ts` (npm/JSR), `crates.test.ts` (Cargo), `moonbit.test.ts` (MoonBit) or `go.test.ts` (Go) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — the suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/), [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/), [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/) and [`test/fixtures/go-workspace/`](test/fixtures/go-workspace/).
 
 ## Releasing
 
