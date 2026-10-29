@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.7.0]
+
+### Added
+
+- Parse go.mod requirements with replace directives applied
+- Recognize private Go modules from GOPRIVATE, GONOPROXY and GONOSUMDB
+- Add a Go license provider backed by deps.dev
+- Activate on go.mod and add the go.enabled and go.useRegistry settings
+- Attach the vim/neovim plugin to go.mod
+
 ## [0.6.2]
 
 ### Fixed
