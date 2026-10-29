@@ -29,7 +29,7 @@ Hover an annotation to see the resolved version, where the information came from
 
 ## Supported languages
 
-| Language | Support | Package managers | Contributor | Notes |
+| Language | Support | Package managers | First contributor | Notes |
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
 | Deno / JSR | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |

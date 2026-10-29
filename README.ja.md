@@ -29,7 +29,7 @@
 
 ## サポート言語
 
-| 言語 | サポート状況 | パッケージマネージャー | 貢献者 | 備考 |
+| 言語 | サポート状況 | パッケージマネージャー | 最初の貢献者 | 備考 |
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | [@otnc](https://github.com/otnc) | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | [@otnc](https://github.com/otnc) | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |

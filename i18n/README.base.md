@@ -51,7 +51,7 @@ Hover an annotation to see the resolved version, where the information came from
 :::kiritan{locale=en}
 ## Supported languages
 
-| Language | Support | Package managers | Contributor | Notes |
+| Language | Support | Package managers | First contributor | Notes |
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
 | Deno / JSR | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
@@ -67,7 +67,7 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 :::kiritan{locale=ja}
 ## サポート言語
 
-| 言語 | サポート状況 | パッケージマネージャー | 貢献者 | 備考 |
+| 言語 | サポート状況 | パッケージマネージャー | 最初の貢献者 | 備考 |
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | [@otnc](https://github.com/otnc) | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | [@otnc](https://github.com/otnc) | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
