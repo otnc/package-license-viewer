@@ -60,6 +60,7 @@ Hover an annotation to see the resolved version, where the information came from
 | Python | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | | Planned — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
 | Go | ❌ | go mod | | Planned — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
+| Your language? | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
 :::
@@ -76,6 +77,7 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Python | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
 | Go | ❌ | go mod | | 対応予定 — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
+| あなたの言語? | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 :::
