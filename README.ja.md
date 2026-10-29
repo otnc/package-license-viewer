@@ -29,7 +29,7 @@
 
 ## サポート言語
 
-| 言語 | サポート状況 | パッケージマネージャー | 貢献者 | 備考 |
+| 言語 | サポート状況 | パッケージマネージャー | 最初の貢献者 | 備考 |
 | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic / berry), bun | [@otnc](https://github.com/otnc) | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
 | Deno / JSR | ✅ | jsr, `npm:` 指定子 | [@otnc](https://github.com/otnc) | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
@@ -38,6 +38,7 @@
 | Python | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Ruby | ❌ | bundler, gem | | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
 | Go | ❌ | go mod | | 対応予定 — [Issue #16](https://github.com/otnc/package-license-viewer/issues/16) |
+| あなたの言語? | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
