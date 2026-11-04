@@ -65,10 +65,12 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | 設定 | デフォルト値 | 説明 |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | インラインのライセンス注釈を表示します。 |
-| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`。 |
+| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`。 |
 | `packageLicenseViewer.showResolvedVersion` | `false` | 解決されたバージョンを付加します(例: `MIT · 4.17.21`)。 |
 | `packageLicenseViewer.showNodeEngine` | `true` | パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。 |
 | `packageLicenseViewer.showRubyVersion` | `true` | gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。 |
+| `packageLicenseViewer.showRustVersion` | `true` | crateに `rust-version` (MSRV) の指定があれば付加します(例: `MIT (Rust: >=1.56)`)。 |
+| `packageLicenseViewer.showGoVersion` | `true` | モジュールのバージョンに `go` ディレクティブの指定があれば付加します(例: `MIT (Go: >=1.21)`)。 |
 | `packageLicenseViewer.unknownText` | `""` | ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。 |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。 |
 | `packageLicenseViewer.licenseColor` | `charts.green` | 注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。 |
@@ -93,7 +95,7 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.useRegistry` | `true` | mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。 |
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
 | `packageLicenseViewer.go.enabled` | `true` | `go.mod` の requirement に注釈を付けます。 |
-| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
+| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストと、`go` ディレクティブ取得のためのGoモジュールプロキシからの各バージョンの `go.mod` の読み取りを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 | `packageLicenseViewer.rubygems.enabled` | `true` | `Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。 |
 | `packageLicenseViewer.rubygems.useRegistry` | `true` | rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 | `packageLicenseViewer.rubygems.useLockfiles` | `true` | `Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。 |

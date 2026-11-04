@@ -30,7 +30,7 @@ npmプロバイダー([`packages/core/src/providers/npm/`](packages/core/src/pro
 
 Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
 
-`workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
+`workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。レコードには `rust_version` も含まれ、リリースの MSRV としてライセンスの横に表示します (`>=` の範囲に正規化)。メタデータのキャッシュキーは版付き (`v2`) です。v1 のレコードにはこのフィールドが無いためです。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
 
 マニフェスト解決キーと公開バージョンのメタデータキーは分けて管理してください。前者はURI、エイリアス、セクション、ソース、要件、ワークスペースのコンテキストを含み、後者はドキュメント間で正確な公開メタデータを共有します。`invalidate()` は補助的な読み込みをクリアし、保留中のCargoリクエストをキャンセルします。Cargoコマンドの実行、アーカイブの読み込み、ソースキャッシュ、ファイルシステムウォッチャー、依存関係グラフのいずれもここには含まれません。
 
@@ -54,7 +54,7 @@ requirement のバージョンは正確なバージョンです。goコマンド
 
 ライセンスは [`client.ts`](packages/core/src/providers/go/client.ts) から [deps.dev](https://docs.deps.dev/api/v3/) の `GetVersion` に問い合わせて取得します。モジュールミラーはライセンスのメタデータを配信しておらず、pkg.go.devにもそのためのAPIがないためです。`licenses` に複数のエントリがあるのはモジュール内にライセンスファイルが複数あるということなので、`AND` でつなぎます。`non-standard` は捨てます。キャッシュするのは見つかった回答だけです。公開直後のリリースは、まだdeps.devに取り込まれていないことがあります。ホバーから `https://pkg.go.dev/<module>@<version>` にリンクするのは、deps.devがそのバージョンについて回答した後だけです。回答があることが、そのモジュールが公開されている証拠になります。
 
-[`env.ts`](packages/core/src/providers/go/env.ts) は `GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` をプロセスの環境変数から、次にgoのenvファイル(`$GOENV`、または `os.UserConfigDir()` 配下の `go/env`)から読み、`module.MatchPrefixPatterns` と同じ方法で照合します。一致したモジュールはリクエストの前にスキップするので、プライベートモジュールのパスがマシンの外に出ることはありません。このチェックは必ずすべてのネットワーク呼び出しより前に置いてください。
+[`env.ts`](packages/core/src/providers/go/env.ts) は `GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` をプロセスの環境変数から、次にgoのenvファイル(`$GOENV`、または `os.UserConfigDir()` 配下の `go/env`)から読み、`module.MatchPrefixPatterns` と同じ方法で照合します。一致したモジュールはリクエストの前にスキップするので、プライベートモジュールのパスがマシンの外に出ることはありません。このチェックは必ずすべてのネットワーク呼び出しより前に置いてください。deps.dev が持っていない唯一の項目である各バージョンの `go` ディレクティブは、モジュールプロキシ上のそのバージョン自身の `go.mod` から読みます。あくまで付随表示なので、読み取りの失敗でライセンス結果が変わることはありません。
 
 `go` コマンドの実行、モジュールキャッシュやライセンスファイルの読み込み、`go.sum`/`go.work` の扱い、依存関係グラフのいずれもここには含まれません。
 

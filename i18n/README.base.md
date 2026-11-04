@@ -132,10 +132,12 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | Setting | Default | Description |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | Show inline license annotations. |
-| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`. |
+| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`. |
 | `packageLicenseViewer.showResolvedVersion` | `false` | Append the resolved version, e.g. `MIT · 4.17.21`. |
 | `packageLicenseViewer.showNodeEngine` | `true` | Append the package's `engines.node` range, when it has one, e.g. `MIT (Node: >=20)`. |
 | `packageLicenseViewer.showRubyVersion` | `true` | Append a gem's `required_ruby_version` range, when it has one, e.g. `MIT (Ruby: >=3.0)`. |
+| `packageLicenseViewer.showRustVersion` | `true` | Append a crate's `rust-version` (MSRV), when it has one, e.g. `MIT (Rust: >=1.56)`. |
+| `packageLicenseViewer.showGoVersion` | `true` | Append a module version's `go` directive, when it has one, e.g. `MIT (Go: >=1.21)`. |
 | `packageLicenseViewer.unknownText` | `""` | Text shown when the license is unknown. Empty means show nothing. |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | Theme color id, or a CSS color such as `#88888899`, for everything except the license itself. |
 | `packageLicenseViewer.licenseColor` | `charts.green` | Theme color id, or a CSS color, used for just the license part of the annotation. |
@@ -160,7 +162,7 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.useRegistry` | `true` | Allow mooncakes.io requests. When disabled, installed modules, the local registry index and existing cached metadata are still used. |
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`, so an installed toolchain resolves without any request. |
 | `packageLicenseViewer.go.enabled` | `true` | Annotate the requirements in `go.mod`. |
-| `packageLicenseViewer.go.useRegistry` | `true` | Allow deps.dev requests. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used. |
+| `packageLicenseViewer.go.useRegistry` | `true` | Allow deps.dev requests, and reads of a version's `go.mod` from the Go module proxy for its `go` directive. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used. |
 | `packageLicenseViewer.rubygems.enabled` | `true` | Annotate dependency declarations in `Gemfile` and `*.gemspec`. |
 | `packageLicenseViewer.rubygems.useRegistry` | `true` | Allow rubygems.org requests. When disabled, existing cached metadata can still be used. |
 | `packageLicenseViewer.rubygems.useLockfiles` | `true` | Prefer a uniquely matching rubygems.org version in `Gemfile.lock`. |
@@ -172,10 +174,12 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | 設定 | デフォルト値 | 説明 |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | インラインのライセンス注釈を表示します。 |
-| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`。 |
+| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`。 |
 | `packageLicenseViewer.showResolvedVersion` | `false` | 解決されたバージョンを付加します(例: `MIT · 4.17.21`)。 |
 | `packageLicenseViewer.showNodeEngine` | `true` | パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。 |
 | `packageLicenseViewer.showRubyVersion` | `true` | gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。 |
+| `packageLicenseViewer.showRustVersion` | `true` | crateに `rust-version` (MSRV) の指定があれば付加します(例: `MIT (Rust: >=1.56)`)。 |
+| `packageLicenseViewer.showGoVersion` | `true` | モジュールのバージョンに `go` ディレクティブの指定があれば付加します(例: `MIT (Go: >=1.21)`)。 |
 | `packageLicenseViewer.unknownText` | `""` | ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。 |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。 |
 | `packageLicenseViewer.licenseColor` | `charts.green` | 注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。 |
@@ -200,7 +204,7 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.useRegistry` | `true` | mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。 |
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
 | `packageLicenseViewer.go.enabled` | `true` | `go.mod` の requirement に注釈を付けます。 |
-| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
+| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストと、`go` ディレクティブ取得のためのGoモジュールプロキシからの各バージョンの `go.mod` の読み取りを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 | `packageLicenseViewer.rubygems.enabled` | `true` | `Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。 |
 | `packageLicenseViewer.rubygems.useRegistry` | `true` | rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 | `packageLicenseViewer.rubygems.useLockfiles` | `true` | `Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。 |
