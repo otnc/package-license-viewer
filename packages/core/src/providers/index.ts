@@ -4,6 +4,7 @@ import { GoLicenseProvider } from "./go";
 import { JsrLicenseProvider } from "./jsr";
 import { MoonbitLicenseProvider } from "./moonbit";
 import { NpmLicenseProvider } from "./npm";
+import { RubyGemsLicenseProvider } from "./rubygems";
 import type { LicenseProvider, ProviderHost, TextDocumentLike } from "./types";
 
 export * from "./types";
@@ -13,6 +14,7 @@ export { GoLicenseProvider } from "./go";
 export { JsrLicenseProvider } from "./jsr";
 export { MoonbitLicenseProvider } from "./moonbit";
 export { NpmLicenseProvider } from "./npm";
+export { RubyGemsLicenseProvider } from "./rubygems";
 
 /**
  * Build the set of providers.
@@ -28,6 +30,7 @@ export function createProviders(cache: LicenseCache, host: ProviderHost): Licens
     new CratesLicenseProvider(cache, host),
     new MoonbitLicenseProvider(cache, host),
     new GoLicenseProvider(cache, host),
+    new RubyGemsLicenseProvider(cache, host),
   ];
 }
 
