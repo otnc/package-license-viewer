@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem "rails", "~> 8.0"
+gem "forked", "1.0"
+gem "vendored", path: "../vendored"
+
+source "https://gems.example.com" do
+  gem "internal", "1.0"
+end
