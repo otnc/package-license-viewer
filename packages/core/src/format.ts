@@ -35,7 +35,8 @@ export function formatAnnotationSegments(
     .replace(/\$\{version\}/g, info.version ?? "")
     .replace(/\$\{name\}/g, entry.name)
     .replace(/\$\{source\}/g, info.source)
-    .replace(/\$\{nodeEngine\}/g, info.nodeEngine ?? "");
+    .replace(/\$\{nodeEngine\}/g, info.nodeEngine ?? "")
+    .replace(/\$\{rubyVersion\}/g, info.rubyVersion ?? "");
 
   const marker = "${license}";
   const markerIndex = template.indexOf(marker);
@@ -58,6 +59,10 @@ export function formatAnnotationSegments(
 
   if (config.showNodeEngine && info.nodeEngine && !config.format.includes("${nodeEngine}")) {
     after += ` (Node: ${info.nodeEngine})`;
+  }
+
+  if (config.showRubyVersion && info.rubyVersion && !config.format.includes("${rubyVersion}")) {
+    after += ` (Ruby: ${info.rubyVersion})`;
   }
 
   // Trim only the outer edges — a leading/trailing space right next to the license value (as in "${name}: ${license}") is intentional and must survive.
@@ -112,6 +117,10 @@ export function buildHover(
 
   if (info.nodeEngine) {
     lines.push(`Node: \`${info.nodeEngine}\``);
+  }
+
+  if (info.rubyVersion) {
+    lines.push(`Ruby: \`${info.rubyVersion}\``);
   }
 
   lines.push(`Resolved from: ${describeSource(info)}`);

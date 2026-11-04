@@ -526,6 +526,7 @@ const BASE_CONFIG: ViewerConfig = {
   format: "${license}",
   showResolvedVersion: false,
   showNodeEngine: true,
+  showRubyVersion: true,
   unknownText: "",
   annotationColor: "editorCodeLens.foreground",
   licenseColor: "charts.green",
