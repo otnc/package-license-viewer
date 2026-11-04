@@ -1,6 +1,6 @@
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
-import { checkCancelled, fetchJson, NotFoundError, record } from "../../net";
+import { checkCancelled, fetchJson, fetchText, NotFoundError, record } from "../../net";
 import type { CancellationLike } from "../types";
 
 /** What deps.dev knows about one module version */
@@ -23,7 +23,9 @@ export function modulePageUrl(path: string, version: string): string {
 /**
  * Reads module licenses from [deps.dev](https://docs.deps.dev/api/v3/).
 
- * The Go module mirror serves zips and `go.mod` files but no license metadata, and pkg.go.dev has no API for it, so this asks deps.dev, which detects the licenses in the modules the mirror serves. One request per module version answers everything: `GetVersion` carries the licenses and the source repository. A version's contents never change, so a found answer is cached; a miss is not, since deps.dev may simply not have ingested a fresh release yet.
+ * The Go module mirror serves zips and `go.mod` files but no license metadata, and pkg.go.dev has no API for it, so this asks deps.dev, which detects the licenses in the modules the mirror serves. `GetVersion` carries the licenses and the source repository. A version's contents never change, so a found answer is cached; a miss is not, since deps.dev may simply not have ingested a fresh release yet.
+ *
+ * The one thing deps.dev does not carry is the version's `go` directive, so that is read from the version's own `go.mod` on the module proxy instead — a best-effort decoration: any failure just leaves it unset.
  */
 export class DepsDevClient {
   private epoch = 0;
@@ -64,6 +66,55 @@ export class DepsDevClient {
       return { kind: "unknown", reason: `deps.dev lookup failed: ${String(error)}` };
     }
   }
+
+  /**
+   * The `go` directive of one module version, normalized to a range
+   * (`">= 1.21"`), read from its `go.mod` on the module proxy.
+   * Returns undefined when there is nothing to show or the read failed —
+   * unlike the license lookup, a failure here is not worth reporting.
+   */
+  async goVersion(
+    path: string,
+    version: string,
+    token: CancellationLike
+  ): Promise<string | undefined> {
+    const key = `go:modfile:v1:${path}@${version}`;
+    const cached = this.cache.get<string>(key);
+    if (cached) return cached;
+    if (!getSetting("go.useRegistry", true)) return undefined;
+    const epoch = this.epoch;
+    try {
+      checkCancelled(token);
+      const text = await fetchText(
+        `https://proxy.golang.org/${escapeModulePath(path)}/@v/${version}.mod`,
+        token
+      );
+      const directive = parseGoDirective(text);
+      if (directive && epoch === this.epoch) {
+        this.cache.set(key, directive);
+      }
+      return directive;
+    } catch {
+      return undefined;
+    }
+  }
+}
+
+/** The module proxy's case escaping: an uppercase letter becomes `!` plus its lowercase form */
+function escapeModulePath(path: string): string {
+  return path.replace(/[A-Z]/g, (letter) => `!${letter.toLowerCase()}`);
+}
+
+/**
+ * The `go` directive of a go.mod file, as the range it declares. The
+ * directive names the language version the module is written in, and since
+ * Go 1.21 the toolchain refuses to build a module with a newer one, so it
+ * reads as a minimum. A `toolchain` directive is a different statement and
+ * is not picked up (the pattern anchors on a bare `go`).
+ */
+export function parseGoDirective(text: string): string | undefined {
+  const match = /^go[ \t]+(\d+\.\d+(?:\.\d+)?)[ \t]*(?:\/\/.*)?$/m.exec(text);
+  return match ? `>= ${match[1]}` : undefined;
 }
 
 function decodeVersion(json: unknown, path: string, version: string): GoModuleVersion {

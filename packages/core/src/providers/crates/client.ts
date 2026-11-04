@@ -11,6 +11,8 @@ export interface CrateVersion {
   license?: string;
   homepage?: string;
   yanked: boolean;
+  /** The version's declared `rust-version` (MSRV), normalized to a range, e.g. `">= 1.56"` */
+  rustVersion?: string;
 }
 export type MetadataResult =
   { kind: "found"; metadata: CrateVersion } | { kind: "unknown"; reason: string };
@@ -29,7 +31,8 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
     !validVersion(value.num) ||
     typeof value.yanked !== "boolean" ||
     (value.license != null && typeof value.license !== "string") ||
-    (value.homepage != null && typeof value.homepage !== "string")
+    (value.homepage != null && typeof value.homepage !== "string") ||
+    (value.rust_version != null && typeof value.rust_version !== "string")
   )
     throw new Error("invalid crates.io version metadata");
   return {
@@ -37,7 +40,20 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
     license: typeof value.license === "string" ? value.license.trim() || undefined : undefined,
     homepage: typeof value.homepage === "string" ? value.homepage : undefined,
     yanked: value.yanked,
+    rustVersion: normalizeRustVersion(value.rust_version),
   };
+}
+
+/**
+ * crates.io reports `rust_version` as a bare version (`"1.56"`) — the minimum
+ * Rust the release needs — so spell it as the range it means. Anything that
+ * already carries an operator is kept as published.
+ */
+function normalizeRustVersion(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return /^\d+\.\d+(?:\.\d+)?$/.test(trimmed) ? `>= ${trimmed}` : trimmed;
 }
 
 /** Shared across all Cargo clients in this extension host; spaces actual send starts. */
@@ -107,8 +123,9 @@ export class CratesClient {
     token: CancellationLike
   ): Promise<MetadataResult> {
     const epoch = this.epoch;
-    const key = (v: string) => `crates:metadata:v1:${name}@${v}`;
-    const listKey = `crates:versions:v1:${name}`;
+    // v2: v1 entries predate the rustVersion field and would mask it for up to a week
+    const key = (v: string) => `crates:metadata:v2:${name}@${v}`;
+    const listKey = `crates:versions:v2:${name}`;
     try {
       checkCancelled(token);
       const cached = locked

@@ -93,7 +93,7 @@
         "packageLicenseViewer.format": {
           "type": "string",
           "default": "${license}",
-          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`."
+          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`."
         },
         "packageLicenseViewer.showResolvedVersion": {
           "type": "boolean",
@@ -109,6 +109,16 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Append a gem's declared `required_ruby_version` range to the annotation, when it has one (e.g. `MIT (Ruby: >=3.0)`)."
+        },
+        "packageLicenseViewer.showRustVersion": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Append a crate's declared `rust-version` (MSRV) to the annotation, when it has one (e.g. `MIT (Rust: >=1.56)`)."
+        },
+        "packageLicenseViewer.showGoVersion": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Append a module version's declared `go` directive to the annotation, when it has one (e.g. `MIT (Go: >=1.21)`)."
         },
         "packageLicenseViewer.unknownText": {
           "type": "string",
