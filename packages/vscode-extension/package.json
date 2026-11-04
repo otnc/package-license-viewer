@@ -30,7 +30,12 @@
     "mooncakes",
     "go",
     "golang",
-    "go.mod"
+    "go.mod",
+    "ruby",
+    "rubygems",
+    "gemfile",
+    "gemspec",
+    "bundler"
   ],
   "icon": "images/icon.png",
   "repository": {
@@ -47,6 +52,7 @@
     "onLanguage:yaml",
     "onLanguage:toml",
     "onLanguage:go.mod",
+    "onLanguage:ruby",
     "workspaceContains:**/package.json",
     "workspaceContains:**/deno.json",
     "workspaceContains:**/deno.jsonc",
@@ -57,7 +63,9 @@
     "workspaceContains:**/Cargo.toml",
     "workspaceContains:**/moon.mod",
     "workspaceContains:**/moon.mod.json",
-    "workspaceContains:**/go.mod"
+    "workspaceContains:**/go.mod",
+    "workspaceContains:**/Gemfile",
+    "workspaceContains:**/*.gemspec"
   ],
   "contributes": {
     "commands": [
@@ -85,7 +93,7 @@
         "packageLicenseViewer.format": {
           "type": "string",
           "default": "${license}",
-          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`."
+          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`."
         },
         "packageLicenseViewer.showResolvedVersion": {
           "type": "boolean",
@@ -96,6 +104,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Append the package's declared `engines.node` range to the annotation, when it has one (e.g. `MIT (Node: >=20)`)."
+        },
+        "packageLicenseViewer.showRubyVersion": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Append a gem's declared `required_ruby_version` range to the annotation, when it has one (e.g. `MIT (Ruby: >=3.0)`)."
         },
         "packageLicenseViewer.unknownText": {
           "type": "string",
@@ -233,6 +246,21 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Allow deps.dev requests. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used."
+        },
+        "packageLicenseViewer.rubygems.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable license annotations for Ruby manifests (`Gemfile` and `*.gemspec`)."
+        },
+        "packageLicenseViewer.rubygems.useRegistry": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Allow rubygems.org requests. When disabled, existing cached metadata is still used."
+        },
+        "packageLicenseViewer.rubygems.useLockfiles": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Use a uniquely matching version from `Gemfile.lock` before selecting a public version from the requirement."
         }
       }
     }
