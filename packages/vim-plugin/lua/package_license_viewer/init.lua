@@ -121,6 +121,8 @@ function M.setup()
       "pnpm-workspace.yml",
       "moon.mod",
       "go.mod",
+      "Gemfile",
+      "*.gemspec",
     },
     callback = function(args)
       M.attach(args.buf)
