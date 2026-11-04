@@ -2,7 +2,7 @@ import { afterEach, expect, test } from "vitest";
 import { LicenseCache } from "../src/cache";
 import { buildHover } from "../src/format";
 import { GoLicenseProvider } from "../src/providers/go";
-import { combineLicenses } from "../src/providers/go/client";
+import { combineLicenses, parseGoDirective } from "../src/providers/go/client";
 import { matchPrefixPatterns, parseEnvFile } from "../src/providers/go/env";
 import { parseGoMod, tokenizeLine } from "../src/providers/go/parse";
 import { isDirectoryPath, isModulePath, isModuleVersion } from "../src/providers/go/spec";
@@ -172,6 +172,15 @@ test("private patterns match leading path elements the way module.MatchPrefixPat
 
 // --- licenses ---------------------------------------------------------------
 
+test("the go directive is read as a minimum; a toolchain directive is a different statement", () => {
+  expect(parseGoDirective("module example.com/x\n\ngo 1.21\n")).toBe(">= 1.21");
+  expect(parseGoDirective("module example.com/x\n\ngo 1.21.0 // the language version\n")).toBe(
+    ">= 1.21.0"
+  );
+  expect(parseGoDirective("module example.com/x\n\ntoolchain go1.22.0\n")).toBeUndefined();
+  expect(parseGoDirective("module example.com/x\n")).toBeUndefined();
+});
+
 test("deps.dev licenses combine into one SPDX expression", () => {
   expect(combineLicenses(["MIT"])).toBe("MIT");
   expect(combineLicenses(["Apache-2.0", "MIT"])).toBe("Apache-2.0 AND MIT");
@@ -193,6 +202,14 @@ function mount(files: Map<string, string>, answers: Record<string, unknown>) {
   const originalFetch = global.fetch;
   global.fetch = (async (url: string) => {
     calls.push(url);
+    if (url.startsWith("https://proxy.golang.org/")) {
+      // The version's go.mod, read for its `go` directive
+      return {
+        ok: true,
+        status: 200,
+        text: async () => "module example.com/x\n\ngo 1.21\n",
+      };
+    }
     const match = /\/packages\/([^/]+)\/versions\/([^/]+)$/.exec(url);
     const name = match ? decodeURIComponent(match[1]) : "";
     const version = match ? decodeURIComponent(match[2]) : "";
@@ -207,7 +224,7 @@ function mount(files: Map<string, string>, answers: Record<string, unknown>) {
         links: [{ label: "SOURCE_REPO", url: `https://${name}` }],
       }),
     };
-  }) as typeof fetch;
+  }) as unknown as typeof fetch;
   return { host, calls, restore: () => (global.fetch = originalFetch) };
 }
 
@@ -247,6 +264,7 @@ test("Go resolution looks each require up on deps.dev at the version replace lea
     packagePageUrl: "https://pkg.go.dev/github.com/gorilla/mux@v1.8.1",
     via: "deps.dev",
     detail: undefined,
+    goVersion: ">= 1.21",
   });
   // Two license files in one module: both apply
   expect(resolved[1].license).toBe("Apache-2.0 AND MIT");
@@ -266,12 +284,17 @@ test("Go resolution looks each require up on deps.dev at the version replace lea
     via: "deps.dev",
     detail: "deps.dev has no record of this module version",
   });
-  // The `+` of +incompatible is escaped in the path
+  // The `+` of +incompatible is escaped in the deps.dev path; each found
+  // version is followed by the proxy read of its go.mod for the `go` directive
   expect(calls).toEqual([
     "https://api.deps.dev/v3/systems/go/packages/github.com%2Fgorilla%2Fmux/versions/v1.8.1",
+    "https://proxy.golang.org/github.com/gorilla/mux/@v/v1.8.1.mod",
     "https://api.deps.dev/v3/systems/go/packages/github.com%2Fdocker%2Fdocker/versions/v24.0.7%2Bincompatible",
+    "https://proxy.golang.org/github.com/docker/docker/@v/v24.0.7+incompatible.mod",
     "https://api.deps.dev/v3/systems/go/packages/example.com%2Ffork/versions/v1.0.1",
+    "https://proxy.golang.org/example.com/fork/@v/v1.0.1.mod",
     "https://api.deps.dev/v3/systems/go/packages/example.com%2Fodd/versions/v0.1.0",
+    "https://proxy.golang.org/example.com/odd/@v/v0.1.0.mod",
     "https://api.deps.dev/v3/systems/go/packages/example.com%2Fmissing/versions/v1.0.0",
   ]);
 

@@ -527,6 +527,8 @@ const BASE_CONFIG: ViewerConfig = {
   showResolvedVersion: false,
   showNodeEngine: true,
   showRubyVersion: true,
+  showRustVersion: true,
+  showGoVersion: true,
   unknownText: "",
   annotationColor: "editorCodeLens.foreground",
   licenseColor: "charts.green",
