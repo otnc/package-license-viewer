@@ -58,6 +58,16 @@ requirement のバージョンは正確なバージョンです。goコマンド
 
 `go` コマンドの実行、モジュールキャッシュやライセンスファイルの読み込み、`go.sum`/`go.work` の扱い、依存関係グラフのいずれもここには含まれません。
 
+### Rubyの実装
+
+Rubyの実装は [`packages/core/src/providers/rubygems/`](packages/core/src/providers/rubygems/) にあります。[`parse.ts`](packages/core/src/providers/rubygems/parse.ts) は、2つのマニフェスト形式 — Gemfileの `gem` 呼び出しと gemspec の `add_dependency` 系 — に必要な分だけ Ruby をトークン化し、何も実行しません。`git:`/`github:`/`path:` オプションと、デフォルトでない `source` の下で宣言された gem はパースの時点でスキップするので、それらの名前が rubygems.org に送られることはありません。バージョン要件は [`spec.ts`](packages/core/src/providers/rubygems/spec.ts) で `Gem::Requirement` と同じ方法で解釈し、npm や Cargo の範囲とは独立しています。
+
+[`lockfile.ts`](packages/core/src/providers/rubygems/lockfile.ts) は宣言の特定と、一意に一致する公開バージョンの選択だけを行います。インデックス化するのは、remote が公開ソースである Gemfile.lock の `GEM` セクションだけです。[`client.ts`](packages/core/src/providers/rubygems/client.ts) は `GET /api/v1/versions/<name>.json` を読みます。このレスポンスは公開済みの全バージョンとそのライセンスを1回で返すので (crates.io クライアントと同じ形です)、候補の選択にバージョンごとのリクエストは不要です。1つのリリースのプラットフォーム別ビルドは1レコードにまとめます。gemspec の `licenses` リストはそのリリースが配布されるすべてのライセンスを列挙したものなので、複数エントリは `AND` でつなぎます。
+
+同じレスポンスには各リリースの `ruby_version` (`required_ruby_version`) も含まれ、npm の `engines.node` と同じ形でライセンスの横に表示します。制約なしは `>= 0` と報告されるので、その場合は何も表示しません。
+
+`ruby` や `bundle` の実行、インストール済み gem の読み込み、依存関係グラフのいずれもここには含まれません。
+
 ## 別のエコシステムを追加する
 
 `LicenseProvider` を実装し、登録し、有効化と設定を接続します。
@@ -91,10 +101,10 @@ npmやJSRと同様に、すべてのプロバイダーはホバータイトル�
 
 レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
 
-Python、Rubyへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされている各Issueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
+Pythonへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされているIssueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
-- [deps.dev](https://docs.deps.dev/api/v3/) の `GetVersion` は、Goと同じくPyPIとRubyGemsについても `licenses` を返します
+- [deps.dev](https://docs.deps.dev/api/v3/) の `GetVersion` は、Goと同じくPyPIについても `licenses` を返します
 
 ## ドキュメントとi18n
 

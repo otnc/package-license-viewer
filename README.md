@@ -37,7 +37,7 @@ Hover an annotation to see the resolved version, where the information came from
 | Rust | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
 | MoonBit | ✅ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Python | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Ruby | ❌ | bundler, gem | | Planned — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
+| Ruby | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
 | Your language? | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
@@ -65,9 +65,10 @@ The Vim/Neovim plugin lives at [`packages/vim-plugin`](packages/vim-plugin); see
 | Setting | Default | Description |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | Show inline license annotations. |
-| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`. |
+| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`. |
 | `packageLicenseViewer.showResolvedVersion` | `false` | Append the resolved version, e.g. `MIT · 4.17.21`. |
 | `packageLicenseViewer.showNodeEngine` | `true` | Append the package's `engines.node` range, when it has one, e.g. `MIT (Node: >=20)`. |
+| `packageLicenseViewer.showRubyVersion` | `true` | Append a gem's `required_ruby_version` range, when it has one, e.g. `MIT (Ruby: >=3.0)`. |
 | `packageLicenseViewer.unknownText` | `""` | Text shown when the license is unknown. Empty means show nothing. |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | Theme color id, or a CSS color such as `#88888899`, for everything except the license itself. |
 | `packageLicenseViewer.licenseColor` | `charts.green` | Theme color id, or a CSS color, used for just the license part of the annotation. |
@@ -93,6 +94,9 @@ The Vim/Neovim plugin lives at [`packages/vim-plugin`](packages/vim-plugin); see
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`, so an installed toolchain resolves without any request. |
 | `packageLicenseViewer.go.enabled` | `true` | Annotate the requirements in `go.mod`. |
 | `packageLicenseViewer.go.useRegistry` | `true` | Allow deps.dev requests. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used. |
+| `packageLicenseViewer.rubygems.enabled` | `true` | Annotate dependency declarations in `Gemfile` and `*.gemspec`. |
+| `packageLicenseViewer.rubygems.useRegistry` | `true` | Allow rubygems.org requests. When disabled, existing cached metadata can still be used. |
+| `packageLicenseViewer.rubygems.useLockfiles` | `true` | Prefer a uniquely matching rubygems.org version in `Gemfile.lock`. |
 
 ## Contributing
 

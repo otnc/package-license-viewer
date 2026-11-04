@@ -9,6 +9,8 @@ This is the detailed reference for how each supported ecosystem resolves a licen
 | `pnpm-workspace.yaml` | `catalog:` and `catalogs:` — the actual ranges a workspace catalog resolves to |
 | `Cargo.toml` | `dependencies`, `dev-dependencies`, `build-dependencies`, their target-specific forms, and `workspace.dependencies` |
 | `go.mod` | `require`, single-line and block form, direct and `// indirect` alike, with `replace` applied |
+| `Gemfile` | `gem` calls, in and out of `group` blocks |
+| `*.gemspec` | `add_dependency`, `add_runtime_dependency`, `add_development_dependency` |
 
 ## npm / JSR
 
@@ -100,3 +102,28 @@ Licenses come from [deps.dev](https://deps.dev), one `GetVersion` request per mo
 A module matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` is skipped without any request, so its path is never sent to deps.dev. Those variables are read the way the go command reads them: the process environment first, then the go env file `go env -w` writes (`$GOENV`, or `go/env` under the user config directory). Patterns are matched against leading path elements, as `module.MatchPrefixPatterns` does. A module path whose first element has no dot (a local-only or standard-library path) is reported as unknown.
 
 No Go installation is required. The extension never runs `go`, reads the module cache or `go.sum`, or opens license files. A `go.mod` extracted into the module cache (`…/<module>@<version>/go.mod`) is not annotated. Setting `go.useRegistry` to `false` stops requests while still using cached answers.
+
+## Ruby
+
+```ruby
+# Gemfile
+source "https://rubygems.org"
+
+gem "rails", "~> 8.0" # MIT
+gem "rake", "13.2.1" # MIT
+gem "vendored", path: "../vendored" # (nothing: a local path)
+```
+
+Comments above illustrate annotations, not changes the extension writes to files. A Gemfile is executable Ruby, but a dependency declaration is a single `gem` call, and only those calls are read — the file is tokenized, never executed. In a `.gemspec`, the `add_dependency` / `add_runtime_dependency` / `add_development_dependency` calls are read the same way. A name or requirement computed by an expression (interpolation, a variable) is reported as unknown rather than guessed, and a half-typed line never blanks out the declarations around it.
+
+The lookup path is:
+
+1. Look in the `Gemfile.lock` beside the manifest for a unique version matching the name and the declared requirement, in a `GEM` section served by a public source (rubygems.org, or gem.coop, which mirrors the same package set).
+2. If one is found, use that version's metadata from the cached or fetched version list.
+3. Otherwise choose the highest public version satisfying the RubyGems requirement — including the pessimistic `~>` operator and the rule that a prerelease only counts when the requirement itself names one.
+
+Licenses come from rubygems.org's versions API (`GET /api/v1/versions/<name>.json`), which reports every published version and the licenses it declares in one request; the list is cached and shared across manifests. A release published for several platforms appears once per platform with the same licenses, and collapses to one record. The same response carries each release's `required_ruby_version`, shown after the license the way npm shows `engines.node`; an unconstrained release reports `>= 0` there and shows nothing. When a release declares several licenses, the annotation joins them with `AND`, as the gemspec list names every license the release is distributed under. A release that declares none shows as unknown. The hover title links to `https://rubygems.org/gems/<name>/versions/<version>`, and the `via` description distinguishes `Gemfile.lock + RubyGems` from `manifest requirement + RubyGems`. **Gemfile.lock does not contain licenses** — it only pins the version.
+
+`git:`, `github:` and `path:` gems, and gems declared under a `source` block (or a per-gem `source:`) pointing anywhere other than rubygems.org, are skipped: their names are never sent to rubygems.org. A `GEM` section of Gemfile.lock served by a private server is likewise ignored, since its names may collide with public ones. `gemspec` directives in a Gemfile, `eval_gemfile`, `ruby` version directives and other Bundler DSL calls are not interpreted.
+
+No Ruby or Bundler installation is required. The extension never runs `ruby` or `bundle`, reads installed gems, or opens license files. It does not resolve dependency graphs or list transitive dependencies — Gemfile.lock entries are only used to pin a declared gem's version, never annotated themselves. Setting `rubygems.useRegistry` to `false` stops requests while still using cached answers, and `rubygems.useLockfiles` to `false` ignores Gemfile.lock.

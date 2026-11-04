@@ -58,6 +58,14 @@ Licenses come from [deps.dev](https://docs.deps.dev/api/v3/) (`GetVersion`), via
 
 No `go` invocation, module cache or license-file reading, `go.sum`/`go.work` handling or dependency graph belongs here.
 
+### Ruby implementation
+
+Ruby's implementation lives in [`packages/core/src/providers/rubygems/`](packages/core/src/providers/rubygems/). [`parse.ts`](packages/core/src/providers/rubygems/parse.ts) tokenizes just enough Ruby for the two manifest forms — a Gemfile's `gem` calls and a gemspec's `add_dependency` family — and never executes anything. `git:`/`github:`/`path:` options and gems declared under a non-default `source` are skipped at parse time, so their names are never sent to rubygems.org. Version requirements are interpreted the way `Gem::Requirement` does, in [`spec.ts`](packages/core/src/providers/rubygems/spec.ts), independently of npm and Cargo ranges.
+
+[`lockfile.ts`](packages/core/src/providers/rubygems/lockfile.ts) only locates declarations and uniquely matching public versions: just the `GEM` sections of Gemfile.lock whose remotes are public sources are indexed. [`client.ts`](packages/core/src/providers/rubygems/client.ts) reads `GET /api/v1/versions/<name>.json`, which carries every published version and its licenses in one response — the same shape as the crates.io client — so candidate selection needs no request per version. Platform builds of one release collapse to a single record. A gemspec's `licenses` list names every license the release is distributed under, so several entries are joined with `AND`. The same response carries each release's `ruby_version` (its `required_ruby_version`), shown next to the license the way npm shows `engines.node`; an unconstrained release reports `>= 0` and shows nothing.
+
+No `ruby` or `bundle` invocation, installed-gem reading or dependency graph belongs here.
+
 ## Adding another ecosystem
 
 Implement `LicenseProvider`, register it, and connect its activation and settings.
@@ -91,10 +99,10 @@ Every provider is expected to make the hover title clickable, the same way npm a
 
 If the registry also exposes a genuine, separately-declared homepage, put that in `homepage` as usual — `buildHover` already drops the `Homepage` line when it would just repeat the title link (as it does for JSR, which has no separate homepage of its own).
 
-Python and Ruby support are planned but not implemented yet — see the open issues linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
+Python support is planned but not implemented yet — see the open issue linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
-- [deps.dev](https://docs.deps.dev/api/v3/) answers `GetVersion` with `licenses` for PyPI and RubyGems too, as it does for Go
+- [deps.dev](https://docs.deps.dev/api/v3/) answers `GetVersion` with `licenses` for PyPI too, as it does for Go
 
 ## Documentation and i18n
 
