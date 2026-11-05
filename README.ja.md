@@ -37,7 +37,7 @@
 | Rust | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
 | MoonBit | ✅ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
 | Python | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Ruby | ❌ | bundler, gem | | 対応予定 — [Issue #15](https://github.com/otnc/package-license-viewer/issues/15) |
+| Ruby | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` と `*.gemspec` の宣言を rubygems.org / `Gemfile.lock` と突き合わせて解決。ローカルにRubyのインストールは不要 |
 | あなたの言語? | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
@@ -65,9 +65,10 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | 設定 | デフォルト値 | 説明 |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | インラインのライセンス注釈を表示します。 |
-| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`。 |
+| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`。 |
 | `packageLicenseViewer.showResolvedVersion` | `false` | 解決されたバージョンを付加します(例: `MIT · 4.17.21`)。 |
 | `packageLicenseViewer.showNodeEngine` | `true` | パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。 |
+| `packageLicenseViewer.showRubyVersion` | `true` | gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。 |
 | `packageLicenseViewer.unknownText` | `""` | ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。 |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。 |
 | `packageLicenseViewer.licenseColor` | `charts.green` | 注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。 |
@@ -93,6 +94,9 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
 | `packageLicenseViewer.go.enabled` | `true` | `go.mod` の requirement に注釈を付けます。 |
 | `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
+| `packageLicenseViewer.rubygems.enabled` | `true` | `Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。 |
+| `packageLicenseViewer.rubygems.useRegistry` | `true` | rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
+| `packageLicenseViewer.rubygems.useLockfiles` | `true` | `Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。 |
 
 ## コントリビュート
 
