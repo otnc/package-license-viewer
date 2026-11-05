@@ -88,6 +88,7 @@ export class GoLicenseProvider implements LicenseProvider {
       return { source: "unknown", version, via, detail: result.reason };
     }
     const license = combineLicenses(result.module.licenses);
+    const goVersion = await this.client.goVersion(path, version, token);
     return {
       source: "registry",
       license,
@@ -96,6 +97,7 @@ export class GoLicenseProvider implements LicenseProvider {
       packagePageUrl: modulePageUrl(path, version),
       via,
       detail: license ? undefined : describeMissingLicense(result.module.licenses),
+      ...(goVersion ? { goVersion } : {}),
     };
   }
 }

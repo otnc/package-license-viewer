@@ -36,7 +36,9 @@ export function formatAnnotationSegments(
     .replace(/\$\{name\}/g, entry.name)
     .replace(/\$\{source\}/g, info.source)
     .replace(/\$\{nodeEngine\}/g, info.nodeEngine ?? "")
-    .replace(/\$\{rubyVersion\}/g, info.rubyVersion ?? "");
+    .replace(/\$\{rubyVersion\}/g, info.rubyVersion ?? "")
+    .replace(/\$\{rustVersion\}/g, info.rustVersion ?? "")
+    .replace(/\$\{goVersion\}/g, info.goVersion ?? "");
 
   const marker = "${license}";
   const markerIndex = template.indexOf(marker);
@@ -63,6 +65,14 @@ export function formatAnnotationSegments(
 
   if (config.showRubyVersion && info.rubyVersion && !config.format.includes("${rubyVersion}")) {
     after += ` (Ruby: ${info.rubyVersion})`;
+  }
+
+  if (config.showRustVersion && info.rustVersion && !config.format.includes("${rustVersion}")) {
+    after += ` (Rust: ${info.rustVersion})`;
+  }
+
+  if (config.showGoVersion && info.goVersion && !config.format.includes("${goVersion}")) {
+    after += ` (Go: ${info.goVersion})`;
   }
 
   // Trim only the outer edges — a leading/trailing space right next to the license value (as in "${name}: ${license}") is intentional and must survive.
@@ -121,6 +131,14 @@ export function buildHover(
 
   if (info.rubyVersion) {
     lines.push(`Ruby: \`${info.rubyVersion}\``);
+  }
+
+  if (info.rustVersion) {
+    lines.push(`Rust: \`${info.rustVersion}\``);
+  }
+
+  if (info.goVersion) {
+    lines.push(`Go: \`${info.goVersion}\``);
   }
 
   lines.push(`Resolved from: ${describeSource(info)}`);

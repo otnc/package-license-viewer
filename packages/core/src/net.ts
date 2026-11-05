@@ -47,6 +47,40 @@ export async function fetchJson<T>(
   }
 }
 
+/** GET some plain text, with the same timeout, cancellation and 404 handling as {@link fetchJson} */
+export async function fetchText(
+  url: string,
+  token: CancellationLike,
+  accept = "text/plain"
+): Promise<string> {
+  const timeoutMs = getConfig().requestTimeoutMs;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(new Error("timeout")), timeoutMs);
+  const cancelSub = token.onCancellationRequested(() => controller.abort(new Error("cancelled")));
+
+  try {
+    log.debug(`GET ${url}`);
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        Accept: accept,
+        "User-Agent": "vscode-package-license-viewer",
+      },
+    });
+
+    if (response.status === 404) {
+      throw new NotFoundError(url);
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} for ${url}`);
+    }
+    return await response.text();
+  } finally {
+    clearTimeout(timer);
+    cancelSub.dispose();
+  }
+}
+
 /** Run tasks with a ceiling on how many are in flight at once */
 export async function runWithConcurrency<T>(
   tasks: ReadonlyArray<() => Promise<T>>,

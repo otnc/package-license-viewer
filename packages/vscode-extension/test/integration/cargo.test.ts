@@ -85,7 +85,7 @@ suite("Cargo-only workspace", () => {
       update: async () => {},
     });
     try {
-      cache.set("crates:metadata:v1:semver@1.0.27", {
+      cache.set("crates:metadata:v2:semver@1.0.27", {
         version: "1.0.27",
         license: "MIT OR Apache-2.0",
         yanked: false,
