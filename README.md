@@ -29,16 +29,16 @@ Hover an annotation to see the resolved version, where the information came from
 
 ## Supported languages
 
-| Language | Support | Package managers | First contributor | Notes |
-| --- | --- | --- | --- | --- |
-| JavaScript / TypeScript | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
-| Deno / JSR | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
-| Go | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` requirements, with `replace` applied, resolved against deps.dev; no local Go install needed, and modules matching `GOPRIVATE` are never looked up |
-| Rust | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
-| MoonBit | ✅ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
-| Python | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Ruby | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
-| Your language? | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
+| Language | Support | Version | Package managers | First contributor | Notes |
+| --- | --- | --- | --- | --- | --- |
+| JavaScript / TypeScript | ✅ | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
+| Deno / JSR | ✅ | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
+| Go | ✅ | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` requirements, with `replace` applied, resolved against deps.dev; no local Go install needed, and modules matching `GOPRIVATE` are never looked up |
+| Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
+| MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
+| Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
+| Python | ❌ | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
+| Your language? | | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
 
