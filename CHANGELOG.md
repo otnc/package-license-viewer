@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.8.0]
+
+### Added
+
+- Gemfile と gemspec の依存関係をパースする
+- Ruby の対応バージョン表示の土台を追加する
+- Rubygems.org を使う RubyGems ライセンスプロバイダーを追加する
+- Gemfile と gemspec で有効化し、rubygems 設定を追加する
+- Vim/Neovim プラグインを Gemfile と gemspec に接続する
+- Rust / Go の対応バージョンを Node と同じ形式で表示する
+
 ## [0.7.0]
 
 ### Added
