@@ -30,6 +30,7 @@ import {
   recordSatisfies,
 } from "../src/providers/composer/metadata";
 import type { ValidConstraint } from "../src/providers/composer/spec";
+import { ComposerLicenseProvider } from "../src/providers/composer";
 import { InstalledLookup } from "../src/providers/composer/installed";
 import { parseLock } from "../src/providers/composer/lockfile";
 import { fakeDocument, fakeHost, fakeUri } from "./support/fakeHost";
@@ -507,4 +508,273 @@ test("phpVersion is appended like goVersion and shown in the hover", () => {
   setSettings({ "packageLicenseViewer.format": "${license} php ${phpVersion}" });
   invalidateConfigCache();
   expect(formatAnnotationSegments(getConfig(), entry, info)?.after).toBe(" php >=8.0.0");
+});
+
+// --- the provider -----------------------------------------------------------
+
+const PACKAGIST = "https://packagist.org/downloads/";
+const lockWith = (packages: unknown[], dev: unknown[] = []) =>
+  JSON.stringify({ packages, "packages-dev": dev, aliases: [] });
+const installedWith = (packages: unknown[]) => JSON.stringify({ packages, dev: true });
+
+test("Composer resolution prefers vendor, then composer.lock, then Packagist", async () => {
+  const files = new Map([
+    [
+      "/repo/vendor/composer/installed.json",
+      installedWith([
+        {
+          name: "psr/log",
+          version: "3.0.2",
+          license: ["MIT"],
+          require: { php: ">=8.0.0" },
+          homepage: "https://github.com/php-fig/log",
+          "notification-url": PACKAGIST,
+        },
+      ]),
+    ],
+    [
+      "/repo/composer.lock",
+      lockWith(
+        [{ name: "psr/log", version: "3.0.2", license: ["MIT"], "notification-url": PACKAGIST }],
+        [
+          {
+            name: "psr/container",
+            version: "2.0.2",
+            license: ["MIT"],
+            "notification-url": PACKAGIST,
+          },
+        ]
+      ),
+    ],
+  ]);
+  const { calls, restore } = mountPackagist({
+    "acme/remote": [
+      { name: "acme/remote", version: "1.2.0", version_normalized: "1.2.0.0", license: ["MIT"] },
+      { version: "1.1.0", version_normalized: "1.1.0.0" },
+    ],
+  });
+  const cache = makeCache();
+  try {
+    const provider = new ComposerLicenseProvider(cache, fakeHost(files));
+    const document = fakeDocument(
+      JSON.stringify({
+        require: { "psr/log": "^3.0", "acme/remote": "^1.0", "acme/missing": "^1.0" },
+        "require-dev": { "psr/container": "^2.0" },
+      }),
+      "/repo/composer.json"
+    );
+    const entries = provider.parse(document);
+    expect(entries.map((e) => e.name)).toEqual([
+      "psr/log",
+      "acme/remote",
+      "acme/missing",
+      "psr/container",
+    ]);
+    const resolved = [];
+    for (const entry of entries) resolved.push(await provider.resolve(entry, document, noCancel));
+
+    expect({ ...resolved[0] }).toEqual({
+      source: "local",
+      license: "MIT",
+      version: "3.0.2",
+      phpVersion: ">=8.0.0",
+      homepage: "https://github.com/php-fig/log",
+      packagePageUrl: "https://packagist.org/packages/psr/log#3.0.2",
+    });
+    expect(resolved[1]).toMatchObject({
+      source: "registry",
+      via: "packagist.org",
+      license: "MIT",
+      version: "1.2.0",
+      packagePageUrl: "https://packagist.org/packages/acme/remote#1.2.0",
+    });
+    expect(resolved[2]).toEqual({ source: "unknown", detail: "not found on Packagist" });
+    expect(resolved[3]).toMatchObject({ source: "lockfile", via: "composer.lock", license: "MIT" });
+    expect(calls).toEqual([
+      "https://repo.packagist.org/p2/acme/remote.json",
+      "https://repo.packagist.org/p2/acme/missing.json",
+    ]);
+    expect(buildHover(entries[1], resolved[1])!.value).toMatch(
+      /\[`acme\/remote@1\.2\.0`\]\(https:\/\/packagist\.org\/packages\/acme\/remote#1\.2\.0\)/
+    );
+    // The expanded list is cached, so asking again sends nothing
+    calls.length = 0;
+    expect((await provider.resolve(entries[1], document, noCancel)).license).toBe("MIT");
+    expect(calls).toEqual([]);
+  } finally {
+    restore();
+    cache.dispose();
+  }
+});
+
+test("a stale vendor or lock version falls through instead of lying", async () => {
+  const files = new Map([
+    [
+      "/repo/vendor/composer/installed.json",
+      installedWith([{ name: "psr/log", version: "2.0.0", license: ["MIT"] }]),
+    ],
+    ["/repo/composer.lock", lockWith([{ name: "psr/log", version: "2.0.0", license: ["MIT"] }])],
+  ]);
+  const { restore } = mountPackagist({
+    "psr/log": [
+      { name: "psr/log", version: "3.0.2", version_normalized: "3.0.2.0", license: ["MIT"] },
+    ],
+  });
+  const cache = makeCache();
+  try {
+    const provider = new ComposerLicenseProvider(cache, fakeHost(files));
+    const document = fakeDocument('{"require":{"psr/log":"^3.0"}}', "/repo/composer.json");
+    const [entry] = provider.parse(document);
+    expect(await provider.resolve(entry, document, noCancel)).toMatchObject({
+      source: "registry",
+      version: "3.0.2",
+    });
+  } finally {
+    restore();
+    cache.dispose();
+  }
+});
+
+test("a path-repository package has no title link, and a dev branch is reported from the lock only", async () => {
+  const files = new Map([
+    [
+      "/repo/composer.lock",
+      lockWith([
+        {
+          name: "acme/local",
+          version: "dev-main",
+          license: ["MIT"],
+          dist: { type: "path", url: "../local" },
+        },
+        {
+          name: "acme/branch",
+          version: "dev-main",
+          license: ["Apache-2.0"],
+          extra: { "branch-alias": { "dev-main": "1.x-dev" } },
+          "notification-url": PACKAGIST,
+        },
+      ]),
+    ],
+  ]);
+  const { calls, restore } = mountPackagist({});
+  const cache = makeCache();
+  try {
+    const provider = new ComposerLicenseProvider(cache, fakeHost(files));
+    const document = fakeDocument(
+      JSON.stringify({
+        require: { "acme/local": "dev-main", "acme/branch": "^1.0", "acme/other": "dev-feature" },
+      }),
+      "/repo/composer.json"
+    );
+    const entries = provider.parse(document);
+    const [local, branch, other] = await Promise.all(
+      entries.map((entry) => provider.resolve(entry, document, noCancel))
+    );
+    expect(local).toMatchObject({ source: "lockfile", license: "MIT", version: "dev-main" });
+    expect(local.packagePageUrl).toBeUndefined();
+    expect(branch).toMatchObject({
+      source: "lockfile",
+      license: "Apache-2.0",
+      version: "dev-main",
+      packagePageUrl: "https://packagist.org/packages/acme/branch#dev-main",
+    });
+    expect(other).toEqual({
+      source: "unknown",
+      detail: "branch requirements resolve only from vendor/ or composer.lock",
+    });
+    expect(calls).toEqual([]);
+  } finally {
+    restore();
+    cache.dispose();
+  }
+});
+
+test("platform, invalid, disabled-Packagist and unparseable requirements never reach the network", async () => {
+  const files = new Map([
+    ["/repo/composer.lock", lockWith([{ name: "acme/x", version: "1.0.0", license: ["MIT"] }])],
+  ]);
+  const { calls, restore } = mountPackagist({});
+  const cache = makeCache();
+  try {
+    const provider = new ComposerLicenseProvider(cache, fakeHost(files));
+    const document = fakeDocument(
+      JSON.stringify({
+        require: {
+          php: ">=8.1",
+          "ext-json": "*",
+          "not-a-name": "1.0",
+          "acme/x": "~>1.0",
+          "acme/y": "^1.0",
+          "acme/z": "~>2.0",
+        },
+        repositories: [{ "packagist.org": false }],
+      }),
+      "/repo/composer.json"
+    );
+    const entries = provider.parse(document);
+    expect(entries.map((e) => e.name)).toEqual(["not-a-name", "acme/x", "acme/y", "acme/z"]);
+    const infos = [];
+    for (const entry of entries) infos.push(await provider.resolve(entry, document, noCancel));
+    expect(infos[0]).toEqual({ source: "unknown", detail: "invalid package name" });
+    // Locked, so reported even though the constraint cannot be checked
+    expect(infos[1]).toMatchObject({
+      source: "lockfile",
+      license: "MIT",
+      detail: "version constraint could not be checked",
+    });
+    expect(infos[2]).toEqual({
+      source: "unknown",
+      detail: "Packagist is disabled in composer.json",
+    });
+    expect(infos[3]).toEqual({ source: "unknown", detail: "unsupported version constraint" });
+    expect(calls).toEqual([]);
+  } finally {
+    restore();
+    cache.dispose();
+  }
+});
+
+test("with composer.useLockfiles off, the lock is skipped", async () => {
+  setSettings({
+    "packageLicenseViewer.composer.useLockfiles": false,
+    "packageLicenseViewer.composer.useRegistry": false,
+  });
+  const files = new Map([
+    ["/repo/composer.lock", lockWith([{ name: "acme/x", version: "1.0.0", license: ["MIT"] }])],
+  ]);
+  const cache = makeCache();
+  const provider = new ComposerLicenseProvider(cache, fakeHost(files));
+  const document = fakeDocument('{"require":{"acme/x":"^1.0"}}', "/repo/composer.json");
+  const [entry] = provider.parse(document);
+  expect(await provider.resolve(entry, document, noCancel)).toEqual({
+    source: "unknown",
+    detail: "Packagist lookups are disabled",
+  });
+  cache.dispose();
+});
+
+test("supports recognizes project manifests only, and cache keys keep manifests apart", () => {
+  const cache = makeCache();
+  const provider = new ComposerLicenseProvider(cache, fakeHost());
+  cache.dispose();
+  expect(provider.id).toBe("composer");
+  expect(provider.supports(fakeDocument("", "/r/composer.json"))).toBe(true);
+  expect(provider.supports(fakeDocument("", "/r/sub/composer.json"))).toBe(true);
+  expect(provider.supports(fakeDocument("", "/r/vendor/x/y/composer.json"))).toBe(false);
+  expect(provider.supports(fakeDocument("", "/r/composer.lock"))).toBe(false);
+  expect(provider.supports(fakeDocument("", "/r/package.json"))).toBe(false);
+  const of = (path: string, text: string) =>
+    provider.cacheKey(provider.parse(fakeDocument(text, path))[0]);
+  expect(of("/a/composer.json", '{"require":{"acme/x":"^1.0"}}')).not.toBe(
+    of("/b/composer.json", '{"require":{"acme/x":"^1.0"}}')
+  );
+  expect(of("/a/composer.json", '{"require":{"acme/x":"^1.0"}}')).not.toBe(
+    of("/a/composer.json", '{"require":{"acme/x":"^2.0"}}')
+  );
+  expect(of("/a/composer.json", '{"require":{"acme/x":"^1.0"}}')).toBe(
+    of("/a/composer.json", '{"require-dev":{"acme/x":"^1.0"}}')
+  );
+  expect(provider.cacheKey({ name: "acme/x", spec: "^1.0", section: "require", line: 0 })).toBe(
+    "composer:invalid:acme/x"
+  );
 });

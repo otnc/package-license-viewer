@@ -35,7 +35,10 @@
     "rubygems",
     "gemfile",
     "gemspec",
-    "bundler"
+    "bundler",
+    "php",
+    "composer",
+    "packagist"
   ],
   "icon": "images/icon.png",
   "repository": {
@@ -65,7 +68,8 @@
     "workspaceContains:**/moon.mod.json",
     "workspaceContains:**/go.mod",
     "workspaceContains:**/Gemfile",
-    "workspaceContains:**/*.gemspec"
+    "workspaceContains:**/*.gemspec",
+    "workspaceContains:**/composer.json"
   ],
   "contributes": {
     "commands": [
@@ -276,6 +280,21 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Use a uniquely matching version from `Gemfile.lock` before selecting a public version from the requirement."
+        },
+        "packageLicenseViewer.composer.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable license annotations for Composer manifests (`composer.json`)."
+        },
+        "packageLicenseViewer.composer.useLockfiles": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Read `composer.lock` for the locked version and its license when nothing is installed under `vendor/`."
+        },
+        "packageLicenseViewer.composer.useRegistry": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Allow Packagist requests. When disabled, installed packages, `composer.lock` and existing cached metadata are still used."
         }
       }
     }
