@@ -66,6 +66,18 @@ Ruby's implementation lives in [`packages/core/src/providers/rubygems/`](package
 
 No `ruby` or `bundle` invocation, installed-gem reading or dependency graph belongs here.
 
+### Composer implementation
+
+Composer's implementation lives in [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/). [`parse.ts`](packages/core/src/providers/composer/parse.ts) reads `require` and `require-dev` from the jsonc-parser AST, lowercases names (`composer.lock`, `installed.json` and Packagist all key packages that way) and drops platform packages (`php`, `ext-*`, `lib-*`, `composer-*-api`), which constrain PHP itself rather than a package with a license. It also picks up `config.vendor-dir`, `minimum-stability`, `prefer-stable` and whether `repositories` disables Packagist.
+
+Resolution runs vendor → lock → registry, like npm. [`installed.ts`](packages/core/src/providers/composer/installed.ts) reads `<vendor-dir>/composer/installed.json` (the Composer 2 object or the Composer 1 array; no parent-directory walk, since Composer never hoists), [`lockfile.ts`](packages/core/src/providers/composer/lockfile.ts) reads `composer.lock`, and [`client.ts`](packages/core/src/providers/composer/client.ts) asks Packagist's p2 endpoint. Both files on disk carry each package's `license`, so a hit there is an answer, not just a pinned version. [`metadata.ts`](packages/core/src/providers/composer/metadata.ts) decodes all three sources into one `PackageRecord` and owns the rules they share: a `license` array is disjunctive by Composer's definition, so it is joined with `OR` — the opposite of deps.dev's `AND` for Go; a record's `require.php` becomes `phpVersion`; and the hover title links to Packagist only when the record's `notification-url` is Packagist's (or it came from p2), so a `path`/`vcs` package never gets a link that 404s.
+
+A vendored or locked version is reported only if it still satisfies the manifest's constraint, so a stale lock falls through to Packagist instead of lying. A `dev-*` branch satisfies through its aliases — the constraint's own `as` clause, the record's `extra.branch-alias`, or the lock's `aliases` — which is how Composer itself lets `^1.0` be met by `dev-main`. Branches never resolve from Packagist.
+
+[`spec.ts`](packages/core/src/providers/composer/spec.ts) is a port of `composer/semver` (`VersionParser::normalize`, `parseConstraints`, `parseStability` and PHP's `version_compare`), independent of npm and Cargo ranges, tested against TSV oracles the real library generated; [`composer-provenance.md`](test/fixtures/lockfiles/composer-provenance.md) says how to regenerate them, and the oracle wins over any prose description. Candidate selection without a lock follows Composer's stability rules: an explicit `@flag` replaces `minimum-stability` for that package, a prerelease named in the constraint lowers it, and `prefer-stable` prefers a stable candidate over a higher unstable one. p2 responses are minified — each version lists only the keys that changed, and `"__unset"` removes one — and are expanded before anything reads them; the expanded list is cached, a miss is not. Requests go out in parallel under `maxConcurrentRequests`, since p2 files are static CDN JSON, but an HTTP 429 pauses every client for a minute without retrying.
+
+No `composer` invocation, private repository (Private Packagist, Satis, `vcs`/`path` repositories), `COMPOSER_VENDOR_DIR` handling, `replace`/`provide` resolution or dependency graph belongs here.
+
 ## Adding another ecosystem
 
 Implement `LicenseProvider`, register it, and connect its activation and settings.

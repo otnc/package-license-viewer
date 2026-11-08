@@ -68,6 +68,18 @@ Rubyの実装は [`packages/core/src/providers/rubygems/`](packages/core/src/pro
 
 `ruby` や `bundle` の実行、インストール済み gem の読み込み、依存関係グラフのいずれもここには含まれません。
 
+### Composerの実装
+
+Composerの実装は [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/) にあります。[`parse.ts`](packages/core/src/providers/composer/parse.ts) は jsonc-parser の AST から `require` と `require-dev` を読み、名前を小文字にそろえ(`composer.lock`、`installed.json`、Packagist はいずれも小文字でパッケージを管理しています)、プラットフォームパッケージ(`php`、`ext-*`、`lib-*`、`composer-*-api`)は捨てます。これらはライセンスを持つパッケージではなく、PHP 自体への制約だからです。あわせて `config.vendor-dir`、`minimum-stability`、`prefer-stable`、`repositories` が Packagist を無効化しているかどうかも読み取ります。
+
+解決は npm と同じく vendor → lock → レジストリの順に進みます。[`installed.ts`](packages/core/src/providers/composer/installed.ts) は `<vendor-dir>/composer/installed.json`(Composer 2 のオブジェクト形式と Composer 1 の配列形式の両方)を読みます。Composer はホイスティングをしないので、親ディレクトリは探索しません。[`lockfile.ts`](packages/core/src/providers/composer/lockfile.ts) は `composer.lock` を読み、[`client.ts`](packages/core/src/providers/composer/client.ts) は Packagist の p2 エンドポイントに問い合わせます。ディスク上の2つのファイルはどちらも各パッケージの `license` を持っているので、そこでのヒットはバージョンの固定ではなく、答えそのものです。[`metadata.ts`](packages/core/src/providers/composer/metadata.ts) は3つのソースを1つの `PackageRecord` に落とし込み、共通のルールを担います。`license` 配列は Composer の定義上「いずれかを選べる」という意味なので `OR` でつなぎます — Go の deps.dev が `AND` なのとは逆です。レコードの `require.php` は `phpVersion` になります。ホバータイトルの Packagist へのリンクは、レコードの `notification-url` が Packagist のもの(または p2 由来)であるときだけ付けるので、`path`/`vcs` 由来のパッケージが 404 になるリンクを持つことはありません。
+
+vendor や lock のバージョンは、マニフェストの制約を今も満たしている場合にだけ報告します。そのため古くなった lock は嘘をつかず、Packagist へ落ちていきます。`dev-*` ブランチは、制約自身の `as` 句、レコードの `extra.branch-alias`、lock の `aliases` というエイリアスを通じて制約を満たせます。これは Composer 自身が `^1.0` を `dev-main` で満たせるようにしている仕組みと同じです。ブランチが Packagist から解決されることはありません。
+
+[`spec.ts`](packages/core/src/providers/composer/spec.ts) は `composer/semver`(`VersionParser::normalize`、`parseConstraints`、`parseStability`、PHP の `version_compare`)の移植で、npm や Cargo の範囲指定とは独立しています。実際のライブラリが生成した TSV のオラクルに対してテストされており、再生成の方法は [`composer-provenance.md`](test/fixtures/lockfiles/composer-provenance.md) に書いてあります。文章での説明とオラクルが食い違うときはオラクルが正です。lock がない場合の候補選定は Composer の安定度ルールに従います。明示的な `@flag` はそのパッケージについて `minimum-stability` を置き換え、制約に書かれたプレリリースは下限を下げ、`prefer-stable` はより高い不安定版よりも安定版を優先します。p2 のレスポンスは minified 形式(各バージョンは前のバージョンから変わったキーだけを持ち、`"__unset"` はキーの削除を表す)なので、読む前に展開します。展開済みのリストはキャッシュしますが、見つからなかった結果はキャッシュしません。p2 は静的な CDN 配信の JSON なので、リクエストは `maxConcurrentRequests` の範囲で並列に送りますが、HTTP 429 が返った場合はすべてのクライアントが1分間送信を止め、リトライはしません。
+
+`composer` コマンドの実行、プライベートリポジトリ(Private Packagist、Satis、`vcs`/`path` リポジトリ)、`COMPOSER_VENDOR_DIR` の扱い、`replace`/`provide` の解決、依存関係グラフのいずれもここには含まれません。
+
 ## 別のエコシステムを追加する
 
 `LicenseProvider` を実装し、登録し、有効化と設定を接続します。
