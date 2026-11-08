@@ -1,0 +1,52 @@
+{
+  "heading": {
+    "en": "Editors",
+    "ja": "エディタ"
+  },
+  "columns": {
+    "editor": {
+      "en": "Editor",
+      "ja": "エディタ"
+    },
+    "support": {
+      "en": "Support",
+      "ja": "サポート状況"
+    },
+    "notes": {
+      "en": "Notes",
+      "ja": "備考"
+    }
+  },
+  "rows": [
+    {
+      "editor": "VS Code",
+      "support": "✅",
+      "notes": {
+        "en": "The full feature set: inline annotations, hover, and every `packageLicenseViewer.*` setting.",
+        "ja": "全機能に対応: インライン注釈、hover、`packageLicenseViewer.*` の全設定。"
+      }
+    },
+    {
+      "editor": "Neovim",
+      "support": {
+        "en": "✅ (experimental)",
+        "ja": "✅ (実験的)"
+      },
+      "notes": {
+        "en": "Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server currently has to be built locally (`npm run compile:lsp`, or a plugin manager's build hook) — see `:help package_license_viewer`.",
+        "ja": "インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`、またはプラグインマネージャーのbuildフック) — `:help package_license_viewer` を参照してください(英語のみ)。"
+      }
+    },
+    {
+      "editor": "Vim",
+      "support": {
+        "en": "✅ (experimental)",
+        "ja": "✅ (実験的)"
+      },
+      "notes": {
+        "en": "Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`.",
+        "ja": "Neovimと同様に対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — `:help package_license_viewer` を参照してください(英語のみ)。"
+      }
+    }
+  ]
+}
