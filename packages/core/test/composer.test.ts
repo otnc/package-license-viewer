@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "vitest";
+import { afterEach, expect, test } from "vitest";
+import { LicenseCache } from "../src/cache";
+import {
+  expandMinified,
+  PackagistClient,
+  selectVersion,
+  StandDown,
+} from "../src/providers/composer/client";
 import {
   compareVersions,
   normalizeVersion,
@@ -24,6 +31,34 @@ import type { ValidConstraint } from "../src/providers/composer/spec";
 import { InstalledLookup } from "../src/providers/composer/installed";
 import { parseLock } from "../src/providers/composer/lockfile";
 import { fakeDocument, fakeHost, fakeUri } from "./support/fakeHost";
+import { setSettings } from "./support/vscodeStub";
+
+const noCancel = {
+  isCancellationRequested: false,
+  onCancellationRequested: (_listener: (e: unknown) => unknown) => ({ dispose() {} }),
+};
+const makeCache = () => new LicenseCache({ get() {}, keys: () => [], async update() {} });
+
+afterEach(() => setSettings({}));
+
+/** Replace `fetch` with a recorder answering `https://repo.packagist.org/p2/<name>.json` from `answers` (a minified version list, or an HTTP status) */
+function mountPackagist(answers: Record<string, unknown[] | number>) {
+  const calls: string[] = [];
+  const originalFetch = global.fetch;
+  global.fetch = (async (url: string) => {
+    calls.push(url);
+    const match = /\/p2\/(.+)\.json$/.exec(url);
+    const answer = match ? answers[match[1]] : undefined;
+    if (answer === undefined) return { ok: false, status: 404, json: async () => ({}) };
+    if (typeof answer === "number") return { ok: false, status: answer, json: async () => ({}) };
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({ packages: { [match![1]]: answer }, minified: "composer/2.0" }),
+    };
+  }) as unknown as typeof fetch;
+  return { calls, restore: () => (global.fetch = originalFetch) };
+}
 
 const fixtures = join(__dirname, "..", "..", "..", "test", "fixtures", "lockfiles");
 const rows = (file: string) =>
@@ -326,4 +361,125 @@ test("installed.json is read from the configured vendor dir, in Composer 2 and 1
   expect((await lookup.find(dir, "vendor", "psr/log"))?.license).toBe("MIT"); // 15 s TtlCache still answers
   lookup.invalidate();
   expect(await lookup.find(dir, "vendor", "psr/log")).toBeUndefined();
+});
+
+// --- client.ts --------------------------------------------------------------
+
+test("minified expansion honours __unset and inheritance", () => {
+  expect(
+    expandMinified([
+      { name: "a/b", version: "2.0.0", license: ["MIT"], homepage: "h" },
+      { version: "1.9.0", license: "__unset" },
+      { version: "1.8.0" },
+    ])
+  ).toEqual([
+    { name: "a/b", version: "2.0.0", license: ["MIT"], homepage: "h" },
+    { name: "a/b", version: "1.9.0", homepage: "h" },
+    { name: "a/b", version: "1.8.0", homepage: "h" },
+  ]);
+  expect(expandMinified([{ version: "1.0" }, "garbage", { version: "0.9" }])).toEqual([
+    { version: "1.0" },
+    { version: "0.9" },
+  ]);
+});
+
+test("candidate selection follows minimum-stability, prefer-stable and flags", () => {
+  const v = (version: string) =>
+    decodePackageRecord({ name: "a/b", version }, { fromPackagist: true })!;
+  const list = [
+    v("2.1.0-beta1"),
+    v("2.0.0"),
+    v("1.5.0"),
+    v("2.0.0-RC1"),
+    v("1.0.0-alpha1"),
+    v("dev-main"),
+  ];
+  const c = (s: string) => parseConstraint(s) as ValidConstraint;
+  expect(selectVersion(list, c("^2.0"), "stable", false)?.version).toBe("2.0.0");
+  expect(selectVersion(list, c("^2.0"), "beta", false)?.version).toBe("2.1.0-beta1");
+  expect(selectVersion(list, c("^2.0"), "beta", true)?.version).toBe("2.0.0");
+  expect(selectVersion(list, c("^2.0@beta"), "stable", false)?.version).toBe("2.1.0-beta1");
+  expect(selectVersion(list, c("^2.0@RC"), "beta", false)?.version).toBe("2.0.0"); // a flag replaces the floor, even upward
+  expect(selectVersion(list, c("2.1.0-beta1"), "stable", false)?.version).toBe("2.1.0-beta1"); // implied stability
+  expect(selectVersion(list, c("^3.0"), "dev", false)).toBeUndefined();
+  expect(selectVersion(list, c("*"), "dev", false)?.version).toBe("2.1.0-beta1"); // branches are never candidates
+  expect(selectVersion(list, c("^1.0"), "stable", false)?.version).toBe("1.5.0");
+});
+
+test("Packagist client caches expanded lists, surfaces 404, and stands down after 429", async () => {
+  let now = 1_000_000;
+  const standDown = new StandDown(() => now);
+  const { calls, restore } = mountPackagist({
+    "psr/log": [
+      {
+        name: "psr/log",
+        version: "3.0.2",
+        version_normalized: "3.0.2.0",
+        license: ["MIT"],
+        require: { php: ">=8.0.0" },
+      },
+      { version: "3.0.1", version_normalized: "3.0.1.0" },
+    ],
+    "acme/limited": 429,
+  });
+  const cache = makeCache();
+  try {
+    const client = new PackagistClient(cache, standDown);
+    const found = await client.versions("psr/log", noCancel);
+    expect(found.kind).toBe("found");
+    if (found.kind !== "found") return;
+    expect(
+      found.versions.map((v) => [v.version, v.license, v.phpVersion, v.fromPackagist])
+    ).toEqual([
+      ["3.0.2", "MIT", ">=8.0.0", true],
+      ["3.0.1", "MIT", ">=8.0.0", true],
+    ]);
+    expect(calls).toEqual(["https://repo.packagist.org/p2/psr/log.json"]);
+    expect(await client.versions("psr/log", noCancel)).toEqual(found); // cached: nothing sent
+    expect(calls.length).toBe(1);
+    expect(await client.versions("acme/missing", noCancel)).toEqual({
+      kind: "unknown",
+      reason: "not found on Packagist",
+    });
+    expect(await new PackagistClient(cache, standDown).versions("acme/missing", noCancel)).toEqual({
+      kind: "unknown",
+      reason: "not found on Packagist",
+    }); // a miss is not cached
+    expect(calls.length).toBe(3);
+
+    expect((await client.versions("acme/limited", noCancel)).kind).toBe("unknown");
+    const paused = await new PackagistClient(cache, standDown).versions("acme/other", noCancel);
+    expect(paused).toEqual({ kind: "unknown", reason: "Packagist requests paused after HTTP 429" });
+    expect(calls.length).toBe(4); // the paused call sent nothing
+    now += 60_001;
+    await client.versions("acme/other", noCancel);
+    expect(calls.length).toBe(5);
+  } finally {
+    restore();
+    cache.dispose();
+  }
+});
+
+test("with composer.useRegistry off, only cached lists answer", async () => {
+  setSettings({ "packageLicenseViewer.composer.useRegistry": false });
+  const { calls, restore } = mountPackagist({ "psr/log": [{ name: "psr/log", version: "3.0.2" }] });
+  const cache = makeCache();
+  try {
+    const client = new PackagistClient(cache, new StandDown());
+    expect(await client.versions("psr/log", noCancel)).toEqual({
+      kind: "unknown",
+      reason: "Packagist lookups are disabled",
+    });
+    cache.set("composer:packagist:v1:psr/log", [
+      decodePackageRecord(
+        { name: "psr/log", version: "3.0.2", license: ["MIT"] },
+        { fromPackagist: true }
+      ),
+    ]);
+    expect((await client.versions("psr/log", noCancel)).kind).toBe("found");
+    expect(calls).toEqual([]);
+  } finally {
+    restore();
+    cache.dispose();
+  }
 });
