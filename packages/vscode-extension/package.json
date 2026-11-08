@@ -93,7 +93,7 @@
         "packageLicenseViewer.format": {
           "type": "string",
           "default": "${license}",
-          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`."
+          "markdownDescription": "Template for the inline annotation. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`."
         },
         "packageLicenseViewer.showResolvedVersion": {
           "type": "boolean",
@@ -119,6 +119,11 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Append a module version's declared `go` directive to the annotation, when it has one (e.g. `MIT (Go: >=1.21)`)."
+        },
+        "packageLicenseViewer.showPhpVersion": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Append a package's declared `require.php` constraint to the annotation, when it has one (e.g. `MIT (PHP: >=8.1)`)."
         },
         "packageLicenseViewer.unknownText": {
           "type": "string",

@@ -348,6 +348,7 @@ const FORMAT_CONFIG: ViewerConfig = {
   showRubyVersion: true,
   showRustVersion: true,
   showGoVersion: true,
+  showPhpVersion: true,
   unknownText: "",
   annotationColor: "editorCodeLens.foreground",
   licenseColor: "charts.green",

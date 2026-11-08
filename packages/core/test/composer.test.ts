@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, expect, test } from "vitest";
 import { LicenseCache } from "../src/cache";
+import { getConfig, invalidateConfigCache } from "../src/config";
+import { buildHover, formatAnnotationSegments } from "../src/format";
 import {
   expandMinified,
   PackagistClient,
@@ -39,7 +41,10 @@ const noCancel = {
 };
 const makeCache = () => new LicenseCache({ get() {}, keys: () => [], async update() {} });
 
-afterEach(() => setSettings({}));
+afterEach(() => {
+  setSettings({});
+  invalidateConfigCache();
+});
 
 /** Replace `fetch` with a recorder answering `https://repo.packagist.org/p2/<name>.json` from `answers` (a minified version list, or an HTTP status) */
 function mountPackagist(answers: Record<string, unknown[] | number>) {
@@ -482,4 +487,24 @@ test("with composer.useRegistry off, only cached lists answer", async () => {
     restore();
     cache.dispose();
   }
+});
+
+// --- phpVersion display -----------------------------------------------------
+
+test("phpVersion is appended like goVersion and shown in the hover", () => {
+  const entry = { name: "psr/log", spec: "^3.0", section: "require", line: 0 };
+  const info = {
+    source: "local" as const,
+    license: "MIT",
+    version: "3.0.2",
+    phpVersion: ">=8.0.0",
+  };
+  expect(formatAnnotationSegments(getConfig(), entry, info)?.after).toContain("(PHP: >=8.0.0)");
+  expect(buildHover(entry, info)?.value).toContain("PHP: `>=8.0.0`");
+  setSettings({ "packageLicenseViewer.showPhpVersion": false });
+  invalidateConfigCache();
+  expect(formatAnnotationSegments(getConfig(), entry, info)?.after ?? "").not.toContain("PHP");
+  setSettings({ "packageLicenseViewer.format": "${license} php ${phpVersion}" });
+  invalidateConfigCache();
+  expect(formatAnnotationSegments(getConfig(), entry, info)?.after).toBe(" php >=8.0.0");
 });
