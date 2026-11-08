@@ -14,6 +14,13 @@ import {
   isPlatformPackage,
   parseComposerJson,
 } from "../src/providers/composer/parse";
+import {
+  combineLicenses,
+  decodePackageRecord,
+  packagePageUrl,
+  recordSatisfies,
+} from "../src/providers/composer/metadata";
+import type { ValidConstraint } from "../src/providers/composer/spec";
 import { fakeDocument } from "./support/fakeHost";
 
 const fixtures = join(__dirname, "..", "..", "..", "test", "fixtures", "lockfiles");
@@ -188,4 +195,79 @@ test("platform and invalid names, and which paths are project manifests", () => 
   expect(isComposerJsonPath("/r/vendor/psr/log/composer.json")).toBe(false);
   expect(isComposerJsonPath("/r/composer.lock")).toBe(false);
   expect(isComposerJsonPath("/r/package.json")).toBe(false);
+});
+
+// --- metadata.ts ------------------------------------------------------------
+
+test("package records decode from lock/installed/p2 shapes", () => {
+  const rec = decodePackageRecord({
+    name: "psr/log",
+    version: "3.0.2",
+    license: ["MIT"],
+    homepage: "https://github.com/php-fig/log",
+    require: { php: ">=8.0.0" },
+    extra: { "branch-alias": { "dev-master": "3.x-dev" } },
+    "notification-url": "https://packagist.org/downloads/",
+  });
+  expect(rec).toEqual({
+    name: "psr/log",
+    version: "3.0.2",
+    versionNormalized: "3.0.2.0",
+    license: "MIT",
+    homepage: "https://github.com/php-fig/log",
+    phpVersion: ">=8.0.0",
+    branchAliases: { "dev-master": "3.x-dev" },
+    fromPackagist: true,
+  });
+  const local = decodePackageRecord({
+    name: "a/b",
+    version: "dev-main",
+    version_normalized: "dev-main",
+    dist: { type: "path" },
+  })!;
+  expect(local).toMatchObject({
+    versionNormalized: "dev-main",
+    fromPackagist: false,
+    branchAliases: {},
+  });
+  expect(local.license).toBeUndefined();
+  expect(
+    decodePackageRecord({ name: "a/b", version: "1.0" }, { fromPackagist: true })
+  ).toMatchObject({ versionNormalized: "1.0.0.0", fromPackagist: true });
+  expect(decodePackageRecord({ name: "a/b" })).toBeUndefined();
+  expect(decodePackageRecord({ name: "a/b", version: "not a version" })).toBeUndefined();
+  expect(decodePackageRecord("nope")).toBeUndefined();
+});
+
+test("Composer license arrays are disjunctive", () => {
+  expect(combineLicenses(["MIT"])).toBe("MIT");
+  expect(combineLicenses(["LGPL-2.1-only", "GPL-3.0-or-later"])).toBe(
+    "LGPL-2.1-only OR GPL-3.0-or-later"
+  );
+  expect(combineLicenses(["MIT", " MIT "])).toBe("MIT");
+  expect(combineLicenses("(MIT or GPL-2.0)")).toBe("(MIT or GPL-2.0)");
+  expect(combineLicenses("proprietary")).toBe("proprietary");
+  expect(combineLicenses([])).toBeUndefined();
+  expect(combineLicenses("")).toBeUndefined();
+  expect(combineLicenses(undefined)).toBeUndefined();
+  expect(combineLicenses([42])).toBeUndefined();
+});
+
+test("a dev record satisfies through its aliases, a stale numeric record does not", () => {
+  const dev = decodePackageRecord({
+    name: "a/b",
+    version: "dev-master",
+    extra: { "branch-alias": { "dev-master": "2.0.x-dev" } },
+  })!;
+  const c = (s: string) => parseConstraint(s) as ValidConstraint;
+  expect(recordSatisfies(dev, c("^2.0"), [])).toBe(true); // extra.branch-alias
+  expect(recordSatisfies(dev, c("^3.0"), [])).toBe(false);
+  expect(recordSatisfies(dev, c("^3.0"), ["3.0.0.0"])).toBe(true); // composer.lock aliases
+  expect(recordSatisfies(dev, c("dev-master as 3.1.0"), [])).toBe(true); // the branch itself
+  expect(recordSatisfies(dev, c("dev-other as 2.0.0"), [])).toBe(false); // alias of another branch
+  expect(recordSatisfies(dev, c("dev-other"), [])).toBe(false);
+  const old = decodePackageRecord({ name: "a/b", version: "1.2.0" })!;
+  expect(recordSatisfies(old, c("^1.0"), [])).toBe(true);
+  expect(recordSatisfies(old, c("^2.0"), ["9.0.0.0"])).toBe(false); // aliases only apply to dev records
+  expect(packagePageUrl("psr/log", "3.0.2")).toBe("https://packagist.org/packages/psr/log#3.0.2");
 });
