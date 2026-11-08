@@ -59,7 +59,7 @@ Hover an annotation to see the resolved version, where the information came from
 | Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
-| PHP | ✅ | ✅ | Composer | | `composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed |
+| PHP | ✅ | ✅ | Composer | [@v420v](https://github.com/v420v) | `composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed |
 | Python | ❌ | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Your language? | | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
@@ -77,7 +77,7 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` と `*.gemspec` の宣言を rubygems.org / `Gemfile.lock` と突き合わせて解決。ローカルにRubyのインストールは不要 |
-| PHP | ✅ | ✅ | Composer | | `composer.json` の requirement を `vendor/` / `composer.lock` / Packagist と突き合わせて解決。ローカルにPHPやComposerのインストールは不要 |
+| PHP | ✅ | ✅ | Composer | [@v420v](https://github.com/v420v) | `composer.json` の requirement を `vendor/` / `composer.lock` / Packagist と突き合わせて解決。ローカルにPHPやComposerのインストールは不要 |
 | Python | ❌ | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | あなたの言語? | | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
