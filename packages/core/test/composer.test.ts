@@ -21,7 +21,9 @@ import {
   recordSatisfies,
 } from "../src/providers/composer/metadata";
 import type { ValidConstraint } from "../src/providers/composer/spec";
-import { fakeDocument } from "./support/fakeHost";
+import { InstalledLookup } from "../src/providers/composer/installed";
+import { parseLock } from "../src/providers/composer/lockfile";
+import { fakeDocument, fakeHost, fakeUri } from "./support/fakeHost";
 
 const fixtures = join(__dirname, "..", "..", "..", "test", "fixtures", "lockfiles");
 const rows = (file: string) =>
@@ -270,4 +272,58 @@ test("a dev record satisfies through its aliases, a stale numeric record does no
   expect(recordSatisfies(old, c("^1.0"), [])).toBe(true);
   expect(recordSatisfies(old, c("^2.0"), ["9.0.0.0"])).toBe(false); // aliases only apply to dev records
   expect(packagePageUrl("psr/log", "3.0.2")).toBe("https://packagist.org/packages/psr/log#3.0.2");
+});
+
+// --- installed.ts / lockfile.ts ----------------------------------------------
+
+const lockText = readFileSync(join(fixtures, "composer.composer.lock"), "utf8");
+const installedText = readFileSync(join(fixtures, "composer.installed.json"), "utf8");
+
+test("composer.lock indexes packages and packages-dev with licenses, and rejects other JSON", () => {
+  const lock = parseLock(lockText)!;
+  expect(lock.packages.get("psr/log")).toMatchObject({
+    version: "3.0.2",
+    license: "MIT",
+    fromPackagist: true,
+    phpVersion: ">=8.0.0",
+  });
+  expect(lock.packages.get("psr/container")?.license).toBe("MIT"); // from packages-dev
+  expect(lock.packages.get("psr/http-message")).toMatchObject({
+    version: "dev-master",
+    branchAliases: { "dev-master": "2.0.x-dev" },
+  });
+  expect(lock.aliases.get("psr/log")).toBeUndefined();
+  expect(
+    parseLock(
+      JSON.stringify({
+        packages: [],
+        aliases: [
+          { package: "a/b", version: "dev-main", alias: "1.0.0", alias_normalized: "1.0.0.0" },
+        ],
+      })
+    )!.aliases.get("a/b")
+  ).toEqual(["1.0.0.0"]);
+  expect(parseLock('{"name":"x"}')).toBeUndefined();
+  expect(parseLock("not json")).toBeUndefined();
+});
+
+test("installed.json is read from the configured vendor dir, in Composer 2 and 1 shapes, without walking up", async () => {
+  const files = new Map([
+    ["/repo/vendor/composer/installed.json", installedText],
+    [
+      "/repo/lib/composer/installed.json",
+      JSON.stringify([{ name: "a/b", version: "1.0.0", license: ["BSD-2-Clause"] }]),
+    ],
+  ]);
+  const lookup = new InstalledLookup(fakeHost(files).fs);
+  const dir = fakeUri("/repo");
+  expect((await lookup.find(dir, "vendor", "psr/log"))?.license).toBe("MIT");
+  expect((await lookup.find(dir, "vendor", "psr/http-message"))?.version).toBe("dev-master");
+  expect((await lookup.find(dir, "lib", "a/b"))?.license).toBe("BSD-2-Clause"); // Composer 1 bare array
+  expect(await lookup.find(dir, "vendor", "acme/missing")).toBeUndefined();
+  expect(await lookup.find(fakeUri("/repo/sub"), "vendor", "psr/log")).toBeUndefined(); // no walk up
+  files.delete("/repo/vendor/composer/installed.json");
+  expect((await lookup.find(dir, "vendor", "psr/log"))?.license).toBe("MIT"); // 15 s TtlCache still answers
+  lookup.invalidate();
+  expect(await lookup.find(dir, "vendor", "psr/log")).toBeUndefined();
 });
