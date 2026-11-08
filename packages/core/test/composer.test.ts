@@ -575,12 +575,14 @@ test("Composer resolution prefers vendor, then composer.lock, then Packagist", a
 
     expect({ ...resolved[0] }).toEqual({
       source: "local",
+      via: "installed package (`vendor/`)",
       license: "MIT",
       version: "3.0.2",
       phpVersion: ">=8.0.0",
       homepage: "https://github.com/php-fig/log",
       packagePageUrl: "https://packagist.org/packages/psr/log#3.0.2",
     });
+    expect(buildHover(entries[0], resolved[0])!.value).toContain("installed package (`vendor/`)");
     expect(resolved[1]).toMatchObject({
       source: "registry",
       via: "packagist.org",
@@ -589,7 +591,11 @@ test("Composer resolution prefers vendor, then composer.lock, then Packagist", a
       packagePageUrl: "https://packagist.org/packages/acme/remote#1.2.0",
     });
     expect(resolved[2]).toEqual({ source: "unknown", detail: "not found on Packagist" });
-    expect(resolved[3]).toMatchObject({ source: "lockfile", via: "composer.lock", license: "MIT" });
+    expect(resolved[3]).toMatchObject({
+      source: "lockfile",
+      via: "`composer.lock`",
+      license: "MIT",
+    });
     expect(calls).toEqual([
       "https://repo.packagist.org/p2/acme/remote.json",
       "https://repo.packagist.org/p2/acme/missing.json",

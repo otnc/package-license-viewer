@@ -11,6 +11,7 @@ This is the detailed reference for how each supported ecosystem resolves a licen
 | `go.mod` | `require`, single-line and block form, direct and `// indirect` alike, with `replace` applied |
 | `Gemfile` | `gem` calls, in and out of `group` blocks |
 | `*.gemspec` | `add_dependency`, `add_runtime_dependency`, `add_development_dependency` |
+| `composer.json` | `require` and `require-dev`; platform packages (`php`, `ext-*`, `lib-*`, `composer-*-api`) are skipped |
 
 ## npm / JSR
 

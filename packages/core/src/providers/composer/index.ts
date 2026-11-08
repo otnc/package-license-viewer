@@ -120,7 +120,7 @@ export class ComposerLicenseProvider implements LicenseProvider {
     const installed = await this.installed.find(manifestDir, manifest.vendorDir, entry.name);
     if (installed) {
       if (constraint.kind === "invalid" || recordSatisfies(installed, constraint, [])) {
-        return report(installed, "local", undefined, unchecked);
+        return report(installed, "local", "installed package (`vendor/`)", unchecked);
       }
       log.debug(
         `composer: installed ${entry.name}@${installed.version} does not satisfy ${entry.spec}`
@@ -141,7 +141,7 @@ export class ComposerLicenseProvider implements LicenseProvider {
       if (locked) {
         const aliases = lock?.aliases.get(entry.name) ?? [];
         if (constraint.kind === "invalid" || recordSatisfies(locked, constraint, aliases)) {
-          return report(locked, "lockfile", "composer.lock", unchecked);
+          return report(locked, "lockfile", "`composer.lock`", unchecked);
         }
         log.debug(
           `composer: locked ${entry.name}@${locked.version} does not satisfy ${entry.spec}`

@@ -79,7 +79,7 @@ suite("Composer workspace", () => {
       // Only in composer.lock (installed with --no-dev)
       const locked = await provider.resolve(entries[2], doc, noCancel);
       assert.equal(locked.source, "lockfile");
-      assert.equal(locked.via, "composer.lock");
+      assert.equal(locked.via, "`composer.lock`");
       assert.equal(locked.license, "MIT");
 
       // Neither installed nor locked, and requests are turned off
