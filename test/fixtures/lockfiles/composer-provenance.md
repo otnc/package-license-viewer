@@ -28,4 +28,19 @@ versions in the version list.
 
 ## Lockfile fixtures
 
-(Added by a later change.)
+`composer.composer.lock` and `composer.installed.json` are the `composer.lock`
+and `vendor/composer/installed.json` that `composer install` (Composer 2.10.3,
+PHP 8.5.12, 2026-11-08) produced for a temporary project named
+`plv/composer-fixtures` with this manifest:
+
+```json
+{
+    "require": { "psr/log": "^3.0", "psr/http-message": "^2.0@dev" },
+    "require-dev": { "psr/container": "^2.0" }
+}
+```
+
+The `@dev` flag makes Composer pick `psr/http-message`'s `dev-master` branch,
+which carries `extra.branch-alias` (`dev-master` → `2.0.x-dev`), so the
+branch-alias path has a real fixture. None of the three packages has
+transitive dependencies. Both files are unmodified Composer output.
