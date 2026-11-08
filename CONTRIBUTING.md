@@ -95,7 +95,7 @@ export class ExampleLicenseProvider implements LicenseProvider {
 
 Register it in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) and add the language to `activationEvents` in [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json).
 
-Also add a row to the language/package-manager table in [README.md](README.md#supported-languages) (edit [`i18n/README.base.md`](i18n/README.base.md), not `README.md` — see "Documentation and i18n" below), and remove the corresponding "planned" row if there's a tracking issue for it.
+Also add a row to [`i18n/supported-languages.json`](i18n/supported-languages.json), which supplies the language/package-manager table in both READMEs, and remove the corresponding "planned" row if there's a tracking issue for it. Store shared cells once and use `{ "en": "…", "ja": "…" }` only for cells that differ by locale.
 
 ### Link the hover title to the package's registry page
 
@@ -126,6 +126,12 @@ npm run docs:check   # verify nothing is left missing/stale
 ```
 
 See [AGENTS.md](AGENTS.md) and the Kiritan skill installed at [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) for the full directive syntax and CLI reference.
+
+README tables use the project-specific `::docs-table{id=...}` directive. Their shared cells and translations live together in [`i18n/supported-languages.json`](i18n/supported-languages.json), [`i18n/editors.json`](i18n/editors.json), [`i18n/commands.json`](i18n/commands.json) and [`i18n/settings.json`](i18n/settings.json). Each table's `columns` keys determine its column order; use a string for shared cells and `{ "en": "…", "ja": "…" }` for translated cells. Cells can contain Markdown links and code spans.
+
+Command rows are keyed by command ID, and setting rows by setting ID. Their titles, setting names, default values and row order come from [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json); edit the descriptions in the table files. `docs:build` fails if a command or setting has no documentation entry or an entry refers to a removed ID. The `npm.sections` row uses `defaultSummary` with `%{count}` to describe the array default without repeating its length.
+
+The renderer in [`i18n/readme-renderer.mjs`](i18n/readme-renderer.mjs) expands table directives during parsing. Ordinary prose stays in the base files, with each English section next to its Japanese counterpart. Keep identical code examples and other shared content outside locale blocks so they only need editing once.
 
 ## Agent skills
 

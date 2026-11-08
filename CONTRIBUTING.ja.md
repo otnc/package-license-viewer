@@ -97,7 +97,7 @@ export class ExampleLicenseProvider implements LicenseProvider {
 
 [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
 
-また、[README.md](README.md#サポート言語) の言語/パッケージマネージャー表にも行を追加してください(`README.md` ではなく [`i18n/README.base.md`](i18n/README.base.md) を編集します — 詳しくは後述の「ドキュメントとi18n」を参照)。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。
+また、両言語のREADMEの言語/パッケージマネージャー表を生成する [`i18n/supported-languages.json`](i18n/supported-languages.json) に行を追加してください。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。共通のセルは一度だけ書き、言語によって異なるセルだけ `{ "en": "…", "ja": "…" }` で指定します。
 
 ### ホバータイトルをパッケージのレジストリページにリンクする
 
@@ -128,6 +128,12 @@ npm run docs:check   # 未翻訳・古くなった内容が残っていないか
 ```
 
 ディレクティブの構文やCLIリファレンスの詳細については、[AGENTS.md](AGENTS.md) と [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) にインストールされているKiritanのスキルを参照してください。
+
+READMEの表には、このプロジェクト独自の `::docs-table{id=...}` を使います。共通のセルと翻訳は [`i18n/supported-languages.json`](i18n/supported-languages.json)、[`i18n/editors.json`](i18n/editors.json)、[`i18n/commands.json`](i18n/commands.json)、[`i18n/settings.json`](i18n/settings.json) で管理します。列の順序は各ファイルの `columns` のキー順で決まります。共通のセルは文字列で、翻訳するセルは `{ "en": "…", "ja": "…" }` で書きます。セルにはMarkdownのリンクやコード表記も使えます。
+
+コマンドの行はコマンドID、設定の行は設定IDをキーにします。コマンド名、設定名、初期値、行の順序は [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) から取得するため、表のファイルでは説明文を編集します。追加したコマンドや設定の説明がない場合や、削除したIDの説明が残っている場合は、`docs:build` がエラーになります。`npm.sections` の行は、`defaultSummary` に `%{count}` を使って配列の初期値を説明するため、要素数を書き直す必要はありません。
+
+[`i18n/readme-renderer.mjs`](i18n/readme-renderer.mjs) のレンダラーが、解析時に表のディレクティブを展開します。通常の文章はbaseファイルで管理し、英語の節と対応する日本語の節を隣に置きます。同じコード例などの共通部分は言語別ブロックの外に置き、一度の編集で済むようにします。
 
 ## エージェント向けスキル
 

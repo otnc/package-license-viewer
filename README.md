@@ -38,8 +38,8 @@ Hover an annotation to see the resolved version, where the information came from
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
 | PHP | ✅ | ✅ | Composer | [@v420v](https://github.com/v420v) | `composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed |
-| Python | ❌ | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Your language? | | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
+| Python | ❌ | ❌ | pip, uv, poetry |  | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
+| Your language? |  |  |  |  | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
 See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
 

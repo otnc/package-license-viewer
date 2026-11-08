@@ -42,58 +42,6 @@ Everything a provider doesn't have to worry about is shared:
 The npm provider ([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/)) resolves in three steps — `node_modules`, then the lockfile, then the registry — each in its own file ([`installed.ts`](packages/core/src/providers/npm/installed.ts), [`lockfile/`](packages/core/src/providers/npm/lockfile/), [`registry.ts`](packages/core/src/providers/npm/registry.ts)). The JSR provider ([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/)) reuses the npm registry client for `npm:` specifiers and routes `@jsr/scope__name` npm-compatibility names back to JSR.
 
 For exactly how each ecosystem resolves a license (npm/JSR precedence, package-manager layouts, Cargo's lookup path), see [docs/resolution-details.md](docs/resolution-details.md).
-
-### Cargo implementation
-
-Cargo's implementation lives in [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/). `parse.ts` uses the position-aware MIT-licensed `toml-eslint-parser` 0.10.0 (CommonJS, Node >=16 supported); keep the extension's minimum VS Code version when changing this dependency. TOML 1.0 declarations use their first line, or the dependency table header, as the annotation position. Invalid TOML yields no entries. Cargo requirements are interpreted independently of npm ranges; the saved Rust `semver::VersionReq` oracle and generated Cargo.lock fixture are described in [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md).
-
-`workspace.ts` and `lockfile.ts` only locate declarations and uniquely matching public versions. `client.ts` shares a send-start limiter (one request per second) across clients and uses `fetchJson` for HTTP. Its `/versions` request deliberately omits `per_page`: the [API implementation](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs) returns all versions in this mode. A response advertising another page is rejected instead of being treated as complete. The version records carry `license`, so candidate selection needs no request for each individual version. They also carry `rust_version`, surfaced as the release's MSRV next to the license (normalized to a `>=` range); the metadata cache keys are versioned (`v2`) because v1 records predate that field. Exact locked versions use the per-version endpoint, including yanked versions. Transient failures are never written to `LicenseCache`; HTTP 429 delays subsequent sends for at least one minute without automatic retries.
-
-Keep manifest resolution keys separate from public version metadata keys. The former include the URI, alias, section, source, requirement and workspace context; the latter share exact public metadata across documents. `invalidate()` clears auxiliary reads and cancels pending Cargo requests. No Cargo command, archive reader, source cache, filesystem watcher or dependency graph belongs here.
-
-### MoonBit implementation
-
-MoonBit's implementation lives in [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/). moon is replacing `moon.mod.json` with `moon.mod`, a small DSL, so both are parsed: [`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) is a tokenizer for the [published grammar](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html) that reads only what is needed (the strings in a top-level `import` block, a `key = "string"`, a `key = [ … ]`) and skips whatever it does not recognize, so a half-typed statement never blanks out the dependencies above it. [`parse.ts`](packages/core/src/providers/moonbit/parse.ts) lowers both formats to the same entries, splitting each `import` item on its **last** `@` the way `read_module_from_dsl` does in moon.
-
-A declared version is an exact `semver::Version`, never a range: moon resolves with [minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs). Nothing here interprets ranges, and nothing runs `moon`. Resolution is [`.mooncakes`](packages/core/src/providers/moonbit/installed.ts) → `moon.work` members → the [registry index](packages/core/src/providers/moonbit/registryIndex.ts) → [mooncakes.io](packages/core/src/providers/moonbit/client.ts); the first two answer from the manifest that `moon build` unpacked, which is the only source that knows where selection actually landed, and both are checked before a declared version is even looked at — a `moon.work` member's `@version` is ignored by moon whatever it says, so validating it first would misreport a member with an odd placeholder version as unresolvable instead of skipped.
-
-The registry index is the clone `moon update` maintains in `$MOON_HOME/registry/index` (`~/.moon` by default), one JSON-lines file per module carrying every version **and its license** — which is why an installed toolchain resolves offline. Keep dropping a malformed line on its own rather than the whole file, as the crates.io client does for a bad version record.
-
-mooncakes.io answers `/api/v0/modules/<user>/<module>@<version>` with that release's metadata and `…/<user>/<module>` with the newest one; only the exact-version answer is cached, since the newest release is by definition what changes. That route has **no form for a nested name** such as `moonbitlang/lex/runtime`, even though the index carries one — those resolve from disk only and must not be given a hover link that would fail to load. The registry publishes no rate limit, so sends are spaced out instead of filling `maxConcurrentRequests`, and an HTTP 429 stands down for a minute without retrying.
-
-No `moon` invocation, archive download, `.mbt` parsing, package-level (`moon.pkg`) handling or dependency graph belongs here.
-
-### Go implementation
-
-Go's implementation lives in [`packages/core/src/providers/go/`](packages/core/src/providers/go/). [`parse.ts`](packages/core/src/providers/go/parse.ts) follows the lexical rules of `golang.org/x/mod/modfile` — one directive per line, `//` comments, `verb ( … )` blocks, quoted or raw strings — and reads only `require` and `replace`. `replace` is applied at parse time, an exact-version replacement winning over a wildcard one the way the go command picks; a directory target makes the requirement skipped, and a module target makes it resolve as that module.
-
-A required version is exact: the go command uses minimal version selection, and since Go 1.17 the main module's `go.mod` lists every module the build needs at its selected version. Nothing interprets ranges, and nothing runs `go`.
-
-Licenses come from [deps.dev](https://docs.deps.dev/api/v3/) (`GetVersion`), via [`client.ts`](packages/core/src/providers/go/client.ts): the module mirror serves no license metadata and pkg.go.dev has no API for it. Several entries in its `licenses` mean several license files in the module, so they are joined with `AND`; `non-standard` is dropped. Only found answers are cached — deps.dev may not have ingested a fresh release yet. The hover links to `https://pkg.go.dev/<module>@<version>` only after deps.dev has answered for that version, which is what shows the module is public.
-
-[`env.ts`](packages/core/src/providers/go/env.ts) reads `GOPRIVATE`, `GONOPROXY` and `GONOSUMDB` from the process environment, then from the go env file (`$GOENV`, or `go/env` under `os.UserConfigDir()`), and matches them like `module.MatchPrefixPatterns`. A matching module is skipped before any request, so a private module's path never leaves the machine. Keep that check ahead of every network call. The one item deps.dev does not carry, a version's `go` directive, is read from that version's own `go.mod` on the module proxy; it is decoration only, and a failed read never changes the license result.
-
-No `go` invocation, module cache or license-file reading, `go.sum`/`go.work` handling or dependency graph belongs here.
-
-### Ruby implementation
-
-Ruby's implementation lives in [`packages/core/src/providers/rubygems/`](packages/core/src/providers/rubygems/). [`parse.ts`](packages/core/src/providers/rubygems/parse.ts) tokenizes just enough Ruby for the two manifest forms — a Gemfile's `gem` calls and a gemspec's `add_dependency` family — and never executes anything. `git:`/`github:`/`path:` options and gems declared under a non-default `source` are skipped at parse time, so their names are never sent to rubygems.org. Version requirements are interpreted the way `Gem::Requirement` does, in [`spec.ts`](packages/core/src/providers/rubygems/spec.ts), independently of npm and Cargo ranges.
-
-[`lockfile.ts`](packages/core/src/providers/rubygems/lockfile.ts) only locates declarations and uniquely matching public versions: just the `GEM` sections of Gemfile.lock whose remotes are public sources are indexed. [`client.ts`](packages/core/src/providers/rubygems/client.ts) reads `GET /api/v1/versions/<name>.json`, which carries every published version and its licenses in one response — the same shape as the crates.io client — so candidate selection needs no request per version. Platform builds of one release collapse to a single record. A gemspec's `licenses` list names every license the release is distributed under, so several entries are joined with `AND`. The same response carries each release's `ruby_version` (its `required_ruby_version`), shown next to the license the way npm shows `engines.node`; an unconstrained release reports `>= 0` and shows nothing.
-
-No `ruby` or `bundle` invocation, installed-gem reading or dependency graph belongs here.
-
-### Composer implementation
-
-Composer's implementation lives in [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/). [`parse.ts`](packages/core/src/providers/composer/parse.ts) reads `require` and `require-dev` from the jsonc-parser AST, lowercases names (`composer.lock`, `installed.json` and Packagist all key packages that way) and drops platform packages (`php`, `ext-*`, `lib-*`, `composer-*-api`), which constrain PHP itself rather than a package with a license. It also picks up `config.vendor-dir`, `minimum-stability`, `prefer-stable` and whether `repositories` disables Packagist.
-
-Resolution runs vendor → lock → registry, like npm. [`installed.ts`](packages/core/src/providers/composer/installed.ts) reads `<vendor-dir>/composer/installed.json` (the Composer 2 object or the Composer 1 array; no parent-directory walk, since Composer never hoists), [`lockfile.ts`](packages/core/src/providers/composer/lockfile.ts) reads `composer.lock`, and [`client.ts`](packages/core/src/providers/composer/client.ts) asks Packagist's p2 endpoint. Both files on disk carry each package's `license`, so a hit there is an answer, not just a pinned version. [`metadata.ts`](packages/core/src/providers/composer/metadata.ts) decodes all three sources into one `PackageRecord` and owns the rules they share: a `license` array is disjunctive by Composer's definition, so it is joined with `OR` — the opposite of deps.dev's `AND` for Go; a record's `require.php` becomes `phpVersion`; and the hover title links to Packagist only when the record's `notification-url` is Packagist's (or it came from p2), so a `path`/`vcs` package never gets a link that 404s.
-
-A vendored or locked version is reported only if it still satisfies the manifest's constraint, so a stale lock falls through to Packagist instead of lying. A `dev-*` branch satisfies through its aliases — the constraint's own `as` clause, the record's `extra.branch-alias`, or the lock's `aliases` — which is how Composer itself lets `^1.0` be met by `dev-main`. Branches never resolve from Packagist.
-
-[`spec.ts`](packages/core/src/providers/composer/spec.ts) is a port of `composer/semver` (`VersionParser::normalize`, `parseConstraints`, `parseStability` and PHP's `version_compare`), independent of npm and Cargo ranges, tested against TSV oracles the real library generated; [`composer-provenance.md`](test/fixtures/lockfiles/composer-provenance.md) says how to regenerate them, and the oracle wins over any prose description. Candidate selection without a lock follows Composer's stability rules: an explicit `@flag` replaces `minimum-stability` for that package, a prerelease named in the constraint lowers it, and `prefer-stable` prefers a stable candidate over a higher unstable one. p2 responses are minified — each version lists only the keys that changed, and `"__unset"` removes one — and are expanded before anything reads them; the expanded list is cached, a miss is not. Requests go out in parallel under `maxConcurrentRequests`, since p2 files are static CDN JSON, but an HTTP 429 pauses every client for a minute without retrying.
-
-No `composer` invocation, private repository (Private Packagist, Satis, `vcs`/`path` repositories), `COMPOSER_VENDOR_DIR` handling, `replace`/`provide` resolution or dependency graph belongs here.
 :::
 
 :::kiritan{locale=ja}
@@ -110,7 +58,19 @@ No `composer` invocation, private repository (Private Packagist, Satis, `vcs`/`p
 npmプロバイダー([`packages/core/src/providers/npm/`](packages/core/src/providers/npm/))は `node_modules` → ロックファイル → レジストリ、という3段階でそれぞれ別ファイル([`installed.ts`](packages/core/src/providers/npm/installed.ts)、[`lockfile/`](packages/core/src/providers/npm/lockfile/)、[`registry.ts`](packages/core/src/providers/npm/registry.ts))に分けて解決します。JSRプロバイダー([`packages/core/src/providers/jsr/`](packages/core/src/providers/jsr/))は `npm:` 指定子に対してnpmのレジストリクライアントを再利用し、npm互換名 `@jsr/scope__name` をJSR側にルーティングします。
 
 各エコシステムが具体的にどうライセンスを解決するか(npm/JSRの優先順位、パッケージマネージャーごとのレイアウト、Cargoの探索経路)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
+:::
 
+:::kiritan{locale=en}
+### Cargo implementation
+
+Cargo's implementation lives in [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/). `parse.ts` uses the position-aware MIT-licensed `toml-eslint-parser` 0.10.0 (CommonJS, Node >=16 supported); keep the extension's minimum VS Code version when changing this dependency. TOML 1.0 declarations use their first line, or the dependency table header, as the annotation position. Invalid TOML yields no entries. Cargo requirements are interpreted independently of npm ranges; the saved Rust `semver::VersionReq` oracle and generated Cargo.lock fixture are described in [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md).
+
+`workspace.ts` and `lockfile.ts` only locate declarations and uniquely matching public versions. `client.ts` shares a send-start limiter (one request per second) across clients and uses `fetchJson` for HTTP. Its `/versions` request deliberately omits `per_page`: the [API implementation](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs) returns all versions in this mode. A response advertising another page is rejected instead of being treated as complete. The version records carry `license`, so candidate selection needs no request for each individual version. They also carry `rust_version`, surfaced as the release's MSRV next to the license (normalized to a `>=` range); the metadata cache keys are versioned (`v2`) because v1 records predate that field. Exact locked versions use the per-version endpoint, including yanked versions. Transient failures are never written to `LicenseCache`; HTTP 429 delays subsequent sends for at least one minute without automatic retries.
+
+Keep manifest resolution keys separate from public version metadata keys. The former include the URI, alias, section, source, requirement and workspace context; the latter share exact public metadata across documents. `invalidate()` clears auxiliary reads and cancels pending Cargo requests. No Cargo command, archive reader, source cache, filesystem watcher or dependency graph belongs here.
+:::
+
+:::kiritan{locale=ja}
 ### Cargoの実装
 
 Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/providers/crates/) にあります。`parse.ts` は位置情報を保持するMITライセンスの `toml-eslint-parser` 0.10.0 (CommonJS、Node >=16対応)を使用しています。この依存関係を変更する際は、拡張機能がサポートする最小のVS Codeバージョンを維持してください。TOML 1.0の宣言は、その最初の行または依存関係テーブルのヘッダーを注釈の位置として使用します。不正なTOMLはエントリを生成しません。Cargoのバージョン要件はnpmの範囲指定とは独立して解釈されます。保存済みのRust `semver::VersionReq` オラクルと生成された Cargo.lock フィクスチャについては [`cargo-provenance.md`](test/fixtures/lockfiles/cargo-provenance.md) で説明しています。
@@ -118,7 +78,23 @@ Cargoの実装は [`packages/core/src/providers/crates/`](packages/core/src/prov
 `workspace.ts` と `lockfile.ts` は宣言と一意に一致する公開バージョンを探すだけです。`client.ts` は送信開始のリミッター(1秒に1リクエスト)を全クライアント間で共有し、HTTP通信には `fetchJson` を使用します。`/versions` リクエストは意図的に `per_page` を省略しています。[APIの実装](https://github.com/rust-lang/crates.io/blob/main/src/controllers/krate/versions.rs)ではこのモードで全バージョンを返すためです。別ページの存在を示すレスポンスは、完了とみなさず拒否します。バージョンレコードには `license` が含まれるため、候補選定のために個々のバージョンへリクエストする必要はありません。レコードには `rust_version` も含まれ、リリースの MSRV としてライセンスの横に表示します (`>=` の範囲に正規化)。メタデータのキャッシュキーは版付き (`v2`) です。v1 のレコードにはこのフィールドが無いためです。ロックされた正確なバージョンには、ヤンクされたものも含めてバージョン別エンドポイントを使用します。一時的な失敗は `LicenseCache` に書き込まれません。HTTP 429の場合、自動リトライなしで以降の送信を少なくとも1分間遅延させます。
 
 マニフェスト解決キーと公開バージョンのメタデータキーは分けて管理してください。前者はURI、エイリアス、セクション、ソース、要件、ワークスペースのコンテキストを含み、後者はドキュメント間で正確な公開メタデータを共有します。`invalidate()` は補助的な読み込みをクリアし、保留中のCargoリクエストをキャンセルします。Cargoコマンドの実行、アーカイブの読み込み、ソースキャッシュ、ファイルシステムウォッチャー、依存関係グラフのいずれもここには含まれません。
+:::
 
+:::kiritan{locale=en}
+### MoonBit implementation
+
+MoonBit's implementation lives in [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/). moon is replacing `moon.mod.json` with `moon.mod`, a small DSL, so both are parsed: [`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) is a tokenizer for the [published grammar](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html) that reads only what is needed (the strings in a top-level `import` block, a `key = "string"`, a `key = [ … ]`) and skips whatever it does not recognize, so a half-typed statement never blanks out the dependencies above it. [`parse.ts`](packages/core/src/providers/moonbit/parse.ts) lowers both formats to the same entries, splitting each `import` item on its **last** `@` the way `read_module_from_dsl` does in moon.
+
+A declared version is an exact `semver::Version`, never a range: moon resolves with [minimal version selection](https://github.com/moonbitlang/moon/blob/main/crates/mooncake/src/resolver/mvs.rs). Nothing here interprets ranges, and nothing runs `moon`. Resolution is [`.mooncakes`](packages/core/src/providers/moonbit/installed.ts) → `moon.work` members → the [registry index](packages/core/src/providers/moonbit/registryIndex.ts) → [mooncakes.io](packages/core/src/providers/moonbit/client.ts); the first two answer from the manifest that `moon build` unpacked, which is the only source that knows where selection actually landed, and both are checked before a declared version is even looked at — a `moon.work` member's `@version` is ignored by moon whatever it says, so validating it first would misreport a member with an odd placeholder version as unresolvable instead of skipped.
+
+The registry index is the clone `moon update` maintains in `$MOON_HOME/registry/index` (`~/.moon` by default), one JSON-lines file per module carrying every version **and its license** — which is why an installed toolchain resolves offline. Keep dropping a malformed line on its own rather than the whole file, as the crates.io client does for a bad version record.
+
+mooncakes.io answers `/api/v0/modules/<user>/<module>@<version>` with that release's metadata and `…/<user>/<module>` with the newest one; only the exact-version answer is cached, since the newest release is by definition what changes. That route has **no form for a nested name** such as `moonbitlang/lex/runtime`, even though the index carries one — those resolve from disk only and must not be given a hover link that would fail to load. The registry publishes no rate limit, so sends are spaced out instead of filling `maxConcurrentRequests`, and an HTTP 429 stands down for a minute without retrying.
+
+No `moon` invocation, archive download, `.mbt` parsing, package-level (`moon.pkg`) handling or dependency graph belongs here.
+:::
+
+:::kiritan{locale=ja}
 ### MoonBitの実装
 
 MoonBitの実装は [`packages/core/src/providers/moonbit/`](packages/core/src/providers/moonbit/) にあります。moonは `moon.mod.json` を小さなDSLである `moon.mod` に置き換えている途中のため、両方をパースします。[`dsl.ts`](packages/core/src/providers/moonbit/dsl.ts) は[公開されている文法](https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html)に対するトークナイザーで、必要な部分(トップレベルの `import` ブロック内の文字列、`key = "string"`、`key = [ … ]`)だけを読み取り、認識できないものはすべてスキップします。そのため、途中まで書きかけの文があっても、その上に書かれた依存関係が消えることはありません。[`parse.ts`](packages/core/src/providers/moonbit/parse.ts) は両方のフォーマットを同じエントリ形式に落とし込み、各 `import` の項目をmoonの `read_module_from_dsl` と同じように**最後の** `@` で分割します。
@@ -130,7 +106,23 @@ MoonBitの実装は [`packages/core/src/providers/moonbit/`](packages/core/src/p
 mooncakes.ioは `/api/v0/modules/<user>/<module>@<version>` にその release のメタデータを、`…/<user>/<module>` に最新版を返します。最新版は定義上変わり得るものなので、正確なバージョンを指定した回答だけがキャッシュされます。このルートには `moonbitlang/lex/runtime` のようなネストした名前の**ルートが存在せず**、インデックス自体はそれを保持しているにもかかわらずです。そのため、そのようなモジュールはディスクからのみ解決し、読み込みに失敗するホバーリンクを渡してはいけません。レジストリはレート制限を公開していないため、`maxConcurrentRequests` を埋め尽くすのではなく送信間隔を空け、HTTP 429が返ってきた場合はリトライせずに1分間送信を停止します。
 
 `moon` コマンドの実行、アーカイブのダウンロード、`.mbt` のパース、パッケージレベル(`moon.pkg`)の扱い、依存関係グラフのいずれもここには含まれません。
+:::
 
+:::kiritan{locale=en}
+### Go implementation
+
+Go's implementation lives in [`packages/core/src/providers/go/`](packages/core/src/providers/go/). [`parse.ts`](packages/core/src/providers/go/parse.ts) follows the lexical rules of `golang.org/x/mod/modfile` — one directive per line, `//` comments, `verb ( … )` blocks, quoted or raw strings — and reads only `require` and `replace`. `replace` is applied at parse time, an exact-version replacement winning over a wildcard one the way the go command picks; a directory target makes the requirement skipped, and a module target makes it resolve as that module.
+
+A required version is exact: the go command uses minimal version selection, and since Go 1.17 the main module's `go.mod` lists every module the build needs at its selected version. Nothing interprets ranges, and nothing runs `go`.
+
+Licenses come from [deps.dev](https://docs.deps.dev/api/v3/) (`GetVersion`), via [`client.ts`](packages/core/src/providers/go/client.ts): the module mirror serves no license metadata and pkg.go.dev has no API for it. Several entries in its `licenses` mean several license files in the module, so they are joined with `AND`; `non-standard` is dropped. Only found answers are cached — deps.dev may not have ingested a fresh release yet. The hover links to `https://pkg.go.dev/<module>@<version>` only after deps.dev has answered for that version, which is what shows the module is public.
+
+[`env.ts`](packages/core/src/providers/go/env.ts) reads `GOPRIVATE`, `GONOPROXY` and `GONOSUMDB` from the process environment, then from the go env file (`$GOENV`, or `go/env` under `os.UserConfigDir()`), and matches them like `module.MatchPrefixPatterns`. A matching module is skipped before any request, so a private module's path never leaves the machine. Keep that check ahead of every network call. The one item deps.dev does not carry, a version's `go` directive, is read from that version's own `go.mod` on the module proxy; it is decoration only, and a failed read never changes the license result.
+
+No `go` invocation, module cache or license-file reading, `go.sum`/`go.work` handling or dependency graph belongs here.
+:::
+
+:::kiritan{locale=ja}
 ### Goの実装
 
 Goの実装は [`packages/core/src/providers/go/`](packages/core/src/providers/go/) にあります。[`parse.ts`](packages/core/src/providers/go/parse.ts) は `golang.org/x/mod/modfile` の字句規則(1行に1ディレクティブ、`//` コメント、`verb ( … )` ブロック、ダブルクォートとバッククォートの文字列)に従い、`require` と `replace` だけを読みます。`replace` はパースの時点で適用します。goコマンドと同じく、バージョン指定の置き換えがワイルドカードの置き換えより優先されます。置き換え先がディレクトリならその requirement はスキップし、モジュールなら置き換え先のモジュールとして解決します。
@@ -142,7 +134,19 @@ requirement のバージョンは正確なバージョンです。goコマンド
 [`env.ts`](packages/core/src/providers/go/env.ts) は `GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` をプロセスの環境変数から、次にgoのenvファイル(`$GOENV`、または `os.UserConfigDir()` 配下の `go/env`)から読み、`module.MatchPrefixPatterns` と同じ方法で照合します。一致したモジュールはリクエストの前にスキップするので、プライベートモジュールのパスがマシンの外に出ることはありません。このチェックは必ずすべてのネットワーク呼び出しより前に置いてください。deps.dev が持っていない唯一の項目である各バージョンの `go` ディレクティブは、モジュールプロキシ上のそのバージョン自身の `go.mod` から読みます。あくまで付随表示なので、読み取りの失敗でライセンス結果が変わることはありません。
 
 `go` コマンドの実行、モジュールキャッシュやライセンスファイルの読み込み、`go.sum`/`go.work` の扱い、依存関係グラフのいずれもここには含まれません。
+:::
 
+:::kiritan{locale=en}
+### Ruby implementation
+
+Ruby's implementation lives in [`packages/core/src/providers/rubygems/`](packages/core/src/providers/rubygems/). [`parse.ts`](packages/core/src/providers/rubygems/parse.ts) tokenizes just enough Ruby for the two manifest forms — a Gemfile's `gem` calls and a gemspec's `add_dependency` family — and never executes anything. `git:`/`github:`/`path:` options and gems declared under a non-default `source` are skipped at parse time, so their names are never sent to rubygems.org. Version requirements are interpreted the way `Gem::Requirement` does, in [`spec.ts`](packages/core/src/providers/rubygems/spec.ts), independently of npm and Cargo ranges.
+
+[`lockfile.ts`](packages/core/src/providers/rubygems/lockfile.ts) only locates declarations and uniquely matching public versions: just the `GEM` sections of Gemfile.lock whose remotes are public sources are indexed. [`client.ts`](packages/core/src/providers/rubygems/client.ts) reads `GET /api/v1/versions/<name>.json`, which carries every published version and its licenses in one response — the same shape as the crates.io client — so candidate selection needs no request per version. Platform builds of one release collapse to a single record. A gemspec's `licenses` list names every license the release is distributed under, so several entries are joined with `AND`. The same response carries each release's `ruby_version` (its `required_ruby_version`), shown next to the license the way npm shows `engines.node`; an unconstrained release reports `>= 0` and shows nothing.
+
+No `ruby` or `bundle` invocation, installed-gem reading or dependency graph belongs here.
+:::
+
+:::kiritan{locale=ja}
 ### Rubyの実装
 
 Rubyの実装は [`packages/core/src/providers/rubygems/`](packages/core/src/providers/rubygems/) にあります。[`parse.ts`](packages/core/src/providers/rubygems/parse.ts) は、2つのマニフェスト形式 — Gemfileの `gem` 呼び出しと gemspec の `add_dependency` 系 — に必要な分だけ Ruby をトークン化し、何も実行しません。`git:`/`github:`/`path:` オプションと、デフォルトでない `source` の下で宣言された gem はパースの時点でスキップするので、それらの名前が rubygems.org に送られることはありません。バージョン要件は [`spec.ts`](packages/core/src/providers/rubygems/spec.ts) で `Gem::Requirement` と同じ方法で解釈し、npm や Cargo の範囲とは独立しています。
@@ -152,7 +156,23 @@ Rubyの実装は [`packages/core/src/providers/rubygems/`](packages/core/src/pro
 同じレスポンスには各リリースの `ruby_version` (`required_ruby_version`) も含まれ、npm の `engines.node` と同じ形でライセンスの横に表示します。制約なしは `>= 0` と報告されるので、その場合は何も表示しません。
 
 `ruby` や `bundle` の実行、インストール済み gem の読み込み、依存関係グラフのいずれもここには含まれません。
+:::
 
+:::kiritan{locale=en}
+### Composer implementation
+
+Composer's implementation lives in [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/). [`parse.ts`](packages/core/src/providers/composer/parse.ts) reads `require` and `require-dev` from the jsonc-parser AST, lowercases names (`composer.lock`, `installed.json` and Packagist all key packages that way) and drops platform packages (`php`, `ext-*`, `lib-*`, `composer-*-api`), which constrain PHP itself rather than a package with a license. It also picks up `config.vendor-dir`, `minimum-stability`, `prefer-stable` and whether `repositories` disables Packagist.
+
+Resolution runs vendor → lock → registry, like npm. [`installed.ts`](packages/core/src/providers/composer/installed.ts) reads `<vendor-dir>/composer/installed.json` (the Composer 2 object or the Composer 1 array; no parent-directory walk, since Composer never hoists), [`lockfile.ts`](packages/core/src/providers/composer/lockfile.ts) reads `composer.lock`, and [`client.ts`](packages/core/src/providers/composer/client.ts) asks Packagist's p2 endpoint. Both files on disk carry each package's `license`, so a hit there is an answer, not just a pinned version. [`metadata.ts`](packages/core/src/providers/composer/metadata.ts) decodes all three sources into one `PackageRecord` and owns the rules they share: a `license` array is disjunctive by Composer's definition, so it is joined with `OR` — the opposite of deps.dev's `AND` for Go; a record's `require.php` becomes `phpVersion`; and the hover title links to Packagist only when the record's `notification-url` is Packagist's (or it came from p2), so a `path`/`vcs` package never gets a link that 404s.
+
+A vendored or locked version is reported only if it still satisfies the manifest's constraint, so a stale lock falls through to Packagist instead of lying. A `dev-*` branch satisfies through its aliases — the constraint's own `as` clause, the record's `extra.branch-alias`, or the lock's `aliases` — which is how Composer itself lets `^1.0` be met by `dev-main`. Branches never resolve from Packagist.
+
+[`spec.ts`](packages/core/src/providers/composer/spec.ts) is a port of `composer/semver` (`VersionParser::normalize`, `parseConstraints`, `parseStability` and PHP's `version_compare`), independent of npm and Cargo ranges, tested against TSV oracles the real library generated; [`composer-provenance.md`](test/fixtures/lockfiles/composer-provenance.md) says how to regenerate them, and the oracle wins over any prose description. Candidate selection without a lock follows Composer's stability rules: an explicit `@flag` replaces `minimum-stability` for that package, a prerelease named in the constraint lowers it, and `prefer-stable` prefers a stable candidate over a higher unstable one. p2 responses are minified — each version lists only the keys that changed, and `"__unset"` removes one — and are expanded before anything reads them; the expanded list is cached, a miss is not. Requests go out in parallel under `maxConcurrentRequests`, since p2 files are static CDN JSON, but an HTTP 429 pauses every client for a minute without retrying.
+
+No `composer` invocation, private repository (Private Packagist, Satis, `vcs`/`path` repositories), `COMPOSER_VENDOR_DIR` handling, `replace`/`provide` resolution or dependency graph belongs here.
+:::
+
+:::kiritan{locale=ja}
 ### Composerの実装
 
 Composerの実装は [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/) にあります。[`parse.ts`](packages/core/src/providers/composer/parse.ts) は jsonc-parser の AST から `require` と `require-dev` を読み、名前を小文字にそろえ(`composer.lock`、`installed.json`、Packagist はいずれも小文字でパッケージを管理しています)、プラットフォームパッケージ(`php`、`ext-*`、`lib-*`、`composer-*-api`)は捨てます。これらはライセンスを持つパッケージではなく、PHP 自体への制約だからです。あわせて `config.vendor-dir`、`minimum-stability`、`prefer-stable`、`repositories` が Packagist を無効化しているかどうかも読み取ります。
@@ -184,8 +204,31 @@ export class ExampleLicenseProvider implements LicenseProvider {
 
 Register it in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) and add the language to `activationEvents` in [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json).
 
-Also add a row to the language/package-manager table in [README.md](README.md#supported-languages) (edit [`i18n/README.base.md`](i18n/README.base.md), not `README.md` — see "Documentation and i18n" below), and remove the corresponding "planned" row if there's a tracking issue for it.
+Also add a row to [`i18n/supported-languages.json`](i18n/supported-languages.json), which supplies the language/package-manager table in both READMEs, and remove the corresponding "planned" row if there's a tracking issue for it. Store shared cells once and use `{ "en": "…", "ja": "…" }` only for cells that differ by locale.
+:::
 
+:::kiritan{locale=ja}
+## 別のエコシステムを追加する
+
+`LicenseProvider` を実装し、登録し、有効化と設定を接続します。
+
+```ts
+export class ExampleLicenseProvider implements LicenseProvider {
+  readonly id = "example";
+  supports(document) { /* マニフェストを認識する */ }
+  isEnabled() { return getSetting("example.enabled", true); }
+  parse(document) { /* → DependencyEntry[] (name, spec, section, line) */ }
+  cacheKey(entry) { /* 解決結果がドキュメント/ソースのコンテキストに依存する場合は含める */ }
+  async resolve(entry, document, token) { /* → LicenseInfo */ }
+}
+```
+
+[`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
+
+また、両言語のREADMEの言語/パッケージマネージャー表を生成する [`i18n/supported-languages.json`](i18n/supported-languages.json) に行を追加してください。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。共通のセルは一度だけ書き、言語によって異なるセルだけ `{ "en": "…", "ja": "…" }` で指定します。
+:::
+
+:::kiritan{locale=en}
 ### Link the hover title to the package's registry page
 
 Every provider is expected to make the hover title clickable, the same way npm and JSR do — don't ship one that leaves it as plain text. Set one of these two `LicenseInfo` fields from `resolve()`, whichever fits the registry's URL shape:
@@ -207,25 +250,6 @@ Python support is planned but not implemented yet — see the open issue linked 
 :::
 
 :::kiritan{locale=ja}
-## 別のエコシステムを追加する
-
-`LicenseProvider` を実装し、登録し、有効化と設定を接続します。
-
-```ts
-export class ExampleLicenseProvider implements LicenseProvider {
-  readonly id = "example";
-  supports(document) { /* マニフェストを認識する */ }
-  isEnabled() { return getSetting("example.enabled", true); }
-  parse(document) { /* → DependencyEntry[] (name, spec, section, line) */ }
-  cacheKey(entry) { /* 解決結果がドキュメント/ソースのコンテキストに依存する場合は含める */ }
-  async resolve(entry, document, token) { /* → LicenseInfo */ }
-}
-```
-
-[`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録し、[`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) の `activationEvents` に対象の言語を追加してください。
-
-また、[README.md](README.md#サポート言語) の言語/パッケージマネージャー表にも行を追加してください(`README.md` ではなく [`i18n/README.base.md`](i18n/README.base.md) を編集します — 詳しくは後述の「ドキュメントとi18n」を参照)。対応するトラッキングIssueがある場合は、その「対応予定」の行を削除してください。
-
 ### ホバータイトルをパッケージのレジストリページにリンクする
 
 npmやJSRと同様に、すべてのプロバイダーはホバータイトルをクリック可能にすることが期待されています — 単なるプレーンテキストのままにしないでください。`resolve()` から、レジストリのURL形式に合う方の `LicenseInfo` フィールドを設定してください。
@@ -257,6 +281,12 @@ npm run docs:check   # verify nothing is left missing/stale
 ```
 
 See [AGENTS.md](AGENTS.md) and the Kiritan skill installed at [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) for the full directive syntax and CLI reference.
+
+README tables use the project-specific `::docs-table{id=...}` directive. Their shared cells and translations live together in [`i18n/supported-languages.json`](i18n/supported-languages.json), [`i18n/editors.json`](i18n/editors.json), [`i18n/commands.json`](i18n/commands.json) and [`i18n/settings.json`](i18n/settings.json). Each table's `columns` keys determine its column order; use a string for shared cells and `{ "en": "…", "ja": "…" }` for translated cells. Cells can contain Markdown links and code spans.
+
+Command rows are keyed by command ID, and setting rows by setting ID. Their titles, setting names, default values and row order come from [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json); edit the descriptions in the table files. `docs:build` fails if a command or setting has no documentation entry or an entry refers to a removed ID. The `npm.sections` row uses `defaultSummary` with `%{count}` to describe the array default without repeating its length.
+
+The renderer in [`i18n/readme-renderer.mjs`](i18n/readme-renderer.mjs) expands table directives during parsing. Ordinary prose stays in the base files, with each English section next to its Japanese counterpart. Keep identical code examples and other shared content outside locale blocks so they only need editing once.
 :::
 
 :::kiritan{locale=ja}
@@ -270,41 +300,47 @@ npm run docs:check   # 未翻訳・古くなった内容が残っていないか
 ```
 
 ディレクティブの構文やCLIリファレンスの詳細については、[AGENTS.md](AGENTS.md) と [`.agents/skills/kiritan`](.agents/skills/kiritan/SKILL.md) にインストールされているKiritanのスキルを参照してください。
+
+READMEの表には、このプロジェクト独自の `::docs-table{id=...}` を使います。共通のセルと翻訳は [`i18n/supported-languages.json`](i18n/supported-languages.json)、[`i18n/editors.json`](i18n/editors.json)、[`i18n/commands.json`](i18n/commands.json)、[`i18n/settings.json`](i18n/settings.json) で管理します。列の順序は各ファイルの `columns` のキー順で決まります。共通のセルは文字列で、翻訳するセルは `{ "en": "…", "ja": "…" }` で書きます。セルにはMarkdownのリンクやコード表記も使えます。
+
+コマンドの行はコマンドID、設定の行は設定IDをキーにします。コマンド名、設定名、初期値、行の順序は [`packages/vscode-extension/package.json`](packages/vscode-extension/package.json) から取得するため、表のファイルでは説明文を編集します。追加したコマンドや設定の説明がない場合や、削除したIDの説明が残っている場合は、`docs:build` がエラーになります。`npm.sections` の行は、`defaultSummary` に `%{count}` を使って配列の初期値を説明するため、要素数を書き直す必要はありません。
+
+[`i18n/readme-renderer.mjs`](i18n/readme-renderer.mjs) のレンダラーが、解析時に表のディレクティブを展開します。通常の文章はbaseファイルで管理し、英語の節と対応する日本語の節を隣に置きます。同じコード例などの共通部分は言語別ブロックの外に置き、一度の編集で済むようにします。
 :::
 
 :::kiritan{locale=en}
 ## Agent skills
 
 AI coding agents get extra instructions ("skills") from [`.agents/skills/`](.agents/skills/) via the [`skills` CLI](https://www.npmjs.com/package/skills) (`npx skills`). Only `.agents/skills/` and [`skills-lock.json`](skills-lock.json) are committed — that's the canonical copy. Every other location a given agent might look in (`.claude/skills/`, `agent/skills/`, …) is a generated symlink or copy and is gitignored; recreate them after cloning with:
-
-```sh
-npx skills experimental_install
-```
-
-To add a new skill:
-
-```sh
-npx skills add <owner>/<repo> --agent '*' -y
-```
-
-This clones the source, copies the canonical file into `.agents/skills/<name>/`, symlinks or copies it into whichever agent directories exist locally, and records the source and its hash in `skills-lock.json`. Only commit the `.agents/skills/` and `skills-lock.json` changes — leave the other generated agent directories untracked (see [`.gitignore`](.gitignore)).
 :::
 
 :::kiritan{locale=ja}
 ## エージェント向けスキル
 
 AIコーディングエージェントは、[`skills` CLI](https://www.npmjs.com/package/skills)(`npx skills`)経由で [`.agents/skills/`](.agents/skills/) から追加の指示(「スキル」)を読み込みます。コミットされているのは `.agents/skills/` と [`skills-lock.json`](skills-lock.json) だけで、これが正本です。各エージェントが実際に参照する他の場所(`.claude/skills/`、`agent/skills/` など)は生成されたシンボリックリンクやコピーであり、gitignoreされています。クローン後は以下で復元してください。
+:::
 
 ```sh
 npx skills experimental_install
 ```
 
+:::kiritan{locale=en}
+To add a new skill:
+:::
+
+:::kiritan{locale=ja}
 新しいスキルを追加するには:
+:::
 
 ```sh
 npx skills add <owner>/<repo> --agent '*' -y
 ```
 
+:::kiritan{locale=en}
+This clones the source, copies the canonical file into `.agents/skills/<name>/`, symlinks or copies it into whichever agent directories exist locally, and records the source and its hash in `skills-lock.json`. Only commit the `.agents/skills/` and `skills-lock.json` changes — leave the other generated agent directories untracked (see [`.gitignore`](.gitignore)).
+:::
+
+:::kiritan{locale=ja}
 これによりソースがクローンされ、正本のファイルが `.agents/skills/<name>/` にコピーされ、ローカルに存在する各エージェント用ディレクトリへシンボリックリンクまたはコピーが作られ、`skills-lock.json` にソースとそのハッシュが記録されます。コミットするのは `.agents/skills/` と `skills-lock.json` の変更だけにし、その他の生成されたエージェント用ディレクトリは追跡しないままにしてください([`.gitignore`](.gitignore) を参照)。
 :::
 
@@ -405,20 +441,6 @@ When adding a provider or changing resolution logic, add a unit test next to the
 6. commit (including any documentation rebuilt in step 3), tag and push, then create the GitHub Release with the `.vsix` attached
 
 Publishing is skipped automatically when `VSCE_PAT` is absent, so the workflow is usable before you have a token. Get one from <https://marketplace.visualstudio.com/manage> — an Azure DevOps PAT with the Marketplace → Manage scope — and add it as a repository secret.
-
-### Changelog
-
-`CHANGELOG.md` is generated with [git-cliff](https://git-cliff.org) (config in [`cliff.toml`](cliff.toml)) from commit messages since the last tag, grouped by [Conventional Commits](https://www.conventionalcommits.org/) type — `feat` → Added, `fix` → Fixed, `perf` → Performance, `refactor`/`revert` → Changed. Everything else (`chore`, `docs`, `test`, `style`, `ci`, `build`, `release`, merge commits) is left out, the same way it always was when this was written by hand. Write commit subjects with that in mind — they end up as changelog lines close to verbatim.
-
-To preview what the next release's entry would look like without touching anything:
-
-```sh
-npx git-cliff --unreleased --tag vX.Y.Z
-```
-
-Tagging happens only after publishing succeeded, so a failed release leaves no dangling tag. Tick `dry_run` to rehearse the whole pipeline without publishing, committing or tagging.
-
-To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, and run `npm run publish` (optionally `npm run publish -- patch`).
 :::
 
 :::kiritan{locale=ja}
@@ -434,17 +456,35 @@ To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, a
 6. コミット(手順3で再生成されたドキュメントも含む)、タグ付け、pushを行い、`.vsix` を添付したGitHub Releaseを作成
 
 `VSCE_PAT` が存在しない場合は公開が自動的にスキップされるため、トークンを取得する前でもこのワークフローを使用できます。<https://marketplace.visualstudio.com/manage> から、Marketplace → Manage スコープを持つAzure DevOpsのPATを取得し、リポジトリシークレットとして追加してください。
+:::
 
+:::kiritan{locale=en}
+### Changelog
+
+`CHANGELOG.md` is generated with [git-cliff](https://git-cliff.org) (config in [`cliff.toml`](cliff.toml)) from commit messages since the last tag, grouped by [Conventional Commits](https://www.conventionalcommits.org/) type — `feat` → Added, `fix` → Fixed, `perf` → Performance, `refactor`/`revert` → Changed. Everything else (`chore`, `docs`, `test`, `style`, `ci`, `build`, `release`, merge commits) is left out, the same way it always was when this was written by hand. Write commit subjects with that in mind — they end up as changelog lines close to verbatim.
+
+To preview what the next release's entry would look like without touching anything:
+:::
+
+:::kiritan{locale=ja}
 ### 変更履歴
 
 `CHANGELOG.md` は [git-cliff](https://git-cliff.org)(設定は [`cliff.toml`](cliff.toml))を使って、最後のタグ以降のコミットメッセージから[Conventional Commits](https://www.conventionalcommits.org/)のタイプ別に生成されます — `feat` → Added、`fix` → Fixed、`perf` → Performance、`refactor`/`revert` → Changed。それ以外(`chore`、`docs`、`test`、`style`、`ci`、`build`、`release`、マージコミット)は、これまで手書きで管理していた頃と同様に除外されます。コミットの件名はそのまま変更履歴の行としてほぼそのまま使われることを意識して書いてください。
 
 何も変更せずに次のリリースのエントリがどう見えるかをプレビューするには:
+:::
 
 ```sh
 npx git-cliff --unreleased --tag vX.Y.Z
 ```
 
+:::kiritan{locale=en}
+Tagging happens only after publishing succeeded, so a failed release leaves no dangling tag. Tick `dry_run` to rehearse the whole pipeline without publishing, committing or tagging.
+
+To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, and run `npm run publish` (optionally `npm run publish -- patch`).
+:::
+
+:::kiritan{locale=ja}
 タグ付けは公開が成功した後にのみ行われるため、リリースが失敗してもタグが残ったままになることはありません。`dry_run` にチェックを入れると、公開・コミット・タグ付けを行わずにパイプライン全体をリハーサルできます。
 
 ローカルから公開するには、`.env.example` を `.env` にコピーし、`VSCE_PAT` を設定した上で `npm run publish`(オプションで `npm run publish -- patch`)を実行してください。
