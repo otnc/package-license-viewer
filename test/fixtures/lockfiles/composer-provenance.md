@@ -44,3 +44,15 @@ The `@dev` flag makes Composer pick `psr/http-message`'s `dev-master` branch,
 which carries `extra.branch-alias` (`dev-master` → `2.0.x-dev`), so the
 branch-alias path has a real fixture. None of the three packages has
 transitive dependencies. Both files are unmodified Composer output.
+
+## Integration workspace
+
+`test/fixtures/composer-workspace/app/` holds the `composer.lock` and
+`vendor/composer/installed.json` that `composer install --no-dev` (same toolchain,
+same date) produced for a project requiring `psr/log ^3.0` and, under
+`require-dev`, `psr/container ^2.0` — so `installed.json` lists only `psr/log`
+while the lock also holds `psr/container`, and the integration test exercises
+both lookups. Only `installed.json` is committed from `vendor/`. The committed
+`composer.json` was then hand-edited to add `php`, `ext-json` and the
+non-existent `acme/missing`; the lock's `content-hash` is therefore stale on
+purpose, which the extension never checks.
