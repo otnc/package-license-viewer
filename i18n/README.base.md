@@ -59,6 +59,7 @@ Hover an annotation to see the resolved version, where the information came from
 | Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
+| PHP | ✅ | ✅ | Composer | | `composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed |
 | Python | ❌ | ❌ | pip, uv, poetry | | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | Your language? | | | | | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
 
@@ -76,6 +77,7 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` と `*.gemspec` の宣言を rubygems.org / `Gemfile.lock` と突き合わせて解決。ローカルにRubyのインストールは不要 |
+| PHP | ✅ | ✅ | Composer | | `composer.json` の requirement を `vendor/` / `composer.lock` / Packagist と突き合わせて解決。ローカルにPHPやComposerのインストールは不要 |
 | Python | ❌ | ❌ | pip, uv, poetry | | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
 | あなたの言語? | | | | | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
 
@@ -132,12 +134,13 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | Setting | Default | Description |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | Show inline license annotations. |
-| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`. |
+| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`. |
 | `packageLicenseViewer.showResolvedVersion` | `false` | Append the resolved version, e.g. `MIT · 4.17.21`. |
 | `packageLicenseViewer.showNodeEngine` | `true` | Append the package's `engines.node` range, when it has one, e.g. `MIT (Node: >=20)`. |
 | `packageLicenseViewer.showRubyVersion` | `true` | Append a gem's `required_ruby_version` range, when it has one, e.g. `MIT (Ruby: >=3.0)`. |
 | `packageLicenseViewer.showRustVersion` | `true` | Append a crate's `rust-version` (MSRV), when it has one, e.g. `MIT (Rust: >=1.56)`. |
 | `packageLicenseViewer.showGoVersion` | `true` | Append a module version's `go` directive, when it has one, e.g. `MIT (Go: >=1.21)`. |
+| `packageLicenseViewer.showPhpVersion` | `true` | Append a package's `require.php` constraint, when it has one, e.g. `MIT (PHP: >=8.1)`. |
 | `packageLicenseViewer.unknownText` | `""` | Text shown when the license is unknown. Empty means show nothing. |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | Theme color id, or a CSS color such as `#88888899`, for everything except the license itself. |
 | `packageLicenseViewer.licenseColor` | `charts.green` | Theme color id, or a CSS color, used for just the license part of the annotation. |
@@ -166,6 +169,9 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.rubygems.enabled` | `true` | Annotate dependency declarations in `Gemfile` and `*.gemspec`. |
 | `packageLicenseViewer.rubygems.useRegistry` | `true` | Allow rubygems.org requests. When disabled, existing cached metadata can still be used. |
 | `packageLicenseViewer.rubygems.useLockfiles` | `true` | Prefer a uniquely matching rubygems.org version in `Gemfile.lock`. |
+| `packageLicenseViewer.composer.enabled` | `true` | Annotate the `require` and `require-dev` sections of `composer.json`. |
+| `packageLicenseViewer.composer.useLockfiles` | `true` | Read `composer.lock` for the locked version and its license when nothing is installed under `vendor/`. |
+| `packageLicenseViewer.composer.useRegistry` | `true` | Allow Packagist requests. When disabled, installed packages, `composer.lock` and existing cached metadata are still used. |
 :::
 
 :::kiritan{locale=ja}
@@ -174,12 +180,13 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | 設定 | デフォルト値 | 説明 |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | インラインのライセンス注釈を表示します。 |
-| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`。 |
+| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`。 |
 | `packageLicenseViewer.showResolvedVersion` | `false` | 解決されたバージョンを付加します(例: `MIT · 4.17.21`)。 |
 | `packageLicenseViewer.showNodeEngine` | `true` | パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。 |
 | `packageLicenseViewer.showRubyVersion` | `true` | gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。 |
 | `packageLicenseViewer.showRustVersion` | `true` | crateに `rust-version` (MSRV) の指定があれば付加します(例: `MIT (Rust: >=1.56)`)。 |
 | `packageLicenseViewer.showGoVersion` | `true` | モジュールのバージョンに `go` ディレクティブの指定があれば付加します(例: `MIT (Go: >=1.21)`)。 |
+| `packageLicenseViewer.showPhpVersion` | `true` | パッケージに `require.php` の指定があれば付加します(例: `MIT (PHP: >=8.1)`)。 |
 | `packageLicenseViewer.unknownText` | `""` | ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。 |
 | `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。 |
 | `packageLicenseViewer.licenseColor` | `charts.green` | 注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。 |
@@ -208,6 +215,9 @@ Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあ
 | `packageLicenseViewer.rubygems.enabled` | `true` | `Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。 |
 | `packageLicenseViewer.rubygems.useRegistry` | `true` | rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
 | `packageLicenseViewer.rubygems.useLockfiles` | `true` | `Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。 |
+| `packageLicenseViewer.composer.enabled` | `true` | `composer.json` の `require` / `require-dev` に注釈を付けます。 |
+| `packageLicenseViewer.composer.useLockfiles` | `true` | `vendor/` に何もインストールされていないとき、`composer.lock` からロックされたバージョンとそのライセンスを読みます。 |
+| `packageLicenseViewer.composer.useRegistry` | `true` | Packagistへのリクエストを許可します。無効にした場合も、インストール済みパッケージ、`composer.lock`、キャッシュ済みのメタデータは利用できます。 |
 :::
 
 :::kiritan{locale=en}

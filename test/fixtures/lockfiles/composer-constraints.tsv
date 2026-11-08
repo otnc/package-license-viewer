@@ -1,0 +1,4464 @@
+*	1.0.0	true
+*	1.0	true
+*	1	true
+*	v1.2.3	true
+*	1.2.3.4	true
+*	0.9.9	true
+*	1.0.0-alpha1	true
+*	1.0.0-a1	true
+*	1.0.0-beta2	true
+*	1.0.0-b2	true
+*	1.0.0-RC1	true
+*	1.0.0-rc1	true
+*	1.0.0-patch1	true
+*	1.0.0-pl1	true
+*	1.0.0-p1	true
+*	1.0.0-dev	true
+*	1.0.0-stable	true
+*	1.1.0	true
+*	1.2.0	true
+*	1.2.3	true
+*	1.2.4	true
+*	1.3.0	true
+*	1.9.9	true
+*	2.0.0	true
+*	2.0.0-beta1	true
+*	2.0.1	true
+*	2.1.0	true
+*	3.0.0	true
+*	0.3.0	true
+*	0.3.5	true
+*	0.4.0	true
+*	0.0.3	true
+*	0.0.4	true
+*	10.0.0	true
+*	1.10.0	true
+*	dev-main	true
+*	dev-master	true
+*	dev-feature/x	true
+*	1.x-dev	true
+*	2.0.x-dev	true
+*	2.0.9999999.9999999-dev	true
+*	1.0.0+build.7	true
+*	v2.0.0-RC2	true
+*	1.0.0.0	true
+*	3.0.0-alpha	true
+*	not a version	invalid-version
+*	1.0.0-	true
+*	~1	invalid-version
+x	1.0.0	true
+x	1.0	true
+x	1	true
+x	v1.2.3	true
+x	1.2.3.4	true
+x	0.9.9	true
+x	1.0.0-alpha1	true
+x	1.0.0-a1	true
+x	1.0.0-beta2	true
+x	1.0.0-b2	true
+x	1.0.0-RC1	true
+x	1.0.0-rc1	true
+x	1.0.0-patch1	true
+x	1.0.0-pl1	true
+x	1.0.0-p1	true
+x	1.0.0-dev	true
+x	1.0.0-stable	true
+x	1.1.0	true
+x	1.2.0	true
+x	1.2.3	true
+x	1.2.4	true
+x	1.3.0	true
+x	1.9.9	true
+x	2.0.0	true
+x	2.0.0-beta1	true
+x	2.0.1	true
+x	2.1.0	true
+x	3.0.0	true
+x	0.3.0	true
+x	0.3.5	true
+x	0.4.0	true
+x	0.0.3	true
+x	0.0.4	true
+x	10.0.0	true
+x	1.10.0	true
+x	dev-main	true
+x	dev-master	true
+x	dev-feature/x	true
+x	1.x-dev	true
+x	2.0.x-dev	true
+x	2.0.9999999.9999999-dev	true
+x	1.0.0+build.7	true
+x	v2.0.0-RC2	true
+x	1.0.0.0	true
+x	3.0.0-alpha	true
+x	not a version	invalid-version
+x	1.0.0-	true
+x	~1	invalid-version
+X	1.0.0	true
+X	1.0	true
+X	1	true
+X	v1.2.3	true
+X	1.2.3.4	true
+X	0.9.9	true
+X	1.0.0-alpha1	true
+X	1.0.0-a1	true
+X	1.0.0-beta2	true
+X	1.0.0-b2	true
+X	1.0.0-RC1	true
+X	1.0.0-rc1	true
+X	1.0.0-patch1	true
+X	1.0.0-pl1	true
+X	1.0.0-p1	true
+X	1.0.0-dev	true
+X	1.0.0-stable	true
+X	1.1.0	true
+X	1.2.0	true
+X	1.2.3	true
+X	1.2.4	true
+X	1.3.0	true
+X	1.9.9	true
+X	2.0.0	true
+X	2.0.0-beta1	true
+X	2.0.1	true
+X	2.1.0	true
+X	3.0.0	true
+X	0.3.0	true
+X	0.3.5	true
+X	0.4.0	true
+X	0.0.3	true
+X	0.0.4	true
+X	10.0.0	true
+X	1.10.0	true
+X	dev-main	true
+X	dev-master	true
+X	dev-feature/x	true
+X	1.x-dev	true
+X	2.0.x-dev	true
+X	2.0.9999999.9999999-dev	true
+X	1.0.0+build.7	true
+X	v2.0.0-RC2	true
+X	1.0.0.0	true
+X	3.0.0-alpha	true
+X	not a version	invalid-version
+X	1.0.0-	true
+X	~1	invalid-version
+v*	1.0.0	true
+v*	1.0	true
+v*	1	true
+v*	v1.2.3	true
+v*	1.2.3.4	true
+v*	0.9.9	true
+v*	1.0.0-alpha1	true
+v*	1.0.0-a1	true
+v*	1.0.0-beta2	true
+v*	1.0.0-b2	true
+v*	1.0.0-RC1	true
+v*	1.0.0-rc1	true
+v*	1.0.0-patch1	true
+v*	1.0.0-pl1	true
+v*	1.0.0-p1	true
+v*	1.0.0-dev	true
+v*	1.0.0-stable	true
+v*	1.1.0	true
+v*	1.2.0	true
+v*	1.2.3	true
+v*	1.2.4	true
+v*	1.3.0	true
+v*	1.9.9	true
+v*	2.0.0	true
+v*	2.0.0-beta1	true
+v*	2.0.1	true
+v*	2.1.0	true
+v*	3.0.0	true
+v*	0.3.0	true
+v*	0.3.5	true
+v*	0.4.0	true
+v*	0.0.3	true
+v*	0.0.4	true
+v*	10.0.0	true
+v*	1.10.0	true
+v*	dev-main	false
+v*	dev-master	false
+v*	dev-feature/x	false
+v*	1.x-dev	true
+v*	2.0.x-dev	true
+v*	2.0.9999999.9999999-dev	true
+v*	1.0.0+build.7	true
+v*	v2.0.0-RC2	true
+v*	1.0.0.0	true
+v*	3.0.0-alpha	true
+v*	not a version	invalid-version
+v*	1.0.0-	true
+v*	~1	invalid-version
+1.0.0	1.0.0	true
+1.0.0	1.0	true
+1.0.0	1	true
+1.0.0	v1.2.3	false
+1.0.0	1.2.3.4	false
+1.0.0	0.9.9	false
+1.0.0	1.0.0-alpha1	false
+1.0.0	1.0.0-a1	false
+1.0.0	1.0.0-beta2	false
+1.0.0	1.0.0-b2	false
+1.0.0	1.0.0-RC1	false
+1.0.0	1.0.0-rc1	false
+1.0.0	1.0.0-patch1	false
+1.0.0	1.0.0-pl1	false
+1.0.0	1.0.0-p1	false
+1.0.0	1.0.0-dev	false
+1.0.0	1.0.0-stable	true
+1.0.0	1.1.0	false
+1.0.0	1.2.0	false
+1.0.0	1.2.3	false
+1.0.0	1.2.4	false
+1.0.0	1.3.0	false
+1.0.0	1.9.9	false
+1.0.0	2.0.0	false
+1.0.0	2.0.0-beta1	false
+1.0.0	2.0.1	false
+1.0.0	2.1.0	false
+1.0.0	3.0.0	false
+1.0.0	0.3.0	false
+1.0.0	0.3.5	false
+1.0.0	0.4.0	false
+1.0.0	0.0.3	false
+1.0.0	0.0.4	false
+1.0.0	10.0.0	false
+1.0.0	1.10.0	false
+1.0.0	dev-main	false
+1.0.0	dev-master	false
+1.0.0	dev-feature/x	false
+1.0.0	1.x-dev	false
+1.0.0	2.0.x-dev	false
+1.0.0	2.0.9999999.9999999-dev	false
+1.0.0	1.0.0+build.7	true
+1.0.0	v2.0.0-RC2	false
+1.0.0	1.0.0.0	true
+1.0.0	3.0.0-alpha	false
+1.0.0	not a version	invalid-version
+1.0.0	1.0.0-	true
+1.0.0	~1	invalid-version
+=1.0.0	1.0.0	true
+=1.0.0	1.0	true
+=1.0.0	1	true
+=1.0.0	v1.2.3	false
+=1.0.0	1.2.3.4	false
+=1.0.0	0.9.9	false
+=1.0.0	1.0.0-alpha1	false
+=1.0.0	1.0.0-a1	false
+=1.0.0	1.0.0-beta2	false
+=1.0.0	1.0.0-b2	false
+=1.0.0	1.0.0-RC1	false
+=1.0.0	1.0.0-rc1	false
+=1.0.0	1.0.0-patch1	false
+=1.0.0	1.0.0-pl1	false
+=1.0.0	1.0.0-p1	false
+=1.0.0	1.0.0-dev	false
+=1.0.0	1.0.0-stable	true
+=1.0.0	1.1.0	false
+=1.0.0	1.2.0	false
+=1.0.0	1.2.3	false
+=1.0.0	1.2.4	false
+=1.0.0	1.3.0	false
+=1.0.0	1.9.9	false
+=1.0.0	2.0.0	false
+=1.0.0	2.0.0-beta1	false
+=1.0.0	2.0.1	false
+=1.0.0	2.1.0	false
+=1.0.0	3.0.0	false
+=1.0.0	0.3.0	false
+=1.0.0	0.3.5	false
+=1.0.0	0.4.0	false
+=1.0.0	0.0.3	false
+=1.0.0	0.0.4	false
+=1.0.0	10.0.0	false
+=1.0.0	1.10.0	false
+=1.0.0	dev-main	false
+=1.0.0	dev-master	false
+=1.0.0	dev-feature/x	false
+=1.0.0	1.x-dev	false
+=1.0.0	2.0.x-dev	false
+=1.0.0	2.0.9999999.9999999-dev	false
+=1.0.0	1.0.0+build.7	true
+=1.0.0	v2.0.0-RC2	false
+=1.0.0	1.0.0.0	true
+=1.0.0	3.0.0-alpha	false
+=1.0.0	not a version	invalid-version
+=1.0.0	1.0.0-	true
+=1.0.0	~1	invalid-version
+==1.0.0	1.0.0	true
+==1.0.0	1.0	true
+==1.0.0	1	true
+==1.0.0	v1.2.3	false
+==1.0.0	1.2.3.4	false
+==1.0.0	0.9.9	false
+==1.0.0	1.0.0-alpha1	false
+==1.0.0	1.0.0-a1	false
+==1.0.0	1.0.0-beta2	false
+==1.0.0	1.0.0-b2	false
+==1.0.0	1.0.0-RC1	false
+==1.0.0	1.0.0-rc1	false
+==1.0.0	1.0.0-patch1	false
+==1.0.0	1.0.0-pl1	false
+==1.0.0	1.0.0-p1	false
+==1.0.0	1.0.0-dev	false
+==1.0.0	1.0.0-stable	true
+==1.0.0	1.1.0	false
+==1.0.0	1.2.0	false
+==1.0.0	1.2.3	false
+==1.0.0	1.2.4	false
+==1.0.0	1.3.0	false
+==1.0.0	1.9.9	false
+==1.0.0	2.0.0	false
+==1.0.0	2.0.0-beta1	false
+==1.0.0	2.0.1	false
+==1.0.0	2.1.0	false
+==1.0.0	3.0.0	false
+==1.0.0	0.3.0	false
+==1.0.0	0.3.5	false
+==1.0.0	0.4.0	false
+==1.0.0	0.0.3	false
+==1.0.0	0.0.4	false
+==1.0.0	10.0.0	false
+==1.0.0	1.10.0	false
+==1.0.0	dev-main	false
+==1.0.0	dev-master	false
+==1.0.0	dev-feature/x	false
+==1.0.0	1.x-dev	false
+==1.0.0	2.0.x-dev	false
+==1.0.0	2.0.9999999.9999999-dev	false
+==1.0.0	1.0.0+build.7	true
+==1.0.0	v2.0.0-RC2	false
+==1.0.0	1.0.0.0	true
+==1.0.0	3.0.0-alpha	false
+==1.0.0	not a version	invalid-version
+==1.0.0	1.0.0-	true
+==1.0.0	~1	invalid-version
+v1.0.0	1.0.0	true
+v1.0.0	1.0	true
+v1.0.0	1	true
+v1.0.0	v1.2.3	false
+v1.0.0	1.2.3.4	false
+v1.0.0	0.9.9	false
+v1.0.0	1.0.0-alpha1	false
+v1.0.0	1.0.0-a1	false
+v1.0.0	1.0.0-beta2	false
+v1.0.0	1.0.0-b2	false
+v1.0.0	1.0.0-RC1	false
+v1.0.0	1.0.0-rc1	false
+v1.0.0	1.0.0-patch1	false
+v1.0.0	1.0.0-pl1	false
+v1.0.0	1.0.0-p1	false
+v1.0.0	1.0.0-dev	false
+v1.0.0	1.0.0-stable	true
+v1.0.0	1.1.0	false
+v1.0.0	1.2.0	false
+v1.0.0	1.2.3	false
+v1.0.0	1.2.4	false
+v1.0.0	1.3.0	false
+v1.0.0	1.9.9	false
+v1.0.0	2.0.0	false
+v1.0.0	2.0.0-beta1	false
+v1.0.0	2.0.1	false
+v1.0.0	2.1.0	false
+v1.0.0	3.0.0	false
+v1.0.0	0.3.0	false
+v1.0.0	0.3.5	false
+v1.0.0	0.4.0	false
+v1.0.0	0.0.3	false
+v1.0.0	0.0.4	false
+v1.0.0	10.0.0	false
+v1.0.0	1.10.0	false
+v1.0.0	dev-main	false
+v1.0.0	dev-master	false
+v1.0.0	dev-feature/x	false
+v1.0.0	1.x-dev	false
+v1.0.0	2.0.x-dev	false
+v1.0.0	2.0.9999999.9999999-dev	false
+v1.0.0	1.0.0+build.7	true
+v1.0.0	v2.0.0-RC2	false
+v1.0.0	1.0.0.0	true
+v1.0.0	3.0.0-alpha	false
+v1.0.0	not a version	invalid-version
+v1.0.0	1.0.0-	true
+v1.0.0	~1	invalid-version
+1.0	1.0.0	true
+1.0	1.0	true
+1.0	1	true
+1.0	v1.2.3	false
+1.0	1.2.3.4	false
+1.0	0.9.9	false
+1.0	1.0.0-alpha1	false
+1.0	1.0.0-a1	false
+1.0	1.0.0-beta2	false
+1.0	1.0.0-b2	false
+1.0	1.0.0-RC1	false
+1.0	1.0.0-rc1	false
+1.0	1.0.0-patch1	false
+1.0	1.0.0-pl1	false
+1.0	1.0.0-p1	false
+1.0	1.0.0-dev	false
+1.0	1.0.0-stable	true
+1.0	1.1.0	false
+1.0	1.2.0	false
+1.0	1.2.3	false
+1.0	1.2.4	false
+1.0	1.3.0	false
+1.0	1.9.9	false
+1.0	2.0.0	false
+1.0	2.0.0-beta1	false
+1.0	2.0.1	false
+1.0	2.1.0	false
+1.0	3.0.0	false
+1.0	0.3.0	false
+1.0	0.3.5	false
+1.0	0.4.0	false
+1.0	0.0.3	false
+1.0	0.0.4	false
+1.0	10.0.0	false
+1.0	1.10.0	false
+1.0	dev-main	false
+1.0	dev-master	false
+1.0	dev-feature/x	false
+1.0	1.x-dev	false
+1.0	2.0.x-dev	false
+1.0	2.0.9999999.9999999-dev	false
+1.0	1.0.0+build.7	true
+1.0	v2.0.0-RC2	false
+1.0	1.0.0.0	true
+1.0	3.0.0-alpha	false
+1.0	not a version	invalid-version
+1.0	1.0.0-	true
+1.0	~1	invalid-version
+1	1.0.0	true
+1	1.0	true
+1	1	true
+1	v1.2.3	false
+1	1.2.3.4	false
+1	0.9.9	false
+1	1.0.0-alpha1	false
+1	1.0.0-a1	false
+1	1.0.0-beta2	false
+1	1.0.0-b2	false
+1	1.0.0-RC1	false
+1	1.0.0-rc1	false
+1	1.0.0-patch1	false
+1	1.0.0-pl1	false
+1	1.0.0-p1	false
+1	1.0.0-dev	false
+1	1.0.0-stable	true
+1	1.1.0	false
+1	1.2.0	false
+1	1.2.3	false
+1	1.2.4	false
+1	1.3.0	false
+1	1.9.9	false
+1	2.0.0	false
+1	2.0.0-beta1	false
+1	2.0.1	false
+1	2.1.0	false
+1	3.0.0	false
+1	0.3.0	false
+1	0.3.5	false
+1	0.4.0	false
+1	0.0.3	false
+1	0.0.4	false
+1	10.0.0	false
+1	1.10.0	false
+1	dev-main	false
+1	dev-master	false
+1	dev-feature/x	false
+1	1.x-dev	false
+1	2.0.x-dev	false
+1	2.0.9999999.9999999-dev	false
+1	1.0.0+build.7	true
+1	v2.0.0-RC2	false
+1	1.0.0.0	true
+1	3.0.0-alpha	false
+1	not a version	invalid-version
+1	1.0.0-	true
+1	~1	invalid-version
+1.2.3.4	1.0.0	false
+1.2.3.4	1.0	false
+1.2.3.4	1	false
+1.2.3.4	v1.2.3	false
+1.2.3.4	1.2.3.4	true
+1.2.3.4	0.9.9	false
+1.2.3.4	1.0.0-alpha1	false
+1.2.3.4	1.0.0-a1	false
+1.2.3.4	1.0.0-beta2	false
+1.2.3.4	1.0.0-b2	false
+1.2.3.4	1.0.0-RC1	false
+1.2.3.4	1.0.0-rc1	false
+1.2.3.4	1.0.0-patch1	false
+1.2.3.4	1.0.0-pl1	false
+1.2.3.4	1.0.0-p1	false
+1.2.3.4	1.0.0-dev	false
+1.2.3.4	1.0.0-stable	false
+1.2.3.4	1.1.0	false
+1.2.3.4	1.2.0	false
+1.2.3.4	1.2.3	false
+1.2.3.4	1.2.4	false
+1.2.3.4	1.3.0	false
+1.2.3.4	1.9.9	false
+1.2.3.4	2.0.0	false
+1.2.3.4	2.0.0-beta1	false
+1.2.3.4	2.0.1	false
+1.2.3.4	2.1.0	false
+1.2.3.4	3.0.0	false
+1.2.3.4	0.3.0	false
+1.2.3.4	0.3.5	false
+1.2.3.4	0.4.0	false
+1.2.3.4	0.0.3	false
+1.2.3.4	0.0.4	false
+1.2.3.4	10.0.0	false
+1.2.3.4	1.10.0	false
+1.2.3.4	dev-main	false
+1.2.3.4	dev-master	false
+1.2.3.4	dev-feature/x	false
+1.2.3.4	1.x-dev	false
+1.2.3.4	2.0.x-dev	false
+1.2.3.4	2.0.9999999.9999999-dev	false
+1.2.3.4	1.0.0+build.7	false
+1.2.3.4	v2.0.0-RC2	false
+1.2.3.4	1.0.0.0	false
+1.2.3.4	3.0.0-alpha	false
+1.2.3.4	not a version	invalid-version
+1.2.3.4	1.0.0-	false
+1.2.3.4	~1	invalid-version
+!=1.0.0	1.0.0	false
+!=1.0.0	1.0	false
+!=1.0.0	1	false
+!=1.0.0	v1.2.3	true
+!=1.0.0	1.2.3.4	true
+!=1.0.0	0.9.9	true
+!=1.0.0	1.0.0-alpha1	true
+!=1.0.0	1.0.0-a1	true
+!=1.0.0	1.0.0-beta2	true
+!=1.0.0	1.0.0-b2	true
+!=1.0.0	1.0.0-RC1	true
+!=1.0.0	1.0.0-rc1	true
+!=1.0.0	1.0.0-patch1	true
+!=1.0.0	1.0.0-pl1	true
+!=1.0.0	1.0.0-p1	true
+!=1.0.0	1.0.0-dev	true
+!=1.0.0	1.0.0-stable	false
+!=1.0.0	1.1.0	true
+!=1.0.0	1.2.0	true
+!=1.0.0	1.2.3	true
+!=1.0.0	1.2.4	true
+!=1.0.0	1.3.0	true
+!=1.0.0	1.9.9	true
+!=1.0.0	2.0.0	true
+!=1.0.0	2.0.0-beta1	true
+!=1.0.0	2.0.1	true
+!=1.0.0	2.1.0	true
+!=1.0.0	3.0.0	true
+!=1.0.0	0.3.0	true
+!=1.0.0	0.3.5	true
+!=1.0.0	0.4.0	true
+!=1.0.0	0.0.3	true
+!=1.0.0	0.0.4	true
+!=1.0.0	10.0.0	true
+!=1.0.0	1.10.0	true
+!=1.0.0	dev-main	true
+!=1.0.0	dev-master	true
+!=1.0.0	dev-feature/x	true
+!=1.0.0	1.x-dev	true
+!=1.0.0	2.0.x-dev	true
+!=1.0.0	2.0.9999999.9999999-dev	true
+!=1.0.0	1.0.0+build.7	false
+!=1.0.0	v2.0.0-RC2	true
+!=1.0.0	1.0.0.0	false
+!=1.0.0	3.0.0-alpha	true
+!=1.0.0	not a version	invalid-version
+!=1.0.0	1.0.0-	false
+!=1.0.0	~1	invalid-version
+<>1.0.0	1.0.0	false
+<>1.0.0	1.0	false
+<>1.0.0	1	false
+<>1.0.0	v1.2.3	true
+<>1.0.0	1.2.3.4	true
+<>1.0.0	0.9.9	true
+<>1.0.0	1.0.0-alpha1	true
+<>1.0.0	1.0.0-a1	true
+<>1.0.0	1.0.0-beta2	true
+<>1.0.0	1.0.0-b2	true
+<>1.0.0	1.0.0-RC1	true
+<>1.0.0	1.0.0-rc1	true
+<>1.0.0	1.0.0-patch1	true
+<>1.0.0	1.0.0-pl1	true
+<>1.0.0	1.0.0-p1	true
+<>1.0.0	1.0.0-dev	true
+<>1.0.0	1.0.0-stable	false
+<>1.0.0	1.1.0	true
+<>1.0.0	1.2.0	true
+<>1.0.0	1.2.3	true
+<>1.0.0	1.2.4	true
+<>1.0.0	1.3.0	true
+<>1.0.0	1.9.9	true
+<>1.0.0	2.0.0	true
+<>1.0.0	2.0.0-beta1	true
+<>1.0.0	2.0.1	true
+<>1.0.0	2.1.0	true
+<>1.0.0	3.0.0	true
+<>1.0.0	0.3.0	true
+<>1.0.0	0.3.5	true
+<>1.0.0	0.4.0	true
+<>1.0.0	0.0.3	true
+<>1.0.0	0.0.4	true
+<>1.0.0	10.0.0	true
+<>1.0.0	1.10.0	true
+<>1.0.0	dev-main	true
+<>1.0.0	dev-master	true
+<>1.0.0	dev-feature/x	true
+<>1.0.0	1.x-dev	true
+<>1.0.0	2.0.x-dev	true
+<>1.0.0	2.0.9999999.9999999-dev	true
+<>1.0.0	1.0.0+build.7	false
+<>1.0.0	v2.0.0-RC2	true
+<>1.0.0	1.0.0.0	false
+<>1.0.0	3.0.0-alpha	true
+<>1.0.0	not a version	invalid-version
+<>1.0.0	1.0.0-	false
+<>1.0.0	~1	invalid-version
+<1.0.0	1.0.0	false
+<1.0.0	1.0	false
+<1.0.0	1	false
+<1.0.0	v1.2.3	false
+<1.0.0	1.2.3.4	false
+<1.0.0	0.9.9	true
+<1.0.0	1.0.0-alpha1	false
+<1.0.0	1.0.0-a1	false
+<1.0.0	1.0.0-beta2	false
+<1.0.0	1.0.0-b2	false
+<1.0.0	1.0.0-RC1	false
+<1.0.0	1.0.0-rc1	false
+<1.0.0	1.0.0-patch1	false
+<1.0.0	1.0.0-pl1	false
+<1.0.0	1.0.0-p1	false
+<1.0.0	1.0.0-dev	false
+<1.0.0	1.0.0-stable	false
+<1.0.0	1.1.0	false
+<1.0.0	1.2.0	false
+<1.0.0	1.2.3	false
+<1.0.0	1.2.4	false
+<1.0.0	1.3.0	false
+<1.0.0	1.9.9	false
+<1.0.0	2.0.0	false
+<1.0.0	2.0.0-beta1	false
+<1.0.0	2.0.1	false
+<1.0.0	2.1.0	false
+<1.0.0	3.0.0	false
+<1.0.0	0.3.0	true
+<1.0.0	0.3.5	true
+<1.0.0	0.4.0	true
+<1.0.0	0.0.3	true
+<1.0.0	0.0.4	true
+<1.0.0	10.0.0	false
+<1.0.0	1.10.0	false
+<1.0.0	dev-main	false
+<1.0.0	dev-master	false
+<1.0.0	dev-feature/x	false
+<1.0.0	1.x-dev	false
+<1.0.0	2.0.x-dev	false
+<1.0.0	2.0.9999999.9999999-dev	false
+<1.0.0	1.0.0+build.7	false
+<1.0.0	v2.0.0-RC2	false
+<1.0.0	1.0.0.0	false
+<1.0.0	3.0.0-alpha	false
+<1.0.0	not a version	invalid-version
+<1.0.0	1.0.0-	false
+<1.0.0	~1	invalid-version
+<=1.0.0	1.0.0	true
+<=1.0.0	1.0	true
+<=1.0.0	1	true
+<=1.0.0	v1.2.3	false
+<=1.0.0	1.2.3.4	false
+<=1.0.0	0.9.9	true
+<=1.0.0	1.0.0-alpha1	true
+<=1.0.0	1.0.0-a1	true
+<=1.0.0	1.0.0-beta2	true
+<=1.0.0	1.0.0-b2	true
+<=1.0.0	1.0.0-RC1	true
+<=1.0.0	1.0.0-rc1	true
+<=1.0.0	1.0.0-patch1	false
+<=1.0.0	1.0.0-pl1	false
+<=1.0.0	1.0.0-p1	false
+<=1.0.0	1.0.0-dev	true
+<=1.0.0	1.0.0-stable	true
+<=1.0.0	1.1.0	false
+<=1.0.0	1.2.0	false
+<=1.0.0	1.2.3	false
+<=1.0.0	1.2.4	false
+<=1.0.0	1.3.0	false
+<=1.0.0	1.9.9	false
+<=1.0.0	2.0.0	false
+<=1.0.0	2.0.0-beta1	false
+<=1.0.0	2.0.1	false
+<=1.0.0	2.1.0	false
+<=1.0.0	3.0.0	false
+<=1.0.0	0.3.0	true
+<=1.0.0	0.3.5	true
+<=1.0.0	0.4.0	true
+<=1.0.0	0.0.3	true
+<=1.0.0	0.0.4	true
+<=1.0.0	10.0.0	false
+<=1.0.0	1.10.0	false
+<=1.0.0	dev-main	false
+<=1.0.0	dev-master	false
+<=1.0.0	dev-feature/x	false
+<=1.0.0	1.x-dev	false
+<=1.0.0	2.0.x-dev	false
+<=1.0.0	2.0.9999999.9999999-dev	false
+<=1.0.0	1.0.0+build.7	true
+<=1.0.0	v2.0.0-RC2	false
+<=1.0.0	1.0.0.0	true
+<=1.0.0	3.0.0-alpha	false
+<=1.0.0	not a version	invalid-version
+<=1.0.0	1.0.0-	true
+<=1.0.0	~1	invalid-version
+>1.0.0	1.0.0	false
+>1.0.0	1.0	false
+>1.0.0	1	false
+>1.0.0	v1.2.3	true
+>1.0.0	1.2.3.4	true
+>1.0.0	0.9.9	false
+>1.0.0	1.0.0-alpha1	false
+>1.0.0	1.0.0-a1	false
+>1.0.0	1.0.0-beta2	false
+>1.0.0	1.0.0-b2	false
+>1.0.0	1.0.0-RC1	false
+>1.0.0	1.0.0-rc1	false
+>1.0.0	1.0.0-patch1	true
+>1.0.0	1.0.0-pl1	true
+>1.0.0	1.0.0-p1	true
+>1.0.0	1.0.0-dev	false
+>1.0.0	1.0.0-stable	false
+>1.0.0	1.1.0	true
+>1.0.0	1.2.0	true
+>1.0.0	1.2.3	true
+>1.0.0	1.2.4	true
+>1.0.0	1.3.0	true
+>1.0.0	1.9.9	true
+>1.0.0	2.0.0	true
+>1.0.0	2.0.0-beta1	true
+>1.0.0	2.0.1	true
+>1.0.0	2.1.0	true
+>1.0.0	3.0.0	true
+>1.0.0	0.3.0	false
+>1.0.0	0.3.5	false
+>1.0.0	0.4.0	false
+>1.0.0	0.0.3	false
+>1.0.0	0.0.4	false
+>1.0.0	10.0.0	true
+>1.0.0	1.10.0	true
+>1.0.0	dev-main	false
+>1.0.0	dev-master	false
+>1.0.0	dev-feature/x	false
+>1.0.0	1.x-dev	true
+>1.0.0	2.0.x-dev	true
+>1.0.0	2.0.9999999.9999999-dev	true
+>1.0.0	1.0.0+build.7	false
+>1.0.0	v2.0.0-RC2	true
+>1.0.0	1.0.0.0	false
+>1.0.0	3.0.0-alpha	true
+>1.0.0	not a version	invalid-version
+>1.0.0	1.0.0-	false
+>1.0.0	~1	invalid-version
+>=1.0.0	1.0.0	true
+>=1.0.0	1.0	true
+>=1.0.0	1	true
+>=1.0.0	v1.2.3	true
+>=1.0.0	1.2.3.4	true
+>=1.0.0	0.9.9	false
+>=1.0.0	1.0.0-alpha1	true
+>=1.0.0	1.0.0-a1	true
+>=1.0.0	1.0.0-beta2	true
+>=1.0.0	1.0.0-b2	true
+>=1.0.0	1.0.0-RC1	true
+>=1.0.0	1.0.0-rc1	true
+>=1.0.0	1.0.0-patch1	true
+>=1.0.0	1.0.0-pl1	true
+>=1.0.0	1.0.0-p1	true
+>=1.0.0	1.0.0-dev	true
+>=1.0.0	1.0.0-stable	true
+>=1.0.0	1.1.0	true
+>=1.0.0	1.2.0	true
+>=1.0.0	1.2.3	true
+>=1.0.0	1.2.4	true
+>=1.0.0	1.3.0	true
+>=1.0.0	1.9.9	true
+>=1.0.0	2.0.0	true
+>=1.0.0	2.0.0-beta1	true
+>=1.0.0	2.0.1	true
+>=1.0.0	2.1.0	true
+>=1.0.0	3.0.0	true
+>=1.0.0	0.3.0	false
+>=1.0.0	0.3.5	false
+>=1.0.0	0.4.0	false
+>=1.0.0	0.0.3	false
+>=1.0.0	0.0.4	false
+>=1.0.0	10.0.0	true
+>=1.0.0	1.10.0	true
+>=1.0.0	dev-main	false
+>=1.0.0	dev-master	false
+>=1.0.0	dev-feature/x	false
+>=1.0.0	1.x-dev	true
+>=1.0.0	2.0.x-dev	true
+>=1.0.0	2.0.9999999.9999999-dev	true
+>=1.0.0	1.0.0+build.7	true
+>=1.0.0	v2.0.0-RC2	true
+>=1.0.0	1.0.0.0	true
+>=1.0.0	3.0.0-alpha	true
+>=1.0.0	not a version	invalid-version
+>=1.0.0	1.0.0-	true
+>=1.0.0	~1	invalid-version
+>=1.0	1.0.0	true
+>=1.0	1.0	true
+>=1.0	1	true
+>=1.0	v1.2.3	true
+>=1.0	1.2.3.4	true
+>=1.0	0.9.9	false
+>=1.0	1.0.0-alpha1	true
+>=1.0	1.0.0-a1	true
+>=1.0	1.0.0-beta2	true
+>=1.0	1.0.0-b2	true
+>=1.0	1.0.0-RC1	true
+>=1.0	1.0.0-rc1	true
+>=1.0	1.0.0-patch1	true
+>=1.0	1.0.0-pl1	true
+>=1.0	1.0.0-p1	true
+>=1.0	1.0.0-dev	true
+>=1.0	1.0.0-stable	true
+>=1.0	1.1.0	true
+>=1.0	1.2.0	true
+>=1.0	1.2.3	true
+>=1.0	1.2.4	true
+>=1.0	1.3.0	true
+>=1.0	1.9.9	true
+>=1.0	2.0.0	true
+>=1.0	2.0.0-beta1	true
+>=1.0	2.0.1	true
+>=1.0	2.1.0	true
+>=1.0	3.0.0	true
+>=1.0	0.3.0	false
+>=1.0	0.3.5	false
+>=1.0	0.4.0	false
+>=1.0	0.0.3	false
+>=1.0	0.0.4	false
+>=1.0	10.0.0	true
+>=1.0	1.10.0	true
+>=1.0	dev-main	false
+>=1.0	dev-master	false
+>=1.0	dev-feature/x	false
+>=1.0	1.x-dev	true
+>=1.0	2.0.x-dev	true
+>=1.0	2.0.9999999.9999999-dev	true
+>=1.0	1.0.0+build.7	true
+>=1.0	v2.0.0-RC2	true
+>=1.0	1.0.0.0	true
+>=1.0	3.0.0-alpha	true
+>=1.0	not a version	invalid-version
+>=1.0	1.0.0-	true
+>=1.0	~1	invalid-version
+<2.0	1.0.0	true
+<2.0	1.0	true
+<2.0	1	true
+<2.0	v1.2.3	true
+<2.0	1.2.3.4	true
+<2.0	0.9.9	true
+<2.0	1.0.0-alpha1	true
+<2.0	1.0.0-a1	true
+<2.0	1.0.0-beta2	true
+<2.0	1.0.0-b2	true
+<2.0	1.0.0-RC1	true
+<2.0	1.0.0-rc1	true
+<2.0	1.0.0-patch1	true
+<2.0	1.0.0-pl1	true
+<2.0	1.0.0-p1	true
+<2.0	1.0.0-dev	true
+<2.0	1.0.0-stable	true
+<2.0	1.1.0	true
+<2.0	1.2.0	true
+<2.0	1.2.3	true
+<2.0	1.2.4	true
+<2.0	1.3.0	true
+<2.0	1.9.9	true
+<2.0	2.0.0	false
+<2.0	2.0.0-beta1	false
+<2.0	2.0.1	false
+<2.0	2.1.0	false
+<2.0	3.0.0	false
+<2.0	0.3.0	true
+<2.0	0.3.5	true
+<2.0	0.4.0	true
+<2.0	0.0.3	true
+<2.0	0.0.4	true
+<2.0	10.0.0	false
+<2.0	1.10.0	true
+<2.0	dev-main	false
+<2.0	dev-master	false
+<2.0	dev-feature/x	false
+<2.0	1.x-dev	true
+<2.0	2.0.x-dev	false
+<2.0	2.0.9999999.9999999-dev	false
+<2.0	1.0.0+build.7	true
+<2.0	v2.0.0-RC2	false
+<2.0	1.0.0.0	true
+<2.0	3.0.0-alpha	false
+<2.0	not a version	invalid-version
+<2.0	1.0.0-	true
+<2.0	~1	invalid-version
+>= 1.0.0	1.0.0	true
+>= 1.0.0	1.0	true
+>= 1.0.0	1	true
+>= 1.0.0	v1.2.3	true
+>= 1.0.0	1.2.3.4	true
+>= 1.0.0	0.9.9	false
+>= 1.0.0	1.0.0-alpha1	true
+>= 1.0.0	1.0.0-a1	true
+>= 1.0.0	1.0.0-beta2	true
+>= 1.0.0	1.0.0-b2	true
+>= 1.0.0	1.0.0-RC1	true
+>= 1.0.0	1.0.0-rc1	true
+>= 1.0.0	1.0.0-patch1	true
+>= 1.0.0	1.0.0-pl1	true
+>= 1.0.0	1.0.0-p1	true
+>= 1.0.0	1.0.0-dev	true
+>= 1.0.0	1.0.0-stable	true
+>= 1.0.0	1.1.0	true
+>= 1.0.0	1.2.0	true
+>= 1.0.0	1.2.3	true
+>= 1.0.0	1.2.4	true
+>= 1.0.0	1.3.0	true
+>= 1.0.0	1.9.9	true
+>= 1.0.0	2.0.0	true
+>= 1.0.0	2.0.0-beta1	true
+>= 1.0.0	2.0.1	true
+>= 1.0.0	2.1.0	true
+>= 1.0.0	3.0.0	true
+>= 1.0.0	0.3.0	false
+>= 1.0.0	0.3.5	false
+>= 1.0.0	0.4.0	false
+>= 1.0.0	0.0.3	false
+>= 1.0.0	0.0.4	false
+>= 1.0.0	10.0.0	true
+>= 1.0.0	1.10.0	true
+>= 1.0.0	dev-main	false
+>= 1.0.0	dev-master	false
+>= 1.0.0	dev-feature/x	false
+>= 1.0.0	1.x-dev	true
+>= 1.0.0	2.0.x-dev	true
+>= 1.0.0	2.0.9999999.9999999-dev	true
+>= 1.0.0	1.0.0+build.7	true
+>= 1.0.0	v2.0.0-RC2	true
+>= 1.0.0	1.0.0.0	true
+>= 1.0.0	3.0.0-alpha	true
+>= 1.0.0	not a version	invalid-version
+>= 1.0.0	1.0.0-	true
+>= 1.0.0	~1	invalid-version
+< 2	1.0.0	true
+< 2	1.0	true
+< 2	1	true
+< 2	v1.2.3	true
+< 2	1.2.3.4	true
+< 2	0.9.9	true
+< 2	1.0.0-alpha1	true
+< 2	1.0.0-a1	true
+< 2	1.0.0-beta2	true
+< 2	1.0.0-b2	true
+< 2	1.0.0-RC1	true
+< 2	1.0.0-rc1	true
+< 2	1.0.0-patch1	true
+< 2	1.0.0-pl1	true
+< 2	1.0.0-p1	true
+< 2	1.0.0-dev	true
+< 2	1.0.0-stable	true
+< 2	1.1.0	true
+< 2	1.2.0	true
+< 2	1.2.3	true
+< 2	1.2.4	true
+< 2	1.3.0	true
+< 2	1.9.9	true
+< 2	2.0.0	false
+< 2	2.0.0-beta1	false
+< 2	2.0.1	false
+< 2	2.1.0	false
+< 2	3.0.0	false
+< 2	0.3.0	true
+< 2	0.3.5	true
+< 2	0.4.0	true
+< 2	0.0.3	true
+< 2	0.0.4	true
+< 2	10.0.0	false
+< 2	1.10.0	true
+< 2	dev-main	false
+< 2	dev-master	false
+< 2	dev-feature/x	false
+< 2	1.x-dev	true
+< 2	2.0.x-dev	false
+< 2	2.0.9999999.9999999-dev	false
+< 2	1.0.0+build.7	true
+< 2	v2.0.0-RC2	false
+< 2	1.0.0.0	true
+< 2	3.0.0-alpha	false
+< 2	not a version	invalid-version
+< 2	1.0.0-	true
+< 2	~1	invalid-version
+~1.2	1.0.0	false
+~1.2	1.0	false
+~1.2	1	false
+~1.2	v1.2.3	true
+~1.2	1.2.3.4	true
+~1.2	0.9.9	false
+~1.2	1.0.0-alpha1	false
+~1.2	1.0.0-a1	false
+~1.2	1.0.0-beta2	false
+~1.2	1.0.0-b2	false
+~1.2	1.0.0-RC1	false
+~1.2	1.0.0-rc1	false
+~1.2	1.0.0-patch1	false
+~1.2	1.0.0-pl1	false
+~1.2	1.0.0-p1	false
+~1.2	1.0.0-dev	false
+~1.2	1.0.0-stable	false
+~1.2	1.1.0	false
+~1.2	1.2.0	true
+~1.2	1.2.3	true
+~1.2	1.2.4	true
+~1.2	1.3.0	true
+~1.2	1.9.9	true
+~1.2	2.0.0	false
+~1.2	2.0.0-beta1	false
+~1.2	2.0.1	false
+~1.2	2.1.0	false
+~1.2	3.0.0	false
+~1.2	0.3.0	false
+~1.2	0.3.5	false
+~1.2	0.4.0	false
+~1.2	0.0.3	false
+~1.2	0.0.4	false
+~1.2	10.0.0	false
+~1.2	1.10.0	true
+~1.2	dev-main	false
+~1.2	dev-master	false
+~1.2	dev-feature/x	false
+~1.2	1.x-dev	true
+~1.2	2.0.x-dev	false
+~1.2	2.0.9999999.9999999-dev	false
+~1.2	1.0.0+build.7	false
+~1.2	v2.0.0-RC2	false
+~1.2	1.0.0.0	false
+~1.2	3.0.0-alpha	false
+~1.2	not a version	invalid-version
+~1.2	1.0.0-	false
+~1.2	~1	invalid-version
+~1.2.3	1.0.0	false
+~1.2.3	1.0	false
+~1.2.3	1	false
+~1.2.3	v1.2.3	true
+~1.2.3	1.2.3.4	true
+~1.2.3	0.9.9	false
+~1.2.3	1.0.0-alpha1	false
+~1.2.3	1.0.0-a1	false
+~1.2.3	1.0.0-beta2	false
+~1.2.3	1.0.0-b2	false
+~1.2.3	1.0.0-RC1	false
+~1.2.3	1.0.0-rc1	false
+~1.2.3	1.0.0-patch1	false
+~1.2.3	1.0.0-pl1	false
+~1.2.3	1.0.0-p1	false
+~1.2.3	1.0.0-dev	false
+~1.2.3	1.0.0-stable	false
+~1.2.3	1.1.0	false
+~1.2.3	1.2.0	false
+~1.2.3	1.2.3	true
+~1.2.3	1.2.4	true
+~1.2.3	1.3.0	false
+~1.2.3	1.9.9	false
+~1.2.3	2.0.0	false
+~1.2.3	2.0.0-beta1	false
+~1.2.3	2.0.1	false
+~1.2.3	2.1.0	false
+~1.2.3	3.0.0	false
+~1.2.3	0.3.0	false
+~1.2.3	0.3.5	false
+~1.2.3	0.4.0	false
+~1.2.3	0.0.3	false
+~1.2.3	0.0.4	false
+~1.2.3	10.0.0	false
+~1.2.3	1.10.0	false
+~1.2.3	dev-main	false
+~1.2.3	dev-master	false
+~1.2.3	dev-feature/x	false
+~1.2.3	1.x-dev	false
+~1.2.3	2.0.x-dev	false
+~1.2.3	2.0.9999999.9999999-dev	false
+~1.2.3	1.0.0+build.7	false
+~1.2.3	v2.0.0-RC2	false
+~1.2.3	1.0.0.0	false
+~1.2.3	3.0.0-alpha	false
+~1.2.3	not a version	invalid-version
+~1.2.3	1.0.0-	false
+~1.2.3	~1	invalid-version
+~1	1.0.0	true
+~1	1.0	true
+~1	1	true
+~1	v1.2.3	true
+~1	1.2.3.4	true
+~1	0.9.9	false
+~1	1.0.0-alpha1	true
+~1	1.0.0-a1	true
+~1	1.0.0-beta2	true
+~1	1.0.0-b2	true
+~1	1.0.0-RC1	true
+~1	1.0.0-rc1	true
+~1	1.0.0-patch1	true
+~1	1.0.0-pl1	true
+~1	1.0.0-p1	true
+~1	1.0.0-dev	true
+~1	1.0.0-stable	true
+~1	1.1.0	true
+~1	1.2.0	true
+~1	1.2.3	true
+~1	1.2.4	true
+~1	1.3.0	true
+~1	1.9.9	true
+~1	2.0.0	false
+~1	2.0.0-beta1	false
+~1	2.0.1	false
+~1	2.1.0	false
+~1	3.0.0	false
+~1	0.3.0	false
+~1	0.3.5	false
+~1	0.4.0	false
+~1	0.0.3	false
+~1	0.0.4	false
+~1	10.0.0	false
+~1	1.10.0	true
+~1	dev-main	false
+~1	dev-master	false
+~1	dev-feature/x	false
+~1	1.x-dev	true
+~1	2.0.x-dev	false
+~1	2.0.9999999.9999999-dev	false
+~1	1.0.0+build.7	true
+~1	v2.0.0-RC2	false
+~1	1.0.0.0	true
+~1	3.0.0-alpha	false
+~1	not a version	invalid-version
+~1	1.0.0-	true
+~1	~1	invalid-version
+~1.2.3.4	1.0.0	false
+~1.2.3.4	1.0	false
+~1.2.3.4	1	false
+~1.2.3.4	v1.2.3	false
+~1.2.3.4	1.2.3.4	true
+~1.2.3.4	0.9.9	false
+~1.2.3.4	1.0.0-alpha1	false
+~1.2.3.4	1.0.0-a1	false
+~1.2.3.4	1.0.0-beta2	false
+~1.2.3.4	1.0.0-b2	false
+~1.2.3.4	1.0.0-RC1	false
+~1.2.3.4	1.0.0-rc1	false
+~1.2.3.4	1.0.0-patch1	false
+~1.2.3.4	1.0.0-pl1	false
+~1.2.3.4	1.0.0-p1	false
+~1.2.3.4	1.0.0-dev	false
+~1.2.3.4	1.0.0-stable	false
+~1.2.3.4	1.1.0	false
+~1.2.3.4	1.2.0	false
+~1.2.3.4	1.2.3	false
+~1.2.3.4	1.2.4	false
+~1.2.3.4	1.3.0	false
+~1.2.3.4	1.9.9	false
+~1.2.3.4	2.0.0	false
+~1.2.3.4	2.0.0-beta1	false
+~1.2.3.4	2.0.1	false
+~1.2.3.4	2.1.0	false
+~1.2.3.4	3.0.0	false
+~1.2.3.4	0.3.0	false
+~1.2.3.4	0.3.5	false
+~1.2.3.4	0.4.0	false
+~1.2.3.4	0.0.3	false
+~1.2.3.4	0.0.4	false
+~1.2.3.4	10.0.0	false
+~1.2.3.4	1.10.0	false
+~1.2.3.4	dev-main	false
+~1.2.3.4	dev-master	false
+~1.2.3.4	dev-feature/x	false
+~1.2.3.4	1.x-dev	false
+~1.2.3.4	2.0.x-dev	false
+~1.2.3.4	2.0.9999999.9999999-dev	false
+~1.2.3.4	1.0.0+build.7	false
+~1.2.3.4	v2.0.0-RC2	false
+~1.2.3.4	1.0.0.0	false
+~1.2.3.4	3.0.0-alpha	false
+~1.2.3.4	not a version	invalid-version
+~1.2.3.4	1.0.0-	false
+~1.2.3.4	~1	invalid-version
+~0.3	1.0.0	false
+~0.3	1.0	false
+~0.3	1	false
+~0.3	v1.2.3	false
+~0.3	1.2.3.4	false
+~0.3	0.9.9	true
+~0.3	1.0.0-alpha1	false
+~0.3	1.0.0-a1	false
+~0.3	1.0.0-beta2	false
+~0.3	1.0.0-b2	false
+~0.3	1.0.0-RC1	false
+~0.3	1.0.0-rc1	false
+~0.3	1.0.0-patch1	false
+~0.3	1.0.0-pl1	false
+~0.3	1.0.0-p1	false
+~0.3	1.0.0-dev	false
+~0.3	1.0.0-stable	false
+~0.3	1.1.0	false
+~0.3	1.2.0	false
+~0.3	1.2.3	false
+~0.3	1.2.4	false
+~0.3	1.3.0	false
+~0.3	1.9.9	false
+~0.3	2.0.0	false
+~0.3	2.0.0-beta1	false
+~0.3	2.0.1	false
+~0.3	2.1.0	false
+~0.3	3.0.0	false
+~0.3	0.3.0	true
+~0.3	0.3.5	true
+~0.3	0.4.0	true
+~0.3	0.0.3	false
+~0.3	0.0.4	false
+~0.3	10.0.0	false
+~0.3	1.10.0	false
+~0.3	dev-main	false
+~0.3	dev-master	false
+~0.3	dev-feature/x	false
+~0.3	1.x-dev	false
+~0.3	2.0.x-dev	false
+~0.3	2.0.9999999.9999999-dev	false
+~0.3	1.0.0+build.7	false
+~0.3	v2.0.0-RC2	false
+~0.3	1.0.0.0	false
+~0.3	3.0.0-alpha	false
+~0.3	not a version	invalid-version
+~0.3	1.0.0-	false
+~0.3	~1	invalid-version
+~1.2-beta	1.0.0	false
+~1.2-beta	1.0	false
+~1.2-beta	1	false
+~1.2-beta	v1.2.3	true
+~1.2-beta	1.2.3.4	true
+~1.2-beta	0.9.9	false
+~1.2-beta	1.0.0-alpha1	false
+~1.2-beta	1.0.0-a1	false
+~1.2-beta	1.0.0-beta2	false
+~1.2-beta	1.0.0-b2	false
+~1.2-beta	1.0.0-RC1	false
+~1.2-beta	1.0.0-rc1	false
+~1.2-beta	1.0.0-patch1	false
+~1.2-beta	1.0.0-pl1	false
+~1.2-beta	1.0.0-p1	false
+~1.2-beta	1.0.0-dev	false
+~1.2-beta	1.0.0-stable	false
+~1.2-beta	1.1.0	false
+~1.2-beta	1.2.0	true
+~1.2-beta	1.2.3	true
+~1.2-beta	1.2.4	true
+~1.2-beta	1.3.0	true
+~1.2-beta	1.9.9	true
+~1.2-beta	2.0.0	false
+~1.2-beta	2.0.0-beta1	false
+~1.2-beta	2.0.1	false
+~1.2-beta	2.1.0	false
+~1.2-beta	3.0.0	false
+~1.2-beta	0.3.0	false
+~1.2-beta	0.3.5	false
+~1.2-beta	0.4.0	false
+~1.2-beta	0.0.3	false
+~1.2-beta	0.0.4	false
+~1.2-beta	10.0.0	false
+~1.2-beta	1.10.0	true
+~1.2-beta	dev-main	false
+~1.2-beta	dev-master	false
+~1.2-beta	dev-feature/x	false
+~1.2-beta	1.x-dev	true
+~1.2-beta	2.0.x-dev	false
+~1.2-beta	2.0.9999999.9999999-dev	false
+~1.2-beta	1.0.0+build.7	false
+~1.2-beta	v2.0.0-RC2	false
+~1.2-beta	1.0.0.0	false
+~1.2-beta	3.0.0-alpha	false
+~1.2-beta	not a version	invalid-version
+~1.2-beta	1.0.0-	false
+~1.2-beta	~1	invalid-version
+~1.2.3@beta	1.0.0	false
+~1.2.3@beta	1.0	false
+~1.2.3@beta	1	false
+~1.2.3@beta	v1.2.3	true
+~1.2.3@beta	1.2.3.4	true
+~1.2.3@beta	0.9.9	false
+~1.2.3@beta	1.0.0-alpha1	false
+~1.2.3@beta	1.0.0-a1	false
+~1.2.3@beta	1.0.0-beta2	false
+~1.2.3@beta	1.0.0-b2	false
+~1.2.3@beta	1.0.0-RC1	false
+~1.2.3@beta	1.0.0-rc1	false
+~1.2.3@beta	1.0.0-patch1	false
+~1.2.3@beta	1.0.0-pl1	false
+~1.2.3@beta	1.0.0-p1	false
+~1.2.3@beta	1.0.0-dev	false
+~1.2.3@beta	1.0.0-stable	false
+~1.2.3@beta	1.1.0	false
+~1.2.3@beta	1.2.0	false
+~1.2.3@beta	1.2.3	true
+~1.2.3@beta	1.2.4	true
+~1.2.3@beta	1.3.0	false
+~1.2.3@beta	1.9.9	false
+~1.2.3@beta	2.0.0	false
+~1.2.3@beta	2.0.0-beta1	false
+~1.2.3@beta	2.0.1	false
+~1.2.3@beta	2.1.0	false
+~1.2.3@beta	3.0.0	false
+~1.2.3@beta	0.3.0	false
+~1.2.3@beta	0.3.5	false
+~1.2.3@beta	0.4.0	false
+~1.2.3@beta	0.0.3	false
+~1.2.3@beta	0.0.4	false
+~1.2.3@beta	10.0.0	false
+~1.2.3@beta	1.10.0	false
+~1.2.3@beta	dev-main	false
+~1.2.3@beta	dev-master	false
+~1.2.3@beta	dev-feature/x	false
+~1.2.3@beta	1.x-dev	false
+~1.2.3@beta	2.0.x-dev	false
+~1.2.3@beta	2.0.9999999.9999999-dev	false
+~1.2.3@beta	1.0.0+build.7	false
+~1.2.3@beta	v2.0.0-RC2	false
+~1.2.3@beta	1.0.0.0	false
+~1.2.3@beta	3.0.0-alpha	false
+~1.2.3@beta	not a version	invalid-version
+~1.2.3@beta	1.0.0-	false
+~1.2.3@beta	~1	invalid-version
+^1.2.3	1.0.0	false
+^1.2.3	1.0	false
+^1.2.3	1	false
+^1.2.3	v1.2.3	true
+^1.2.3	1.2.3.4	true
+^1.2.3	0.9.9	false
+^1.2.3	1.0.0-alpha1	false
+^1.2.3	1.0.0-a1	false
+^1.2.3	1.0.0-beta2	false
+^1.2.3	1.0.0-b2	false
+^1.2.3	1.0.0-RC1	false
+^1.2.3	1.0.0-rc1	false
+^1.2.3	1.0.0-patch1	false
+^1.2.3	1.0.0-pl1	false
+^1.2.3	1.0.0-p1	false
+^1.2.3	1.0.0-dev	false
+^1.2.3	1.0.0-stable	false
+^1.2.3	1.1.0	false
+^1.2.3	1.2.0	false
+^1.2.3	1.2.3	true
+^1.2.3	1.2.4	true
+^1.2.3	1.3.0	true
+^1.2.3	1.9.9	true
+^1.2.3	2.0.0	false
+^1.2.3	2.0.0-beta1	false
+^1.2.3	2.0.1	false
+^1.2.3	2.1.0	false
+^1.2.3	3.0.0	false
+^1.2.3	0.3.0	false
+^1.2.3	0.3.5	false
+^1.2.3	0.4.0	false
+^1.2.3	0.0.3	false
+^1.2.3	0.0.4	false
+^1.2.3	10.0.0	false
+^1.2.3	1.10.0	true
+^1.2.3	dev-main	false
+^1.2.3	dev-master	false
+^1.2.3	dev-feature/x	false
+^1.2.3	1.x-dev	true
+^1.2.3	2.0.x-dev	false
+^1.2.3	2.0.9999999.9999999-dev	false
+^1.2.3	1.0.0+build.7	false
+^1.2.3	v2.0.0-RC2	false
+^1.2.3	1.0.0.0	false
+^1.2.3	3.0.0-alpha	false
+^1.2.3	not a version	invalid-version
+^1.2.3	1.0.0-	false
+^1.2.3	~1	invalid-version
+^1.2	1.0.0	false
+^1.2	1.0	false
+^1.2	1	false
+^1.2	v1.2.3	true
+^1.2	1.2.3.4	true
+^1.2	0.9.9	false
+^1.2	1.0.0-alpha1	false
+^1.2	1.0.0-a1	false
+^1.2	1.0.0-beta2	false
+^1.2	1.0.0-b2	false
+^1.2	1.0.0-RC1	false
+^1.2	1.0.0-rc1	false
+^1.2	1.0.0-patch1	false
+^1.2	1.0.0-pl1	false
+^1.2	1.0.0-p1	false
+^1.2	1.0.0-dev	false
+^1.2	1.0.0-stable	false
+^1.2	1.1.0	false
+^1.2	1.2.0	true
+^1.2	1.2.3	true
+^1.2	1.2.4	true
+^1.2	1.3.0	true
+^1.2	1.9.9	true
+^1.2	2.0.0	false
+^1.2	2.0.0-beta1	false
+^1.2	2.0.1	false
+^1.2	2.1.0	false
+^1.2	3.0.0	false
+^1.2	0.3.0	false
+^1.2	0.3.5	false
+^1.2	0.4.0	false
+^1.2	0.0.3	false
+^1.2	0.0.4	false
+^1.2	10.0.0	false
+^1.2	1.10.0	true
+^1.2	dev-main	false
+^1.2	dev-master	false
+^1.2	dev-feature/x	false
+^1.2	1.x-dev	true
+^1.2	2.0.x-dev	false
+^1.2	2.0.9999999.9999999-dev	false
+^1.2	1.0.0+build.7	false
+^1.2	v2.0.0-RC2	false
+^1.2	1.0.0.0	false
+^1.2	3.0.0-alpha	false
+^1.2	not a version	invalid-version
+^1.2	1.0.0-	false
+^1.2	~1	invalid-version
+^1	1.0.0	true
+^1	1.0	true
+^1	1	true
+^1	v1.2.3	true
+^1	1.2.3.4	true
+^1	0.9.9	false
+^1	1.0.0-alpha1	true
+^1	1.0.0-a1	true
+^1	1.0.0-beta2	true
+^1	1.0.0-b2	true
+^1	1.0.0-RC1	true
+^1	1.0.0-rc1	true
+^1	1.0.0-patch1	true
+^1	1.0.0-pl1	true
+^1	1.0.0-p1	true
+^1	1.0.0-dev	true
+^1	1.0.0-stable	true
+^1	1.1.0	true
+^1	1.2.0	true
+^1	1.2.3	true
+^1	1.2.4	true
+^1	1.3.0	true
+^1	1.9.9	true
+^1	2.0.0	false
+^1	2.0.0-beta1	false
+^1	2.0.1	false
+^1	2.1.0	false
+^1	3.0.0	false
+^1	0.3.0	false
+^1	0.3.5	false
+^1	0.4.0	false
+^1	0.0.3	false
+^1	0.0.4	false
+^1	10.0.0	false
+^1	1.10.0	true
+^1	dev-main	false
+^1	dev-master	false
+^1	dev-feature/x	false
+^1	1.x-dev	true
+^1	2.0.x-dev	false
+^1	2.0.9999999.9999999-dev	false
+^1	1.0.0+build.7	true
+^1	v2.0.0-RC2	false
+^1	1.0.0.0	true
+^1	3.0.0-alpha	false
+^1	not a version	invalid-version
+^1	1.0.0-	true
+^1	~1	invalid-version
+^0.3	1.0.0	false
+^0.3	1.0	false
+^0.3	1	false
+^0.3	v1.2.3	false
+^0.3	1.2.3.4	false
+^0.3	0.9.9	false
+^0.3	1.0.0-alpha1	false
+^0.3	1.0.0-a1	false
+^0.3	1.0.0-beta2	false
+^0.3	1.0.0-b2	false
+^0.3	1.0.0-RC1	false
+^0.3	1.0.0-rc1	false
+^0.3	1.0.0-patch1	false
+^0.3	1.0.0-pl1	false
+^0.3	1.0.0-p1	false
+^0.3	1.0.0-dev	false
+^0.3	1.0.0-stable	false
+^0.3	1.1.0	false
+^0.3	1.2.0	false
+^0.3	1.2.3	false
+^0.3	1.2.4	false
+^0.3	1.3.0	false
+^0.3	1.9.9	false
+^0.3	2.0.0	false
+^0.3	2.0.0-beta1	false
+^0.3	2.0.1	false
+^0.3	2.1.0	false
+^0.3	3.0.0	false
+^0.3	0.3.0	true
+^0.3	0.3.5	true
+^0.3	0.4.0	false
+^0.3	0.0.3	false
+^0.3	0.0.4	false
+^0.3	10.0.0	false
+^0.3	1.10.0	false
+^0.3	dev-main	false
+^0.3	dev-master	false
+^0.3	dev-feature/x	false
+^0.3	1.x-dev	false
+^0.3	2.0.x-dev	false
+^0.3	2.0.9999999.9999999-dev	false
+^0.3	1.0.0+build.7	false
+^0.3	v2.0.0-RC2	false
+^0.3	1.0.0.0	false
+^0.3	3.0.0-alpha	false
+^0.3	not a version	invalid-version
+^0.3	1.0.0-	false
+^0.3	~1	invalid-version
+^0.3.5	1.0.0	false
+^0.3.5	1.0	false
+^0.3.5	1	false
+^0.3.5	v1.2.3	false
+^0.3.5	1.2.3.4	false
+^0.3.5	0.9.9	false
+^0.3.5	1.0.0-alpha1	false
+^0.3.5	1.0.0-a1	false
+^0.3.5	1.0.0-beta2	false
+^0.3.5	1.0.0-b2	false
+^0.3.5	1.0.0-RC1	false
+^0.3.5	1.0.0-rc1	false
+^0.3.5	1.0.0-patch1	false
+^0.3.5	1.0.0-pl1	false
+^0.3.5	1.0.0-p1	false
+^0.3.5	1.0.0-dev	false
+^0.3.5	1.0.0-stable	false
+^0.3.5	1.1.0	false
+^0.3.5	1.2.0	false
+^0.3.5	1.2.3	false
+^0.3.5	1.2.4	false
+^0.3.5	1.3.0	false
+^0.3.5	1.9.9	false
+^0.3.5	2.0.0	false
+^0.3.5	2.0.0-beta1	false
+^0.3.5	2.0.1	false
+^0.3.5	2.1.0	false
+^0.3.5	3.0.0	false
+^0.3.5	0.3.0	false
+^0.3.5	0.3.5	true
+^0.3.5	0.4.0	false
+^0.3.5	0.0.3	false
+^0.3.5	0.0.4	false
+^0.3.5	10.0.0	false
+^0.3.5	1.10.0	false
+^0.3.5	dev-main	false
+^0.3.5	dev-master	false
+^0.3.5	dev-feature/x	false
+^0.3.5	1.x-dev	false
+^0.3.5	2.0.x-dev	false
+^0.3.5	2.0.9999999.9999999-dev	false
+^0.3.5	1.0.0+build.7	false
+^0.3.5	v2.0.0-RC2	false
+^0.3.5	1.0.0.0	false
+^0.3.5	3.0.0-alpha	false
+^0.3.5	not a version	invalid-version
+^0.3.5	1.0.0-	false
+^0.3.5	~1	invalid-version
+^0.0.3	1.0.0	false
+^0.0.3	1.0	false
+^0.0.3	1	false
+^0.0.3	v1.2.3	false
+^0.0.3	1.2.3.4	false
+^0.0.3	0.9.9	false
+^0.0.3	1.0.0-alpha1	false
+^0.0.3	1.0.0-a1	false
+^0.0.3	1.0.0-beta2	false
+^0.0.3	1.0.0-b2	false
+^0.0.3	1.0.0-RC1	false
+^0.0.3	1.0.0-rc1	false
+^0.0.3	1.0.0-patch1	false
+^0.0.3	1.0.0-pl1	false
+^0.0.3	1.0.0-p1	false
+^0.0.3	1.0.0-dev	false
+^0.0.3	1.0.0-stable	false
+^0.0.3	1.1.0	false
+^0.0.3	1.2.0	false
+^0.0.3	1.2.3	false
+^0.0.3	1.2.4	false
+^0.0.3	1.3.0	false
+^0.0.3	1.9.9	false
+^0.0.3	2.0.0	false
+^0.0.3	2.0.0-beta1	false
+^0.0.3	2.0.1	false
+^0.0.3	2.1.0	false
+^0.0.3	3.0.0	false
+^0.0.3	0.3.0	false
+^0.0.3	0.3.5	false
+^0.0.3	0.4.0	false
+^0.0.3	0.0.3	true
+^0.0.3	0.0.4	false
+^0.0.3	10.0.0	false
+^0.0.3	1.10.0	false
+^0.0.3	dev-main	false
+^0.0.3	dev-master	false
+^0.0.3	dev-feature/x	false
+^0.0.3	1.x-dev	false
+^0.0.3	2.0.x-dev	false
+^0.0.3	2.0.9999999.9999999-dev	false
+^0.0.3	1.0.0+build.7	false
+^0.0.3	v2.0.0-RC2	false
+^0.0.3	1.0.0.0	false
+^0.0.3	3.0.0-alpha	false
+^0.0.3	not a version	invalid-version
+^0.0.3	1.0.0-	false
+^0.0.3	~1	invalid-version
+^0	1.0.0	false
+^0	1.0	false
+^0	1	false
+^0	v1.2.3	false
+^0	1.2.3.4	false
+^0	0.9.9	true
+^0	1.0.0-alpha1	false
+^0	1.0.0-a1	false
+^0	1.0.0-beta2	false
+^0	1.0.0-b2	false
+^0	1.0.0-RC1	false
+^0	1.0.0-rc1	false
+^0	1.0.0-patch1	false
+^0	1.0.0-pl1	false
+^0	1.0.0-p1	false
+^0	1.0.0-dev	false
+^0	1.0.0-stable	false
+^0	1.1.0	false
+^0	1.2.0	false
+^0	1.2.3	false
+^0	1.2.4	false
+^0	1.3.0	false
+^0	1.9.9	false
+^0	2.0.0	false
+^0	2.0.0-beta1	false
+^0	2.0.1	false
+^0	2.1.0	false
+^0	3.0.0	false
+^0	0.3.0	true
+^0	0.3.5	true
+^0	0.4.0	true
+^0	0.0.3	true
+^0	0.0.4	true
+^0	10.0.0	false
+^0	1.10.0	false
+^0	dev-main	false
+^0	dev-master	false
+^0	dev-feature/x	false
+^0	1.x-dev	false
+^0	2.0.x-dev	false
+^0	2.0.9999999.9999999-dev	false
+^0	1.0.0+build.7	false
+^0	v2.0.0-RC2	false
+^0	1.0.0.0	false
+^0	3.0.0-alpha	false
+^0	not a version	invalid-version
+^0	1.0.0-	false
+^0	~1	invalid-version
+^1.2.3-beta1	1.0.0	false
+^1.2.3-beta1	1.0	false
+^1.2.3-beta1	1	false
+^1.2.3-beta1	v1.2.3	true
+^1.2.3-beta1	1.2.3.4	true
+^1.2.3-beta1	0.9.9	false
+^1.2.3-beta1	1.0.0-alpha1	false
+^1.2.3-beta1	1.0.0-a1	false
+^1.2.3-beta1	1.0.0-beta2	false
+^1.2.3-beta1	1.0.0-b2	false
+^1.2.3-beta1	1.0.0-RC1	false
+^1.2.3-beta1	1.0.0-rc1	false
+^1.2.3-beta1	1.0.0-patch1	false
+^1.2.3-beta1	1.0.0-pl1	false
+^1.2.3-beta1	1.0.0-p1	false
+^1.2.3-beta1	1.0.0-dev	false
+^1.2.3-beta1	1.0.0-stable	false
+^1.2.3-beta1	1.1.0	false
+^1.2.3-beta1	1.2.0	false
+^1.2.3-beta1	1.2.3	true
+^1.2.3-beta1	1.2.4	true
+^1.2.3-beta1	1.3.0	true
+^1.2.3-beta1	1.9.9	true
+^1.2.3-beta1	2.0.0	false
+^1.2.3-beta1	2.0.0-beta1	false
+^1.2.3-beta1	2.0.1	false
+^1.2.3-beta1	2.1.0	false
+^1.2.3-beta1	3.0.0	false
+^1.2.3-beta1	0.3.0	false
+^1.2.3-beta1	0.3.5	false
+^1.2.3-beta1	0.4.0	false
+^1.2.3-beta1	0.0.3	false
+^1.2.3-beta1	0.0.4	false
+^1.2.3-beta1	10.0.0	false
+^1.2.3-beta1	1.10.0	true
+^1.2.3-beta1	dev-main	false
+^1.2.3-beta1	dev-master	false
+^1.2.3-beta1	dev-feature/x	false
+^1.2.3-beta1	1.x-dev	true
+^1.2.3-beta1	2.0.x-dev	false
+^1.2.3-beta1	2.0.9999999.9999999-dev	false
+^1.2.3-beta1	1.0.0+build.7	false
+^1.2.3-beta1	v2.0.0-RC2	false
+^1.2.3-beta1	1.0.0.0	false
+^1.2.3-beta1	3.0.0-alpha	false
+^1.2.3-beta1	not a version	invalid-version
+^1.2.3-beta1	1.0.0-	false
+^1.2.3-beta1	~1	invalid-version
+^2.0-RC1	1.0.0	false
+^2.0-RC1	1.0	false
+^2.0-RC1	1	false
+^2.0-RC1	v1.2.3	false
+^2.0-RC1	1.2.3.4	false
+^2.0-RC1	0.9.9	false
+^2.0-RC1	1.0.0-alpha1	false
+^2.0-RC1	1.0.0-a1	false
+^2.0-RC1	1.0.0-beta2	false
+^2.0-RC1	1.0.0-b2	false
+^2.0-RC1	1.0.0-RC1	false
+^2.0-RC1	1.0.0-rc1	false
+^2.0-RC1	1.0.0-patch1	false
+^2.0-RC1	1.0.0-pl1	false
+^2.0-RC1	1.0.0-p1	false
+^2.0-RC1	1.0.0-dev	false
+^2.0-RC1	1.0.0-stable	false
+^2.0-RC1	1.1.0	false
+^2.0-RC1	1.2.0	false
+^2.0-RC1	1.2.3	false
+^2.0-RC1	1.2.4	false
+^2.0-RC1	1.3.0	false
+^2.0-RC1	1.9.9	false
+^2.0-RC1	2.0.0	true
+^2.0-RC1	2.0.0-beta1	false
+^2.0-RC1	2.0.1	true
+^2.0-RC1	2.1.0	true
+^2.0-RC1	3.0.0	false
+^2.0-RC1	0.3.0	false
+^2.0-RC1	0.3.5	false
+^2.0-RC1	0.4.0	false
+^2.0-RC1	0.0.3	false
+^2.0-RC1	0.0.4	false
+^2.0-RC1	10.0.0	false
+^2.0-RC1	1.10.0	false
+^2.0-RC1	dev-main	false
+^2.0-RC1	dev-master	false
+^2.0-RC1	dev-feature/x	false
+^2.0-RC1	1.x-dev	false
+^2.0-RC1	2.0.x-dev	true
+^2.0-RC1	2.0.9999999.9999999-dev	true
+^2.0-RC1	1.0.0+build.7	false
+^2.0-RC1	v2.0.0-RC2	true
+^2.0-RC1	1.0.0.0	false
+^2.0-RC1	3.0.0-alpha	false
+^2.0-RC1	not a version	invalid-version
+^2.0-RC1	1.0.0-	false
+^2.0-RC1	~1	invalid-version
+^1.0@dev	1.0.0	true
+^1.0@dev	1.0	true
+^1.0@dev	1	true
+^1.0@dev	v1.2.3	true
+^1.0@dev	1.2.3.4	true
+^1.0@dev	0.9.9	false
+^1.0@dev	1.0.0-alpha1	true
+^1.0@dev	1.0.0-a1	true
+^1.0@dev	1.0.0-beta2	true
+^1.0@dev	1.0.0-b2	true
+^1.0@dev	1.0.0-RC1	true
+^1.0@dev	1.0.0-rc1	true
+^1.0@dev	1.0.0-patch1	true
+^1.0@dev	1.0.0-pl1	true
+^1.0@dev	1.0.0-p1	true
+^1.0@dev	1.0.0-dev	true
+^1.0@dev	1.0.0-stable	true
+^1.0@dev	1.1.0	true
+^1.0@dev	1.2.0	true
+^1.0@dev	1.2.3	true
+^1.0@dev	1.2.4	true
+^1.0@dev	1.3.0	true
+^1.0@dev	1.9.9	true
+^1.0@dev	2.0.0	false
+^1.0@dev	2.0.0-beta1	false
+^1.0@dev	2.0.1	false
+^1.0@dev	2.1.0	false
+^1.0@dev	3.0.0	false
+^1.0@dev	0.3.0	false
+^1.0@dev	0.3.5	false
+^1.0@dev	0.4.0	false
+^1.0@dev	0.0.3	false
+^1.0@dev	0.0.4	false
+^1.0@dev	10.0.0	false
+^1.0@dev	1.10.0	true
+^1.0@dev	dev-main	false
+^1.0@dev	dev-master	false
+^1.0@dev	dev-feature/x	false
+^1.0@dev	1.x-dev	true
+^1.0@dev	2.0.x-dev	false
+^1.0@dev	2.0.9999999.9999999-dev	false
+^1.0@dev	1.0.0+build.7	true
+^1.0@dev	v2.0.0-RC2	false
+^1.0@dev	1.0.0.0	true
+^1.0@dev	3.0.0-alpha	false
+^1.0@dev	not a version	invalid-version
+^1.0@dev	1.0.0-	true
+^1.0@dev	~1	invalid-version
+^1.0@beta	1.0.0	true
+^1.0@beta	1.0	true
+^1.0@beta	1	true
+^1.0@beta	v1.2.3	true
+^1.0@beta	1.2.3.4	true
+^1.0@beta	0.9.9	false
+^1.0@beta	1.0.0-alpha1	true
+^1.0@beta	1.0.0-a1	true
+^1.0@beta	1.0.0-beta2	true
+^1.0@beta	1.0.0-b2	true
+^1.0@beta	1.0.0-RC1	true
+^1.0@beta	1.0.0-rc1	true
+^1.0@beta	1.0.0-patch1	true
+^1.0@beta	1.0.0-pl1	true
+^1.0@beta	1.0.0-p1	true
+^1.0@beta	1.0.0-dev	true
+^1.0@beta	1.0.0-stable	true
+^1.0@beta	1.1.0	true
+^1.0@beta	1.2.0	true
+^1.0@beta	1.2.3	true
+^1.0@beta	1.2.4	true
+^1.0@beta	1.3.0	true
+^1.0@beta	1.9.9	true
+^1.0@beta	2.0.0	false
+^1.0@beta	2.0.0-beta1	false
+^1.0@beta	2.0.1	false
+^1.0@beta	2.1.0	false
+^1.0@beta	3.0.0	false
+^1.0@beta	0.3.0	false
+^1.0@beta	0.3.5	false
+^1.0@beta	0.4.0	false
+^1.0@beta	0.0.3	false
+^1.0@beta	0.0.4	false
+^1.0@beta	10.0.0	false
+^1.0@beta	1.10.0	true
+^1.0@beta	dev-main	false
+^1.0@beta	dev-master	false
+^1.0@beta	dev-feature/x	false
+^1.0@beta	1.x-dev	true
+^1.0@beta	2.0.x-dev	false
+^1.0@beta	2.0.9999999.9999999-dev	false
+^1.0@beta	1.0.0+build.7	true
+^1.0@beta	v2.0.0-RC2	false
+^1.0@beta	1.0.0.0	true
+^1.0@beta	3.0.0-alpha	false
+^1.0@beta	not a version	invalid-version
+^1.0@beta	1.0.0-	true
+^1.0@beta	~1	invalid-version
+^1.0@RC	1.0.0	true
+^1.0@RC	1.0	true
+^1.0@RC	1	true
+^1.0@RC	v1.2.3	true
+^1.0@RC	1.2.3.4	true
+^1.0@RC	0.9.9	false
+^1.0@RC	1.0.0-alpha1	true
+^1.0@RC	1.0.0-a1	true
+^1.0@RC	1.0.0-beta2	true
+^1.0@RC	1.0.0-b2	true
+^1.0@RC	1.0.0-RC1	true
+^1.0@RC	1.0.0-rc1	true
+^1.0@RC	1.0.0-patch1	true
+^1.0@RC	1.0.0-pl1	true
+^1.0@RC	1.0.0-p1	true
+^1.0@RC	1.0.0-dev	true
+^1.0@RC	1.0.0-stable	true
+^1.0@RC	1.1.0	true
+^1.0@RC	1.2.0	true
+^1.0@RC	1.2.3	true
+^1.0@RC	1.2.4	true
+^1.0@RC	1.3.0	true
+^1.0@RC	1.9.9	true
+^1.0@RC	2.0.0	false
+^1.0@RC	2.0.0-beta1	false
+^1.0@RC	2.0.1	false
+^1.0@RC	2.1.0	false
+^1.0@RC	3.0.0	false
+^1.0@RC	0.3.0	false
+^1.0@RC	0.3.5	false
+^1.0@RC	0.4.0	false
+^1.0@RC	0.0.3	false
+^1.0@RC	0.0.4	false
+^1.0@RC	10.0.0	false
+^1.0@RC	1.10.0	true
+^1.0@RC	dev-main	false
+^1.0@RC	dev-master	false
+^1.0@RC	dev-feature/x	false
+^1.0@RC	1.x-dev	true
+^1.0@RC	2.0.x-dev	false
+^1.0@RC	2.0.9999999.9999999-dev	false
+^1.0@RC	1.0.0+build.7	true
+^1.0@RC	v2.0.0-RC2	false
+^1.0@RC	1.0.0.0	true
+^1.0@RC	3.0.0-alpha	false
+^1.0@RC	not a version	invalid-version
+^1.0@RC	1.0.0-	true
+^1.0@RC	~1	invalid-version
+^1.0@stable	1.0.0	true
+^1.0@stable	1.0	true
+^1.0@stable	1	true
+^1.0@stable	v1.2.3	true
+^1.0@stable	1.2.3.4	true
+^1.0@stable	0.9.9	false
+^1.0@stable	1.0.0-alpha1	true
+^1.0@stable	1.0.0-a1	true
+^1.0@stable	1.0.0-beta2	true
+^1.0@stable	1.0.0-b2	true
+^1.0@stable	1.0.0-RC1	true
+^1.0@stable	1.0.0-rc1	true
+^1.0@stable	1.0.0-patch1	true
+^1.0@stable	1.0.0-pl1	true
+^1.0@stable	1.0.0-p1	true
+^1.0@stable	1.0.0-dev	true
+^1.0@stable	1.0.0-stable	true
+^1.0@stable	1.1.0	true
+^1.0@stable	1.2.0	true
+^1.0@stable	1.2.3	true
+^1.0@stable	1.2.4	true
+^1.0@stable	1.3.0	true
+^1.0@stable	1.9.9	true
+^1.0@stable	2.0.0	false
+^1.0@stable	2.0.0-beta1	false
+^1.0@stable	2.0.1	false
+^1.0@stable	2.1.0	false
+^1.0@stable	3.0.0	false
+^1.0@stable	0.3.0	false
+^1.0@stable	0.3.5	false
+^1.0@stable	0.4.0	false
+^1.0@stable	0.0.3	false
+^1.0@stable	0.0.4	false
+^1.0@stable	10.0.0	false
+^1.0@stable	1.10.0	true
+^1.0@stable	dev-main	false
+^1.0@stable	dev-master	false
+^1.0@stable	dev-feature/x	false
+^1.0@stable	1.x-dev	true
+^1.0@stable	2.0.x-dev	false
+^1.0@stable	2.0.9999999.9999999-dev	false
+^1.0@stable	1.0.0+build.7	true
+^1.0@stable	v2.0.0-RC2	false
+^1.0@stable	1.0.0.0	true
+^1.0@stable	3.0.0-alpha	false
+^1.0@stable	not a version	invalid-version
+^1.0@stable	1.0.0-	true
+^1.0@stable	~1	invalid-version
+@dev	1.0.0	true
+@dev	1.0	true
+@dev	1	true
+@dev	v1.2.3	true
+@dev	1.2.3.4	true
+@dev	0.9.9	true
+@dev	1.0.0-alpha1	true
+@dev	1.0.0-a1	true
+@dev	1.0.0-beta2	true
+@dev	1.0.0-b2	true
+@dev	1.0.0-RC1	true
+@dev	1.0.0-rc1	true
+@dev	1.0.0-patch1	true
+@dev	1.0.0-pl1	true
+@dev	1.0.0-p1	true
+@dev	1.0.0-dev	true
+@dev	1.0.0-stable	true
+@dev	1.1.0	true
+@dev	1.2.0	true
+@dev	1.2.3	true
+@dev	1.2.4	true
+@dev	1.3.0	true
+@dev	1.9.9	true
+@dev	2.0.0	true
+@dev	2.0.0-beta1	true
+@dev	2.0.1	true
+@dev	2.1.0	true
+@dev	3.0.0	true
+@dev	0.3.0	true
+@dev	0.3.5	true
+@dev	0.4.0	true
+@dev	0.0.3	true
+@dev	0.0.4	true
+@dev	10.0.0	true
+@dev	1.10.0	true
+@dev	dev-main	true
+@dev	dev-master	true
+@dev	dev-feature/x	true
+@dev	1.x-dev	true
+@dev	2.0.x-dev	true
+@dev	2.0.9999999.9999999-dev	true
+@dev	1.0.0+build.7	true
+@dev	v2.0.0-RC2	true
+@dev	1.0.0.0	true
+@dev	3.0.0-alpha	true
+@dev	not a version	invalid-version
+@dev	1.0.0-	true
+@dev	~1	invalid-version
+1.0@beta	1.0.0	true
+1.0@beta	1.0	true
+1.0@beta	1	true
+1.0@beta	v1.2.3	false
+1.0@beta	1.2.3.4	false
+1.0@beta	0.9.9	false
+1.0@beta	1.0.0-alpha1	false
+1.0@beta	1.0.0-a1	false
+1.0@beta	1.0.0-beta2	false
+1.0@beta	1.0.0-b2	false
+1.0@beta	1.0.0-RC1	false
+1.0@beta	1.0.0-rc1	false
+1.0@beta	1.0.0-patch1	false
+1.0@beta	1.0.0-pl1	false
+1.0@beta	1.0.0-p1	false
+1.0@beta	1.0.0-dev	false
+1.0@beta	1.0.0-stable	true
+1.0@beta	1.1.0	false
+1.0@beta	1.2.0	false
+1.0@beta	1.2.3	false
+1.0@beta	1.2.4	false
+1.0@beta	1.3.0	false
+1.0@beta	1.9.9	false
+1.0@beta	2.0.0	false
+1.0@beta	2.0.0-beta1	false
+1.0@beta	2.0.1	false
+1.0@beta	2.1.0	false
+1.0@beta	3.0.0	false
+1.0@beta	0.3.0	false
+1.0@beta	0.3.5	false
+1.0@beta	0.4.0	false
+1.0@beta	0.0.3	false
+1.0@beta	0.0.4	false
+1.0@beta	10.0.0	false
+1.0@beta	1.10.0	false
+1.0@beta	dev-main	false
+1.0@beta	dev-master	false
+1.0@beta	dev-feature/x	false
+1.0@beta	1.x-dev	false
+1.0@beta	2.0.x-dev	false
+1.0@beta	2.0.9999999.9999999-dev	false
+1.0@beta	1.0.0+build.7	true
+1.0@beta	v2.0.0-RC2	false
+1.0@beta	1.0.0.0	true
+1.0@beta	3.0.0-alpha	false
+1.0@beta	not a version	invalid-version
+1.0@beta	1.0.0-	true
+1.0@beta	~1	invalid-version
+1.2.*	1.0.0	false
+1.2.*	1.0	false
+1.2.*	1	false
+1.2.*	v1.2.3	true
+1.2.*	1.2.3.4	true
+1.2.*	0.9.9	false
+1.2.*	1.0.0-alpha1	false
+1.2.*	1.0.0-a1	false
+1.2.*	1.0.0-beta2	false
+1.2.*	1.0.0-b2	false
+1.2.*	1.0.0-RC1	false
+1.2.*	1.0.0-rc1	false
+1.2.*	1.0.0-patch1	false
+1.2.*	1.0.0-pl1	false
+1.2.*	1.0.0-p1	false
+1.2.*	1.0.0-dev	false
+1.2.*	1.0.0-stable	false
+1.2.*	1.1.0	false
+1.2.*	1.2.0	true
+1.2.*	1.2.3	true
+1.2.*	1.2.4	true
+1.2.*	1.3.0	false
+1.2.*	1.9.9	false
+1.2.*	2.0.0	false
+1.2.*	2.0.0-beta1	false
+1.2.*	2.0.1	false
+1.2.*	2.1.0	false
+1.2.*	3.0.0	false
+1.2.*	0.3.0	false
+1.2.*	0.3.5	false
+1.2.*	0.4.0	false
+1.2.*	0.0.3	false
+1.2.*	0.0.4	false
+1.2.*	10.0.0	false
+1.2.*	1.10.0	false
+1.2.*	dev-main	false
+1.2.*	dev-master	false
+1.2.*	dev-feature/x	false
+1.2.*	1.x-dev	false
+1.2.*	2.0.x-dev	false
+1.2.*	2.0.9999999.9999999-dev	false
+1.2.*	1.0.0+build.7	false
+1.2.*	v2.0.0-RC2	false
+1.2.*	1.0.0.0	false
+1.2.*	3.0.0-alpha	false
+1.2.*	not a version	invalid-version
+1.2.*	1.0.0-	false
+1.2.*	~1	invalid-version
+1.2.x	1.0.0	false
+1.2.x	1.0	false
+1.2.x	1	false
+1.2.x	v1.2.3	true
+1.2.x	1.2.3.4	true
+1.2.x	0.9.9	false
+1.2.x	1.0.0-alpha1	false
+1.2.x	1.0.0-a1	false
+1.2.x	1.0.0-beta2	false
+1.2.x	1.0.0-b2	false
+1.2.x	1.0.0-RC1	false
+1.2.x	1.0.0-rc1	false
+1.2.x	1.0.0-patch1	false
+1.2.x	1.0.0-pl1	false
+1.2.x	1.0.0-p1	false
+1.2.x	1.0.0-dev	false
+1.2.x	1.0.0-stable	false
+1.2.x	1.1.0	false
+1.2.x	1.2.0	true
+1.2.x	1.2.3	true
+1.2.x	1.2.4	true
+1.2.x	1.3.0	false
+1.2.x	1.9.9	false
+1.2.x	2.0.0	false
+1.2.x	2.0.0-beta1	false
+1.2.x	2.0.1	false
+1.2.x	2.1.0	false
+1.2.x	3.0.0	false
+1.2.x	0.3.0	false
+1.2.x	0.3.5	false
+1.2.x	0.4.0	false
+1.2.x	0.0.3	false
+1.2.x	0.0.4	false
+1.2.x	10.0.0	false
+1.2.x	1.10.0	false
+1.2.x	dev-main	false
+1.2.x	dev-master	false
+1.2.x	dev-feature/x	false
+1.2.x	1.x-dev	false
+1.2.x	2.0.x-dev	false
+1.2.x	2.0.9999999.9999999-dev	false
+1.2.x	1.0.0+build.7	false
+1.2.x	v2.0.0-RC2	false
+1.2.x	1.0.0.0	false
+1.2.x	3.0.0-alpha	false
+1.2.x	not a version	invalid-version
+1.2.x	1.0.0-	false
+1.2.x	~1	invalid-version
+1.2.X	1.0.0	false
+1.2.X	1.0	false
+1.2.X	1	false
+1.2.X	v1.2.3	true
+1.2.X	1.2.3.4	true
+1.2.X	0.9.9	false
+1.2.X	1.0.0-alpha1	false
+1.2.X	1.0.0-a1	false
+1.2.X	1.0.0-beta2	false
+1.2.X	1.0.0-b2	false
+1.2.X	1.0.0-RC1	false
+1.2.X	1.0.0-rc1	false
+1.2.X	1.0.0-patch1	false
+1.2.X	1.0.0-pl1	false
+1.2.X	1.0.0-p1	false
+1.2.X	1.0.0-dev	false
+1.2.X	1.0.0-stable	false
+1.2.X	1.1.0	false
+1.2.X	1.2.0	true
+1.2.X	1.2.3	true
+1.2.X	1.2.4	true
+1.2.X	1.3.0	false
+1.2.X	1.9.9	false
+1.2.X	2.0.0	false
+1.2.X	2.0.0-beta1	false
+1.2.X	2.0.1	false
+1.2.X	2.1.0	false
+1.2.X	3.0.0	false
+1.2.X	0.3.0	false
+1.2.X	0.3.5	false
+1.2.X	0.4.0	false
+1.2.X	0.0.3	false
+1.2.X	0.0.4	false
+1.2.X	10.0.0	false
+1.2.X	1.10.0	false
+1.2.X	dev-main	false
+1.2.X	dev-master	false
+1.2.X	dev-feature/x	false
+1.2.X	1.x-dev	false
+1.2.X	2.0.x-dev	false
+1.2.X	2.0.9999999.9999999-dev	false
+1.2.X	1.0.0+build.7	false
+1.2.X	v2.0.0-RC2	false
+1.2.X	1.0.0.0	false
+1.2.X	3.0.0-alpha	false
+1.2.X	not a version	invalid-version
+1.2.X	1.0.0-	false
+1.2.X	~1	invalid-version
+1.*	1.0.0	true
+1.*	1.0	true
+1.*	1	true
+1.*	v1.2.3	true
+1.*	1.2.3.4	true
+1.*	0.9.9	false
+1.*	1.0.0-alpha1	true
+1.*	1.0.0-a1	true
+1.*	1.0.0-beta2	true
+1.*	1.0.0-b2	true
+1.*	1.0.0-RC1	true
+1.*	1.0.0-rc1	true
+1.*	1.0.0-patch1	true
+1.*	1.0.0-pl1	true
+1.*	1.0.0-p1	true
+1.*	1.0.0-dev	true
+1.*	1.0.0-stable	true
+1.*	1.1.0	true
+1.*	1.2.0	true
+1.*	1.2.3	true
+1.*	1.2.4	true
+1.*	1.3.0	true
+1.*	1.9.9	true
+1.*	2.0.0	false
+1.*	2.0.0-beta1	false
+1.*	2.0.1	false
+1.*	2.1.0	false
+1.*	3.0.0	false
+1.*	0.3.0	false
+1.*	0.3.5	false
+1.*	0.4.0	false
+1.*	0.0.3	false
+1.*	0.0.4	false
+1.*	10.0.0	false
+1.*	1.10.0	true
+1.*	dev-main	false
+1.*	dev-master	false
+1.*	dev-feature/x	false
+1.*	1.x-dev	true
+1.*	2.0.x-dev	false
+1.*	2.0.9999999.9999999-dev	false
+1.*	1.0.0+build.7	true
+1.*	v2.0.0-RC2	false
+1.*	1.0.0.0	true
+1.*	3.0.0-alpha	false
+1.*	not a version	invalid-version
+1.*	1.0.0-	true
+1.*	~1	invalid-version
+1.x	1.0.0	true
+1.x	1.0	true
+1.x	1	true
+1.x	v1.2.3	true
+1.x	1.2.3.4	true
+1.x	0.9.9	false
+1.x	1.0.0-alpha1	true
+1.x	1.0.0-a1	true
+1.x	1.0.0-beta2	true
+1.x	1.0.0-b2	true
+1.x	1.0.0-RC1	true
+1.x	1.0.0-rc1	true
+1.x	1.0.0-patch1	true
+1.x	1.0.0-pl1	true
+1.x	1.0.0-p1	true
+1.x	1.0.0-dev	true
+1.x	1.0.0-stable	true
+1.x	1.1.0	true
+1.x	1.2.0	true
+1.x	1.2.3	true
+1.x	1.2.4	true
+1.x	1.3.0	true
+1.x	1.9.9	true
+1.x	2.0.0	false
+1.x	2.0.0-beta1	false
+1.x	2.0.1	false
+1.x	2.1.0	false
+1.x	3.0.0	false
+1.x	0.3.0	false
+1.x	0.3.5	false
+1.x	0.4.0	false
+1.x	0.0.3	false
+1.x	0.0.4	false
+1.x	10.0.0	false
+1.x	1.10.0	true
+1.x	dev-main	false
+1.x	dev-master	false
+1.x	dev-feature/x	false
+1.x	1.x-dev	true
+1.x	2.0.x-dev	false
+1.x	2.0.9999999.9999999-dev	false
+1.x	1.0.0+build.7	true
+1.x	v2.0.0-RC2	false
+1.x	1.0.0.0	true
+1.x	3.0.0-alpha	false
+1.x	not a version	invalid-version
+1.x	1.0.0-	true
+1.x	~1	invalid-version
+v1.*	1.0.0	true
+v1.*	1.0	true
+v1.*	1	true
+v1.*	v1.2.3	true
+v1.*	1.2.3.4	true
+v1.*	0.9.9	false
+v1.*	1.0.0-alpha1	true
+v1.*	1.0.0-a1	true
+v1.*	1.0.0-beta2	true
+v1.*	1.0.0-b2	true
+v1.*	1.0.0-RC1	true
+v1.*	1.0.0-rc1	true
+v1.*	1.0.0-patch1	true
+v1.*	1.0.0-pl1	true
+v1.*	1.0.0-p1	true
+v1.*	1.0.0-dev	true
+v1.*	1.0.0-stable	true
+v1.*	1.1.0	true
+v1.*	1.2.0	true
+v1.*	1.2.3	true
+v1.*	1.2.4	true
+v1.*	1.3.0	true
+v1.*	1.9.9	true
+v1.*	2.0.0	false
+v1.*	2.0.0-beta1	false
+v1.*	2.0.1	false
+v1.*	2.1.0	false
+v1.*	3.0.0	false
+v1.*	0.3.0	false
+v1.*	0.3.5	false
+v1.*	0.4.0	false
+v1.*	0.0.3	false
+v1.*	0.0.4	false
+v1.*	10.0.0	false
+v1.*	1.10.0	true
+v1.*	dev-main	false
+v1.*	dev-master	false
+v1.*	dev-feature/x	false
+v1.*	1.x-dev	true
+v1.*	2.0.x-dev	false
+v1.*	2.0.9999999.9999999-dev	false
+v1.*	1.0.0+build.7	true
+v1.*	v2.0.0-RC2	false
+v1.*	1.0.0.0	true
+v1.*	3.0.0-alpha	false
+v1.*	not a version	invalid-version
+v1.*	1.0.0-	true
+v1.*	~1	invalid-version
+1.0.0.*	1.0.0	true
+1.0.0.*	1.0	true
+1.0.0.*	1	true
+1.0.0.*	v1.2.3	false
+1.0.0.*	1.2.3.4	false
+1.0.0.*	0.9.9	false
+1.0.0.*	1.0.0-alpha1	true
+1.0.0.*	1.0.0-a1	true
+1.0.0.*	1.0.0-beta2	true
+1.0.0.*	1.0.0-b2	true
+1.0.0.*	1.0.0-RC1	true
+1.0.0.*	1.0.0-rc1	true
+1.0.0.*	1.0.0-patch1	true
+1.0.0.*	1.0.0-pl1	true
+1.0.0.*	1.0.0-p1	true
+1.0.0.*	1.0.0-dev	true
+1.0.0.*	1.0.0-stable	true
+1.0.0.*	1.1.0	false
+1.0.0.*	1.2.0	false
+1.0.0.*	1.2.3	false
+1.0.0.*	1.2.4	false
+1.0.0.*	1.3.0	false
+1.0.0.*	1.9.9	false
+1.0.0.*	2.0.0	false
+1.0.0.*	2.0.0-beta1	false
+1.0.0.*	2.0.1	false
+1.0.0.*	2.1.0	false
+1.0.0.*	3.0.0	false
+1.0.0.*	0.3.0	false
+1.0.0.*	0.3.5	false
+1.0.0.*	0.4.0	false
+1.0.0.*	0.0.3	false
+1.0.0.*	0.0.4	false
+1.0.0.*	10.0.0	false
+1.0.0.*	1.10.0	false
+1.0.0.*	dev-main	false
+1.0.0.*	dev-master	false
+1.0.0.*	dev-feature/x	false
+1.0.0.*	1.x-dev	false
+1.0.0.*	2.0.x-dev	false
+1.0.0.*	2.0.9999999.9999999-dev	false
+1.0.0.*	1.0.0+build.7	true
+1.0.0.*	v2.0.0-RC2	false
+1.0.0.*	1.0.0.0	true
+1.0.0.*	3.0.0-alpha	false
+1.0.0.*	not a version	invalid-version
+1.0.0.*	1.0.0-	true
+1.0.0.*	~1	invalid-version
+0.*	1.0.0	false
+0.*	1.0	false
+0.*	1	false
+0.*	v1.2.3	false
+0.*	1.2.3.4	false
+0.*	0.9.9	true
+0.*	1.0.0-alpha1	false
+0.*	1.0.0-a1	false
+0.*	1.0.0-beta2	false
+0.*	1.0.0-b2	false
+0.*	1.0.0-RC1	false
+0.*	1.0.0-rc1	false
+0.*	1.0.0-patch1	false
+0.*	1.0.0-pl1	false
+0.*	1.0.0-p1	false
+0.*	1.0.0-dev	false
+0.*	1.0.0-stable	false
+0.*	1.1.0	false
+0.*	1.2.0	false
+0.*	1.2.3	false
+0.*	1.2.4	false
+0.*	1.3.0	false
+0.*	1.9.9	false
+0.*	2.0.0	false
+0.*	2.0.0-beta1	false
+0.*	2.0.1	false
+0.*	2.1.0	false
+0.*	3.0.0	false
+0.*	0.3.0	true
+0.*	0.3.5	true
+0.*	0.4.0	true
+0.*	0.0.3	true
+0.*	0.0.4	true
+0.*	10.0.0	false
+0.*	1.10.0	false
+0.*	dev-main	false
+0.*	dev-master	false
+0.*	dev-feature/x	false
+0.*	1.x-dev	false
+0.*	2.0.x-dev	false
+0.*	2.0.9999999.9999999-dev	false
+0.*	1.0.0+build.7	false
+0.*	v2.0.0-RC2	false
+0.*	1.0.0.0	false
+0.*	3.0.0-alpha	false
+0.*	not a version	invalid-version
+0.*	1.0.0-	false
+0.*	~1	invalid-version
+1.0 - 2.0	1.0.0	true
+1.0 - 2.0	1.0	true
+1.0 - 2.0	1	true
+1.0 - 2.0	v1.2.3	true
+1.0 - 2.0	1.2.3.4	true
+1.0 - 2.0	0.9.9	false
+1.0 - 2.0	1.0.0-alpha1	true
+1.0 - 2.0	1.0.0-a1	true
+1.0 - 2.0	1.0.0-beta2	true
+1.0 - 2.0	1.0.0-b2	true
+1.0 - 2.0	1.0.0-RC1	true
+1.0 - 2.0	1.0.0-rc1	true
+1.0 - 2.0	1.0.0-patch1	true
+1.0 - 2.0	1.0.0-pl1	true
+1.0 - 2.0	1.0.0-p1	true
+1.0 - 2.0	1.0.0-dev	true
+1.0 - 2.0	1.0.0-stable	true
+1.0 - 2.0	1.1.0	true
+1.0 - 2.0	1.2.0	true
+1.0 - 2.0	1.2.3	true
+1.0 - 2.0	1.2.4	true
+1.0 - 2.0	1.3.0	true
+1.0 - 2.0	1.9.9	true
+1.0 - 2.0	2.0.0	true
+1.0 - 2.0	2.0.0-beta1	true
+1.0 - 2.0	2.0.1	true
+1.0 - 2.0	2.1.0	false
+1.0 - 2.0	3.0.0	false
+1.0 - 2.0	0.3.0	false
+1.0 - 2.0	0.3.5	false
+1.0 - 2.0	0.4.0	false
+1.0 - 2.0	0.0.3	false
+1.0 - 2.0	0.0.4	false
+1.0 - 2.0	10.0.0	false
+1.0 - 2.0	1.10.0	true
+1.0 - 2.0	dev-main	false
+1.0 - 2.0	dev-master	false
+1.0 - 2.0	dev-feature/x	false
+1.0 - 2.0	1.x-dev	true
+1.0 - 2.0	2.0.x-dev	true
+1.0 - 2.0	2.0.9999999.9999999-dev	true
+1.0 - 2.0	1.0.0+build.7	true
+1.0 - 2.0	v2.0.0-RC2	true
+1.0 - 2.0	1.0.0.0	true
+1.0 - 2.0	3.0.0-alpha	false
+1.0 - 2.0	not a version	invalid-version
+1.0 - 2.0	1.0.0-	true
+1.0 - 2.0	~1	invalid-version
+1.0.0 - 2.0.0	1.0.0	true
+1.0.0 - 2.0.0	1.0	true
+1.0.0 - 2.0.0	1	true
+1.0.0 - 2.0.0	v1.2.3	true
+1.0.0 - 2.0.0	1.2.3.4	true
+1.0.0 - 2.0.0	0.9.9	false
+1.0.0 - 2.0.0	1.0.0-alpha1	true
+1.0.0 - 2.0.0	1.0.0-a1	true
+1.0.0 - 2.0.0	1.0.0-beta2	true
+1.0.0 - 2.0.0	1.0.0-b2	true
+1.0.0 - 2.0.0	1.0.0-RC1	true
+1.0.0 - 2.0.0	1.0.0-rc1	true
+1.0.0 - 2.0.0	1.0.0-patch1	true
+1.0.0 - 2.0.0	1.0.0-pl1	true
+1.0.0 - 2.0.0	1.0.0-p1	true
+1.0.0 - 2.0.0	1.0.0-dev	true
+1.0.0 - 2.0.0	1.0.0-stable	true
+1.0.0 - 2.0.0	1.1.0	true
+1.0.0 - 2.0.0	1.2.0	true
+1.0.0 - 2.0.0	1.2.3	true
+1.0.0 - 2.0.0	1.2.4	true
+1.0.0 - 2.0.0	1.3.0	true
+1.0.0 - 2.0.0	1.9.9	true
+1.0.0 - 2.0.0	2.0.0	true
+1.0.0 - 2.0.0	2.0.0-beta1	true
+1.0.0 - 2.0.0	2.0.1	false
+1.0.0 - 2.0.0	2.1.0	false
+1.0.0 - 2.0.0	3.0.0	false
+1.0.0 - 2.0.0	0.3.0	false
+1.0.0 - 2.0.0	0.3.5	false
+1.0.0 - 2.0.0	0.4.0	false
+1.0.0 - 2.0.0	0.0.3	false
+1.0.0 - 2.0.0	0.0.4	false
+1.0.0 - 2.0.0	10.0.0	false
+1.0.0 - 2.0.0	1.10.0	true
+1.0.0 - 2.0.0	dev-main	false
+1.0.0 - 2.0.0	dev-master	false
+1.0.0 - 2.0.0	dev-feature/x	false
+1.0.0 - 2.0.0	1.x-dev	true
+1.0.0 - 2.0.0	2.0.x-dev	false
+1.0.0 - 2.0.0	2.0.9999999.9999999-dev	false
+1.0.0 - 2.0.0	1.0.0+build.7	true
+1.0.0 - 2.0.0	v2.0.0-RC2	true
+1.0.0 - 2.0.0	1.0.0.0	true
+1.0.0 - 2.0.0	3.0.0-alpha	false
+1.0.0 - 2.0.0	not a version	invalid-version
+1.0.0 - 2.0.0	1.0.0-	true
+1.0.0 - 2.0.0	~1	invalid-version
+1.0 - 2	1.0.0	true
+1.0 - 2	1.0	true
+1.0 - 2	1	true
+1.0 - 2	v1.2.3	true
+1.0 - 2	1.2.3.4	true
+1.0 - 2	0.9.9	false
+1.0 - 2	1.0.0-alpha1	true
+1.0 - 2	1.0.0-a1	true
+1.0 - 2	1.0.0-beta2	true
+1.0 - 2	1.0.0-b2	true
+1.0 - 2	1.0.0-RC1	true
+1.0 - 2	1.0.0-rc1	true
+1.0 - 2	1.0.0-patch1	true
+1.0 - 2	1.0.0-pl1	true
+1.0 - 2	1.0.0-p1	true
+1.0 - 2	1.0.0-dev	true
+1.0 - 2	1.0.0-stable	true
+1.0 - 2	1.1.0	true
+1.0 - 2	1.2.0	true
+1.0 - 2	1.2.3	true
+1.0 - 2	1.2.4	true
+1.0 - 2	1.3.0	true
+1.0 - 2	1.9.9	true
+1.0 - 2	2.0.0	true
+1.0 - 2	2.0.0-beta1	true
+1.0 - 2	2.0.1	true
+1.0 - 2	2.1.0	true
+1.0 - 2	3.0.0	false
+1.0 - 2	0.3.0	false
+1.0 - 2	0.3.5	false
+1.0 - 2	0.4.0	false
+1.0 - 2	0.0.3	false
+1.0 - 2	0.0.4	false
+1.0 - 2	10.0.0	false
+1.0 - 2	1.10.0	true
+1.0 - 2	dev-main	false
+1.0 - 2	dev-master	false
+1.0 - 2	dev-feature/x	false
+1.0 - 2	1.x-dev	true
+1.0 - 2	2.0.x-dev	true
+1.0 - 2	2.0.9999999.9999999-dev	true
+1.0 - 2	1.0.0+build.7	true
+1.0 - 2	v2.0.0-RC2	true
+1.0 - 2	1.0.0.0	true
+1.0 - 2	3.0.0-alpha	false
+1.0 - 2	not a version	invalid-version
+1.0 - 2	1.0.0-	true
+1.0 - 2	~1	invalid-version
+1.2.3 - 1.2.5	1.0.0	false
+1.2.3 - 1.2.5	1.0	false
+1.2.3 - 1.2.5	1	false
+1.2.3 - 1.2.5	v1.2.3	true
+1.2.3 - 1.2.5	1.2.3.4	true
+1.2.3 - 1.2.5	0.9.9	false
+1.2.3 - 1.2.5	1.0.0-alpha1	false
+1.2.3 - 1.2.5	1.0.0-a1	false
+1.2.3 - 1.2.5	1.0.0-beta2	false
+1.2.3 - 1.2.5	1.0.0-b2	false
+1.2.3 - 1.2.5	1.0.0-RC1	false
+1.2.3 - 1.2.5	1.0.0-rc1	false
+1.2.3 - 1.2.5	1.0.0-patch1	false
+1.2.3 - 1.2.5	1.0.0-pl1	false
+1.2.3 - 1.2.5	1.0.0-p1	false
+1.2.3 - 1.2.5	1.0.0-dev	false
+1.2.3 - 1.2.5	1.0.0-stable	false
+1.2.3 - 1.2.5	1.1.0	false
+1.2.3 - 1.2.5	1.2.0	false
+1.2.3 - 1.2.5	1.2.3	true
+1.2.3 - 1.2.5	1.2.4	true
+1.2.3 - 1.2.5	1.3.0	false
+1.2.3 - 1.2.5	1.9.9	false
+1.2.3 - 1.2.5	2.0.0	false
+1.2.3 - 1.2.5	2.0.0-beta1	false
+1.2.3 - 1.2.5	2.0.1	false
+1.2.3 - 1.2.5	2.1.0	false
+1.2.3 - 1.2.5	3.0.0	false
+1.2.3 - 1.2.5	0.3.0	false
+1.2.3 - 1.2.5	0.3.5	false
+1.2.3 - 1.2.5	0.4.0	false
+1.2.3 - 1.2.5	0.0.3	false
+1.2.3 - 1.2.5	0.0.4	false
+1.2.3 - 1.2.5	10.0.0	false
+1.2.3 - 1.2.5	1.10.0	false
+1.2.3 - 1.2.5	dev-main	false
+1.2.3 - 1.2.5	dev-master	false
+1.2.3 - 1.2.5	dev-feature/x	false
+1.2.3 - 1.2.5	1.x-dev	false
+1.2.3 - 1.2.5	2.0.x-dev	false
+1.2.3 - 1.2.5	2.0.9999999.9999999-dev	false
+1.2.3 - 1.2.5	1.0.0+build.7	false
+1.2.3 - 1.2.5	v2.0.0-RC2	false
+1.2.3 - 1.2.5	1.0.0.0	false
+1.2.3 - 1.2.5	3.0.0-alpha	false
+1.2.3 - 1.2.5	not a version	invalid-version
+1.2.3 - 1.2.5	1.0.0-	false
+1.2.3 - 1.2.5	~1	invalid-version
+>=1.0 <2.0	1.0.0	true
+>=1.0 <2.0	1.0	true
+>=1.0 <2.0	1	true
+>=1.0 <2.0	v1.2.3	true
+>=1.0 <2.0	1.2.3.4	true
+>=1.0 <2.0	0.9.9	false
+>=1.0 <2.0	1.0.0-alpha1	true
+>=1.0 <2.0	1.0.0-a1	true
+>=1.0 <2.0	1.0.0-beta2	true
+>=1.0 <2.0	1.0.0-b2	true
+>=1.0 <2.0	1.0.0-RC1	true
+>=1.0 <2.0	1.0.0-rc1	true
+>=1.0 <2.0	1.0.0-patch1	true
+>=1.0 <2.0	1.0.0-pl1	true
+>=1.0 <2.0	1.0.0-p1	true
+>=1.0 <2.0	1.0.0-dev	true
+>=1.0 <2.0	1.0.0-stable	true
+>=1.0 <2.0	1.1.0	true
+>=1.0 <2.0	1.2.0	true
+>=1.0 <2.0	1.2.3	true
+>=1.0 <2.0	1.2.4	true
+>=1.0 <2.0	1.3.0	true
+>=1.0 <2.0	1.9.9	true
+>=1.0 <2.0	2.0.0	false
+>=1.0 <2.0	2.0.0-beta1	false
+>=1.0 <2.0	2.0.1	false
+>=1.0 <2.0	2.1.0	false
+>=1.0 <2.0	3.0.0	false
+>=1.0 <2.0	0.3.0	false
+>=1.0 <2.0	0.3.5	false
+>=1.0 <2.0	0.4.0	false
+>=1.0 <2.0	0.0.3	false
+>=1.0 <2.0	0.0.4	false
+>=1.0 <2.0	10.0.0	false
+>=1.0 <2.0	1.10.0	true
+>=1.0 <2.0	dev-main	false
+>=1.0 <2.0	dev-master	false
+>=1.0 <2.0	dev-feature/x	false
+>=1.0 <2.0	1.x-dev	true
+>=1.0 <2.0	2.0.x-dev	false
+>=1.0 <2.0	2.0.9999999.9999999-dev	false
+>=1.0 <2.0	1.0.0+build.7	true
+>=1.0 <2.0	v2.0.0-RC2	false
+>=1.0 <2.0	1.0.0.0	true
+>=1.0 <2.0	3.0.0-alpha	false
+>=1.0 <2.0	not a version	invalid-version
+>=1.0 <2.0	1.0.0-	true
+>=1.0 <2.0	~1	invalid-version
+>=1.0, <2.0	1.0.0	true
+>=1.0, <2.0	1.0	true
+>=1.0, <2.0	1	true
+>=1.0, <2.0	v1.2.3	true
+>=1.0, <2.0	1.2.3.4	true
+>=1.0, <2.0	0.9.9	false
+>=1.0, <2.0	1.0.0-alpha1	true
+>=1.0, <2.0	1.0.0-a1	true
+>=1.0, <2.0	1.0.0-beta2	true
+>=1.0, <2.0	1.0.0-b2	true
+>=1.0, <2.0	1.0.0-RC1	true
+>=1.0, <2.0	1.0.0-rc1	true
+>=1.0, <2.0	1.0.0-patch1	true
+>=1.0, <2.0	1.0.0-pl1	true
+>=1.0, <2.0	1.0.0-p1	true
+>=1.0, <2.0	1.0.0-dev	true
+>=1.0, <2.0	1.0.0-stable	true
+>=1.0, <2.0	1.1.0	true
+>=1.0, <2.0	1.2.0	true
+>=1.0, <2.0	1.2.3	true
+>=1.0, <2.0	1.2.4	true
+>=1.0, <2.0	1.3.0	true
+>=1.0, <2.0	1.9.9	true
+>=1.0, <2.0	2.0.0	false
+>=1.0, <2.0	2.0.0-beta1	false
+>=1.0, <2.0	2.0.1	false
+>=1.0, <2.0	2.1.0	false
+>=1.0, <2.0	3.0.0	false
+>=1.0, <2.0	0.3.0	false
+>=1.0, <2.0	0.3.5	false
+>=1.0, <2.0	0.4.0	false
+>=1.0, <2.0	0.0.3	false
+>=1.0, <2.0	0.0.4	false
+>=1.0, <2.0	10.0.0	false
+>=1.0, <2.0	1.10.0	true
+>=1.0, <2.0	dev-main	false
+>=1.0, <2.0	dev-master	false
+>=1.0, <2.0	dev-feature/x	false
+>=1.0, <2.0	1.x-dev	true
+>=1.0, <2.0	2.0.x-dev	false
+>=1.0, <2.0	2.0.9999999.9999999-dev	false
+>=1.0, <2.0	1.0.0+build.7	true
+>=1.0, <2.0	v2.0.0-RC2	false
+>=1.0, <2.0	1.0.0.0	true
+>=1.0, <2.0	3.0.0-alpha	false
+>=1.0, <2.0	not a version	invalid-version
+>=1.0, <2.0	1.0.0-	true
+>=1.0, <2.0	~1	invalid-version
+>=1.0,<2.0	1.0.0	true
+>=1.0,<2.0	1.0	true
+>=1.0,<2.0	1	true
+>=1.0,<2.0	v1.2.3	true
+>=1.0,<2.0	1.2.3.4	true
+>=1.0,<2.0	0.9.9	false
+>=1.0,<2.0	1.0.0-alpha1	true
+>=1.0,<2.0	1.0.0-a1	true
+>=1.0,<2.0	1.0.0-beta2	true
+>=1.0,<2.0	1.0.0-b2	true
+>=1.0,<2.0	1.0.0-RC1	true
+>=1.0,<2.0	1.0.0-rc1	true
+>=1.0,<2.0	1.0.0-patch1	true
+>=1.0,<2.0	1.0.0-pl1	true
+>=1.0,<2.0	1.0.0-p1	true
+>=1.0,<2.0	1.0.0-dev	true
+>=1.0,<2.0	1.0.0-stable	true
+>=1.0,<2.0	1.1.0	true
+>=1.0,<2.0	1.2.0	true
+>=1.0,<2.0	1.2.3	true
+>=1.0,<2.0	1.2.4	true
+>=1.0,<2.0	1.3.0	true
+>=1.0,<2.0	1.9.9	true
+>=1.0,<2.0	2.0.0	false
+>=1.0,<2.0	2.0.0-beta1	false
+>=1.0,<2.0	2.0.1	false
+>=1.0,<2.0	2.1.0	false
+>=1.0,<2.0	3.0.0	false
+>=1.0,<2.0	0.3.0	false
+>=1.0,<2.0	0.3.5	false
+>=1.0,<2.0	0.4.0	false
+>=1.0,<2.0	0.0.3	false
+>=1.0,<2.0	0.0.4	false
+>=1.0,<2.0	10.0.0	false
+>=1.0,<2.0	1.10.0	true
+>=1.0,<2.0	dev-main	false
+>=1.0,<2.0	dev-master	false
+>=1.0,<2.0	dev-feature/x	false
+>=1.0,<2.0	1.x-dev	true
+>=1.0,<2.0	2.0.x-dev	false
+>=1.0,<2.0	2.0.9999999.9999999-dev	false
+>=1.0,<2.0	1.0.0+build.7	true
+>=1.0,<2.0	v2.0.0-RC2	false
+>=1.0,<2.0	1.0.0.0	true
+>=1.0,<2.0	3.0.0-alpha	false
+>=1.0,<2.0	not a version	invalid-version
+>=1.0,<2.0	1.0.0-	true
+>=1.0,<2.0	~1	invalid-version
+>=1.0 <1.1 || >=1.2	1.0.0	true
+>=1.0 <1.1 || >=1.2	1.0	true
+>=1.0 <1.1 || >=1.2	1	true
+>=1.0 <1.1 || >=1.2	v1.2.3	true
+>=1.0 <1.1 || >=1.2	1.2.3.4	true
+>=1.0 <1.1 || >=1.2	0.9.9	false
+>=1.0 <1.1 || >=1.2	1.0.0-alpha1	true
+>=1.0 <1.1 || >=1.2	1.0.0-a1	true
+>=1.0 <1.1 || >=1.2	1.0.0-beta2	true
+>=1.0 <1.1 || >=1.2	1.0.0-b2	true
+>=1.0 <1.1 || >=1.2	1.0.0-RC1	true
+>=1.0 <1.1 || >=1.2	1.0.0-rc1	true
+>=1.0 <1.1 || >=1.2	1.0.0-patch1	true
+>=1.0 <1.1 || >=1.2	1.0.0-pl1	true
+>=1.0 <1.1 || >=1.2	1.0.0-p1	true
+>=1.0 <1.1 || >=1.2	1.0.0-dev	true
+>=1.0 <1.1 || >=1.2	1.0.0-stable	true
+>=1.0 <1.1 || >=1.2	1.1.0	false
+>=1.0 <1.1 || >=1.2	1.2.0	true
+>=1.0 <1.1 || >=1.2	1.2.3	true
+>=1.0 <1.1 || >=1.2	1.2.4	true
+>=1.0 <1.1 || >=1.2	1.3.0	true
+>=1.0 <1.1 || >=1.2	1.9.9	true
+>=1.0 <1.1 || >=1.2	2.0.0	true
+>=1.0 <1.1 || >=1.2	2.0.0-beta1	true
+>=1.0 <1.1 || >=1.2	2.0.1	true
+>=1.0 <1.1 || >=1.2	2.1.0	true
+>=1.0 <1.1 || >=1.2	3.0.0	true
+>=1.0 <1.1 || >=1.2	0.3.0	false
+>=1.0 <1.1 || >=1.2	0.3.5	false
+>=1.0 <1.1 || >=1.2	0.4.0	false
+>=1.0 <1.1 || >=1.2	0.0.3	false
+>=1.0 <1.1 || >=1.2	0.0.4	false
+>=1.0 <1.1 || >=1.2	10.0.0	true
+>=1.0 <1.1 || >=1.2	1.10.0	true
+>=1.0 <1.1 || >=1.2	dev-main	false
+>=1.0 <1.1 || >=1.2	dev-master	false
+>=1.0 <1.1 || >=1.2	dev-feature/x	false
+>=1.0 <1.1 || >=1.2	1.x-dev	true
+>=1.0 <1.1 || >=1.2	2.0.x-dev	true
+>=1.0 <1.1 || >=1.2	2.0.9999999.9999999-dev	true
+>=1.0 <1.1 || >=1.2	1.0.0+build.7	true
+>=1.0 <1.1 || >=1.2	v2.0.0-RC2	true
+>=1.0 <1.1 || >=1.2	1.0.0.0	true
+>=1.0 <1.1 || >=1.2	3.0.0-alpha	true
+>=1.0 <1.1 || >=1.2	not a version	invalid-version
+>=1.0 <1.1 || >=1.2	1.0.0-	true
+>=1.0 <1.1 || >=1.2	~1	invalid-version
+^1.0 || ^2.0	1.0.0	true
+^1.0 || ^2.0	1.0	true
+^1.0 || ^2.0	1	true
+^1.0 || ^2.0	v1.2.3	true
+^1.0 || ^2.0	1.2.3.4	true
+^1.0 || ^2.0	0.9.9	false
+^1.0 || ^2.0	1.0.0-alpha1	true
+^1.0 || ^2.0	1.0.0-a1	true
+^1.0 || ^2.0	1.0.0-beta2	true
+^1.0 || ^2.0	1.0.0-b2	true
+^1.0 || ^2.0	1.0.0-RC1	true
+^1.0 || ^2.0	1.0.0-rc1	true
+^1.0 || ^2.0	1.0.0-patch1	true
+^1.0 || ^2.0	1.0.0-pl1	true
+^1.0 || ^2.0	1.0.0-p1	true
+^1.0 || ^2.0	1.0.0-dev	true
+^1.0 || ^2.0	1.0.0-stable	true
+^1.0 || ^2.0	1.1.0	true
+^1.0 || ^2.0	1.2.0	true
+^1.0 || ^2.0	1.2.3	true
+^1.0 || ^2.0	1.2.4	true
+^1.0 || ^2.0	1.3.0	true
+^1.0 || ^2.0	1.9.9	true
+^1.0 || ^2.0	2.0.0	true
+^1.0 || ^2.0	2.0.0-beta1	true
+^1.0 || ^2.0	2.0.1	true
+^1.0 || ^2.0	2.1.0	true
+^1.0 || ^2.0	3.0.0	false
+^1.0 || ^2.0	0.3.0	false
+^1.0 || ^2.0	0.3.5	false
+^1.0 || ^2.0	0.4.0	false
+^1.0 || ^2.0	0.0.3	false
+^1.0 || ^2.0	0.0.4	false
+^1.0 || ^2.0	10.0.0	false
+^1.0 || ^2.0	1.10.0	true
+^1.0 || ^2.0	dev-main	false
+^1.0 || ^2.0	dev-master	false
+^1.0 || ^2.0	dev-feature/x	false
+^1.0 || ^2.0	1.x-dev	true
+^1.0 || ^2.0	2.0.x-dev	true
+^1.0 || ^2.0	2.0.9999999.9999999-dev	true
+^1.0 || ^2.0	1.0.0+build.7	true
+^1.0 || ^2.0	v2.0.0-RC2	true
+^1.0 || ^2.0	1.0.0.0	true
+^1.0 || ^2.0	3.0.0-alpha	false
+^1.0 || ^2.0	not a version	invalid-version
+^1.0 || ^2.0	1.0.0-	true
+^1.0 || ^2.0	~1	invalid-version
+^1.0 | ^2.0	1.0.0	true
+^1.0 | ^2.0	1.0	true
+^1.0 | ^2.0	1	true
+^1.0 | ^2.0	v1.2.3	true
+^1.0 | ^2.0	1.2.3.4	true
+^1.0 | ^2.0	0.9.9	false
+^1.0 | ^2.0	1.0.0-alpha1	true
+^1.0 | ^2.0	1.0.0-a1	true
+^1.0 | ^2.0	1.0.0-beta2	true
+^1.0 | ^2.0	1.0.0-b2	true
+^1.0 | ^2.0	1.0.0-RC1	true
+^1.0 | ^2.0	1.0.0-rc1	true
+^1.0 | ^2.0	1.0.0-patch1	true
+^1.0 | ^2.0	1.0.0-pl1	true
+^1.0 | ^2.0	1.0.0-p1	true
+^1.0 | ^2.0	1.0.0-dev	true
+^1.0 | ^2.0	1.0.0-stable	true
+^1.0 | ^2.0	1.1.0	true
+^1.0 | ^2.0	1.2.0	true
+^1.0 | ^2.0	1.2.3	true
+^1.0 | ^2.0	1.2.4	true
+^1.0 | ^2.0	1.3.0	true
+^1.0 | ^2.0	1.9.9	true
+^1.0 | ^2.0	2.0.0	true
+^1.0 | ^2.0	2.0.0-beta1	true
+^1.0 | ^2.0	2.0.1	true
+^1.0 | ^2.0	2.1.0	true
+^1.0 | ^2.0	3.0.0	false
+^1.0 | ^2.0	0.3.0	false
+^1.0 | ^2.0	0.3.5	false
+^1.0 | ^2.0	0.4.0	false
+^1.0 | ^2.0	0.0.3	false
+^1.0 | ^2.0	0.0.4	false
+^1.0 | ^2.0	10.0.0	false
+^1.0 | ^2.0	1.10.0	true
+^1.0 | ^2.0	dev-main	false
+^1.0 | ^2.0	dev-master	false
+^1.0 | ^2.0	dev-feature/x	false
+^1.0 | ^2.0	1.x-dev	true
+^1.0 | ^2.0	2.0.x-dev	true
+^1.0 | ^2.0	2.0.9999999.9999999-dev	true
+^1.0 | ^2.0	1.0.0+build.7	true
+^1.0 | ^2.0	v2.0.0-RC2	true
+^1.0 | ^2.0	1.0.0.0	true
+^1.0 | ^2.0	3.0.0-alpha	false
+^1.0 | ^2.0	not a version	invalid-version
+^1.0 | ^2.0	1.0.0-	true
+^1.0 | ^2.0	~1	invalid-version
+>=1.0 <2.0 || >=3.0	1.0.0	true
+>=1.0 <2.0 || >=3.0	1.0	true
+>=1.0 <2.0 || >=3.0	1	true
+>=1.0 <2.0 || >=3.0	v1.2.3	true
+>=1.0 <2.0 || >=3.0	1.2.3.4	true
+>=1.0 <2.0 || >=3.0	0.9.9	false
+>=1.0 <2.0 || >=3.0	1.0.0-alpha1	true
+>=1.0 <2.0 || >=3.0	1.0.0-a1	true
+>=1.0 <2.0 || >=3.0	1.0.0-beta2	true
+>=1.0 <2.0 || >=3.0	1.0.0-b2	true
+>=1.0 <2.0 || >=3.0	1.0.0-RC1	true
+>=1.0 <2.0 || >=3.0	1.0.0-rc1	true
+>=1.0 <2.0 || >=3.0	1.0.0-patch1	true
+>=1.0 <2.0 || >=3.0	1.0.0-pl1	true
+>=1.0 <2.0 || >=3.0	1.0.0-p1	true
+>=1.0 <2.0 || >=3.0	1.0.0-dev	true
+>=1.0 <2.0 || >=3.0	1.0.0-stable	true
+>=1.0 <2.0 || >=3.0	1.1.0	true
+>=1.0 <2.0 || >=3.0	1.2.0	true
+>=1.0 <2.0 || >=3.0	1.2.3	true
+>=1.0 <2.0 || >=3.0	1.2.4	true
+>=1.0 <2.0 || >=3.0	1.3.0	true
+>=1.0 <2.0 || >=3.0	1.9.9	true
+>=1.0 <2.0 || >=3.0	2.0.0	false
+>=1.0 <2.0 || >=3.0	2.0.0-beta1	false
+>=1.0 <2.0 || >=3.0	2.0.1	false
+>=1.0 <2.0 || >=3.0	2.1.0	false
+>=1.0 <2.0 || >=3.0	3.0.0	true
+>=1.0 <2.0 || >=3.0	0.3.0	false
+>=1.0 <2.0 || >=3.0	0.3.5	false
+>=1.0 <2.0 || >=3.0	0.4.0	false
+>=1.0 <2.0 || >=3.0	0.0.3	false
+>=1.0 <2.0 || >=3.0	0.0.4	false
+>=1.0 <2.0 || >=3.0	10.0.0	true
+>=1.0 <2.0 || >=3.0	1.10.0	true
+>=1.0 <2.0 || >=3.0	dev-main	false
+>=1.0 <2.0 || >=3.0	dev-master	false
+>=1.0 <2.0 || >=3.0	dev-feature/x	false
+>=1.0 <2.0 || >=3.0	1.x-dev	true
+>=1.0 <2.0 || >=3.0	2.0.x-dev	false
+>=1.0 <2.0 || >=3.0	2.0.9999999.9999999-dev	false
+>=1.0 <2.0 || >=3.0	1.0.0+build.7	true
+>=1.0 <2.0 || >=3.0	v2.0.0-RC2	false
+>=1.0 <2.0 || >=3.0	1.0.0.0	true
+>=1.0 <2.0 || >=3.0	3.0.0-alpha	true
+>=1.0 <2.0 || >=3.0	not a version	invalid-version
+>=1.0 <2.0 || >=3.0	1.0.0-	true
+>=1.0 <2.0 || >=3.0	~1	invalid-version
+dev-main	1.0.0	false
+dev-main	1.0	false
+dev-main	1	false
+dev-main	v1.2.3	false
+dev-main	1.2.3.4	false
+dev-main	0.9.9	false
+dev-main	1.0.0-alpha1	false
+dev-main	1.0.0-a1	false
+dev-main	1.0.0-beta2	false
+dev-main	1.0.0-b2	false
+dev-main	1.0.0-RC1	false
+dev-main	1.0.0-rc1	false
+dev-main	1.0.0-patch1	false
+dev-main	1.0.0-pl1	false
+dev-main	1.0.0-p1	false
+dev-main	1.0.0-dev	false
+dev-main	1.0.0-stable	false
+dev-main	1.1.0	false
+dev-main	1.2.0	false
+dev-main	1.2.3	false
+dev-main	1.2.4	false
+dev-main	1.3.0	false
+dev-main	1.9.9	false
+dev-main	2.0.0	false
+dev-main	2.0.0-beta1	false
+dev-main	2.0.1	false
+dev-main	2.1.0	false
+dev-main	3.0.0	false
+dev-main	0.3.0	false
+dev-main	0.3.5	false
+dev-main	0.4.0	false
+dev-main	0.0.3	false
+dev-main	0.0.4	false
+dev-main	10.0.0	false
+dev-main	1.10.0	false
+dev-main	dev-main	true
+dev-main	dev-master	false
+dev-main	dev-feature/x	false
+dev-main	1.x-dev	false
+dev-main	2.0.x-dev	false
+dev-main	2.0.9999999.9999999-dev	false
+dev-main	1.0.0+build.7	false
+dev-main	v2.0.0-RC2	false
+dev-main	1.0.0.0	false
+dev-main	3.0.0-alpha	false
+dev-main	not a version	invalid-version
+dev-main	1.0.0-	false
+dev-main	~1	invalid-version
+dev-master	1.0.0	false
+dev-master	1.0	false
+dev-master	1	false
+dev-master	v1.2.3	false
+dev-master	1.2.3.4	false
+dev-master	0.9.9	false
+dev-master	1.0.0-alpha1	false
+dev-master	1.0.0-a1	false
+dev-master	1.0.0-beta2	false
+dev-master	1.0.0-b2	false
+dev-master	1.0.0-RC1	false
+dev-master	1.0.0-rc1	false
+dev-master	1.0.0-patch1	false
+dev-master	1.0.0-pl1	false
+dev-master	1.0.0-p1	false
+dev-master	1.0.0-dev	false
+dev-master	1.0.0-stable	false
+dev-master	1.1.0	false
+dev-master	1.2.0	false
+dev-master	1.2.3	false
+dev-master	1.2.4	false
+dev-master	1.3.0	false
+dev-master	1.9.9	false
+dev-master	2.0.0	false
+dev-master	2.0.0-beta1	false
+dev-master	2.0.1	false
+dev-master	2.1.0	false
+dev-master	3.0.0	false
+dev-master	0.3.0	false
+dev-master	0.3.5	false
+dev-master	0.4.0	false
+dev-master	0.0.3	false
+dev-master	0.0.4	false
+dev-master	10.0.0	false
+dev-master	1.10.0	false
+dev-master	dev-main	false
+dev-master	dev-master	true
+dev-master	dev-feature/x	false
+dev-master	1.x-dev	false
+dev-master	2.0.x-dev	false
+dev-master	2.0.9999999.9999999-dev	false
+dev-master	1.0.0+build.7	false
+dev-master	v2.0.0-RC2	false
+dev-master	1.0.0.0	false
+dev-master	3.0.0-alpha	false
+dev-master	not a version	invalid-version
+dev-master	1.0.0-	false
+dev-master	~1	invalid-version
+dev-feature/x	1.0.0	false
+dev-feature/x	1.0	false
+dev-feature/x	1	false
+dev-feature/x	v1.2.3	false
+dev-feature/x	1.2.3.4	false
+dev-feature/x	0.9.9	false
+dev-feature/x	1.0.0-alpha1	false
+dev-feature/x	1.0.0-a1	false
+dev-feature/x	1.0.0-beta2	false
+dev-feature/x	1.0.0-b2	false
+dev-feature/x	1.0.0-RC1	false
+dev-feature/x	1.0.0-rc1	false
+dev-feature/x	1.0.0-patch1	false
+dev-feature/x	1.0.0-pl1	false
+dev-feature/x	1.0.0-p1	false
+dev-feature/x	1.0.0-dev	false
+dev-feature/x	1.0.0-stable	false
+dev-feature/x	1.1.0	false
+dev-feature/x	1.2.0	false
+dev-feature/x	1.2.3	false
+dev-feature/x	1.2.4	false
+dev-feature/x	1.3.0	false
+dev-feature/x	1.9.9	false
+dev-feature/x	2.0.0	false
+dev-feature/x	2.0.0-beta1	false
+dev-feature/x	2.0.1	false
+dev-feature/x	2.1.0	false
+dev-feature/x	3.0.0	false
+dev-feature/x	0.3.0	false
+dev-feature/x	0.3.5	false
+dev-feature/x	0.4.0	false
+dev-feature/x	0.0.3	false
+dev-feature/x	0.0.4	false
+dev-feature/x	10.0.0	false
+dev-feature/x	1.10.0	false
+dev-feature/x	dev-main	false
+dev-feature/x	dev-master	false
+dev-feature/x	dev-feature/x	true
+dev-feature/x	1.x-dev	false
+dev-feature/x	2.0.x-dev	false
+dev-feature/x	2.0.9999999.9999999-dev	false
+dev-feature/x	1.0.0+build.7	false
+dev-feature/x	v2.0.0-RC2	false
+dev-feature/x	1.0.0.0	false
+dev-feature/x	3.0.0-alpha	false
+dev-feature/x	not a version	invalid-version
+dev-feature/x	1.0.0-	false
+dev-feature/x	~1	invalid-version
+dev-main#abc123	1.0.0	false
+dev-main#abc123	1.0	false
+dev-main#abc123	1	false
+dev-main#abc123	v1.2.3	false
+dev-main#abc123	1.2.3.4	false
+dev-main#abc123	0.9.9	false
+dev-main#abc123	1.0.0-alpha1	false
+dev-main#abc123	1.0.0-a1	false
+dev-main#abc123	1.0.0-beta2	false
+dev-main#abc123	1.0.0-b2	false
+dev-main#abc123	1.0.0-RC1	false
+dev-main#abc123	1.0.0-rc1	false
+dev-main#abc123	1.0.0-patch1	false
+dev-main#abc123	1.0.0-pl1	false
+dev-main#abc123	1.0.0-p1	false
+dev-main#abc123	1.0.0-dev	false
+dev-main#abc123	1.0.0-stable	false
+dev-main#abc123	1.1.0	false
+dev-main#abc123	1.2.0	false
+dev-main#abc123	1.2.3	false
+dev-main#abc123	1.2.4	false
+dev-main#abc123	1.3.0	false
+dev-main#abc123	1.9.9	false
+dev-main#abc123	2.0.0	false
+dev-main#abc123	2.0.0-beta1	false
+dev-main#abc123	2.0.1	false
+dev-main#abc123	2.1.0	false
+dev-main#abc123	3.0.0	false
+dev-main#abc123	0.3.0	false
+dev-main#abc123	0.3.5	false
+dev-main#abc123	0.4.0	false
+dev-main#abc123	0.0.3	false
+dev-main#abc123	0.0.4	false
+dev-main#abc123	10.0.0	false
+dev-main#abc123	1.10.0	false
+dev-main#abc123	dev-main	true
+dev-main#abc123	dev-master	false
+dev-main#abc123	dev-feature/x	false
+dev-main#abc123	1.x-dev	false
+dev-main#abc123	2.0.x-dev	false
+dev-main#abc123	2.0.9999999.9999999-dev	false
+dev-main#abc123	1.0.0+build.7	false
+dev-main#abc123	v2.0.0-RC2	false
+dev-main#abc123	1.0.0.0	false
+dev-main#abc123	3.0.0-alpha	false
+dev-main#abc123	not a version	invalid-version
+dev-main#abc123	1.0.0-	false
+dev-main#abc123	~1	invalid-version
+dev-main as 1.0.0	1.0.0	false
+dev-main as 1.0.0	1.0	false
+dev-main as 1.0.0	1	false
+dev-main as 1.0.0	v1.2.3	false
+dev-main as 1.0.0	1.2.3.4	false
+dev-main as 1.0.0	0.9.9	false
+dev-main as 1.0.0	1.0.0-alpha1	false
+dev-main as 1.0.0	1.0.0-a1	false
+dev-main as 1.0.0	1.0.0-beta2	false
+dev-main as 1.0.0	1.0.0-b2	false
+dev-main as 1.0.0	1.0.0-RC1	false
+dev-main as 1.0.0	1.0.0-rc1	false
+dev-main as 1.0.0	1.0.0-patch1	false
+dev-main as 1.0.0	1.0.0-pl1	false
+dev-main as 1.0.0	1.0.0-p1	false
+dev-main as 1.0.0	1.0.0-dev	false
+dev-main as 1.0.0	1.0.0-stable	false
+dev-main as 1.0.0	1.1.0	false
+dev-main as 1.0.0	1.2.0	false
+dev-main as 1.0.0	1.2.3	false
+dev-main as 1.0.0	1.2.4	false
+dev-main as 1.0.0	1.3.0	false
+dev-main as 1.0.0	1.9.9	false
+dev-main as 1.0.0	2.0.0	false
+dev-main as 1.0.0	2.0.0-beta1	false
+dev-main as 1.0.0	2.0.1	false
+dev-main as 1.0.0	2.1.0	false
+dev-main as 1.0.0	3.0.0	false
+dev-main as 1.0.0	0.3.0	false
+dev-main as 1.0.0	0.3.5	false
+dev-main as 1.0.0	0.4.0	false
+dev-main as 1.0.0	0.0.3	false
+dev-main as 1.0.0	0.0.4	false
+dev-main as 1.0.0	10.0.0	false
+dev-main as 1.0.0	1.10.0	false
+dev-main as 1.0.0	dev-main	true
+dev-main as 1.0.0	dev-master	false
+dev-main as 1.0.0	dev-feature/x	false
+dev-main as 1.0.0	1.x-dev	false
+dev-main as 1.0.0	2.0.x-dev	false
+dev-main as 1.0.0	2.0.9999999.9999999-dev	false
+dev-main as 1.0.0	1.0.0+build.7	false
+dev-main as 1.0.0	v2.0.0-RC2	false
+dev-main as 1.0.0	1.0.0.0	false
+dev-main as 1.0.0	3.0.0-alpha	false
+dev-main as 1.0.0	not a version	invalid-version
+dev-main as 1.0.0	1.0.0-	false
+dev-main as 1.0.0	~1	invalid-version
+1.x-dev	1.0.0	false
+1.x-dev	1.0	false
+1.x-dev	1	false
+1.x-dev	v1.2.3	false
+1.x-dev	1.2.3.4	false
+1.x-dev	0.9.9	false
+1.x-dev	1.0.0-alpha1	false
+1.x-dev	1.0.0-a1	false
+1.x-dev	1.0.0-beta2	false
+1.x-dev	1.0.0-b2	false
+1.x-dev	1.0.0-RC1	false
+1.x-dev	1.0.0-rc1	false
+1.x-dev	1.0.0-patch1	false
+1.x-dev	1.0.0-pl1	false
+1.x-dev	1.0.0-p1	false
+1.x-dev	1.0.0-dev	false
+1.x-dev	1.0.0-stable	false
+1.x-dev	1.1.0	false
+1.x-dev	1.2.0	false
+1.x-dev	1.2.3	false
+1.x-dev	1.2.4	false
+1.x-dev	1.3.0	false
+1.x-dev	1.9.9	false
+1.x-dev	2.0.0	false
+1.x-dev	2.0.0-beta1	false
+1.x-dev	2.0.1	false
+1.x-dev	2.1.0	false
+1.x-dev	3.0.0	false
+1.x-dev	0.3.0	false
+1.x-dev	0.3.5	false
+1.x-dev	0.4.0	false
+1.x-dev	0.0.3	false
+1.x-dev	0.0.4	false
+1.x-dev	10.0.0	false
+1.x-dev	1.10.0	false
+1.x-dev	dev-main	false
+1.x-dev	dev-master	false
+1.x-dev	dev-feature/x	false
+1.x-dev	1.x-dev	true
+1.x-dev	2.0.x-dev	false
+1.x-dev	2.0.9999999.9999999-dev	false
+1.x-dev	1.0.0+build.7	false
+1.x-dev	v2.0.0-RC2	false
+1.x-dev	1.0.0.0	false
+1.x-dev	3.0.0-alpha	false
+1.x-dev	not a version	invalid-version
+1.x-dev	1.0.0-	false
+1.x-dev	~1	invalid-version
+2.0.x-dev	1.0.0	false
+2.0.x-dev	1.0	false
+2.0.x-dev	1	false
+2.0.x-dev	v1.2.3	false
+2.0.x-dev	1.2.3.4	false
+2.0.x-dev	0.9.9	false
+2.0.x-dev	1.0.0-alpha1	false
+2.0.x-dev	1.0.0-a1	false
+2.0.x-dev	1.0.0-beta2	false
+2.0.x-dev	1.0.0-b2	false
+2.0.x-dev	1.0.0-RC1	false
+2.0.x-dev	1.0.0-rc1	false
+2.0.x-dev	1.0.0-patch1	false
+2.0.x-dev	1.0.0-pl1	false
+2.0.x-dev	1.0.0-p1	false
+2.0.x-dev	1.0.0-dev	false
+2.0.x-dev	1.0.0-stable	false
+2.0.x-dev	1.1.0	false
+2.0.x-dev	1.2.0	false
+2.0.x-dev	1.2.3	false
+2.0.x-dev	1.2.4	false
+2.0.x-dev	1.3.0	false
+2.0.x-dev	1.9.9	false
+2.0.x-dev	2.0.0	false
+2.0.x-dev	2.0.0-beta1	false
+2.0.x-dev	2.0.1	false
+2.0.x-dev	2.1.0	false
+2.0.x-dev	3.0.0	false
+2.0.x-dev	0.3.0	false
+2.0.x-dev	0.3.5	false
+2.0.x-dev	0.4.0	false
+2.0.x-dev	0.0.3	false
+2.0.x-dev	0.0.4	false
+2.0.x-dev	10.0.0	false
+2.0.x-dev	1.10.0	false
+2.0.x-dev	dev-main	false
+2.0.x-dev	dev-master	false
+2.0.x-dev	dev-feature/x	false
+2.0.x-dev	1.x-dev	false
+2.0.x-dev	2.0.x-dev	true
+2.0.x-dev	2.0.9999999.9999999-dev	true
+2.0.x-dev	1.0.0+build.7	false
+2.0.x-dev	v2.0.0-RC2	false
+2.0.x-dev	1.0.0.0	false
+2.0.x-dev	3.0.0-alpha	false
+2.0.x-dev	not a version	invalid-version
+2.0.x-dev	1.0.0-	false
+2.0.x-dev	~1	invalid-version
+2.0.*-dev	1.0.0	false
+2.0.*-dev	1.0	false
+2.0.*-dev	1	false
+2.0.*-dev	v1.2.3	false
+2.0.*-dev	1.2.3.4	false
+2.0.*-dev	0.9.9	false
+2.0.*-dev	1.0.0-alpha1	false
+2.0.*-dev	1.0.0-a1	false
+2.0.*-dev	1.0.0-beta2	false
+2.0.*-dev	1.0.0-b2	false
+2.0.*-dev	1.0.0-RC1	false
+2.0.*-dev	1.0.0-rc1	false
+2.0.*-dev	1.0.0-patch1	false
+2.0.*-dev	1.0.0-pl1	false
+2.0.*-dev	1.0.0-p1	false
+2.0.*-dev	1.0.0-dev	false
+2.0.*-dev	1.0.0-stable	false
+2.0.*-dev	1.1.0	false
+2.0.*-dev	1.2.0	false
+2.0.*-dev	1.2.3	false
+2.0.*-dev	1.2.4	false
+2.0.*-dev	1.3.0	false
+2.0.*-dev	1.9.9	false
+2.0.*-dev	2.0.0	false
+2.0.*-dev	2.0.0-beta1	false
+2.0.*-dev	2.0.1	false
+2.0.*-dev	2.1.0	false
+2.0.*-dev	3.0.0	false
+2.0.*-dev	0.3.0	false
+2.0.*-dev	0.3.5	false
+2.0.*-dev	0.4.0	false
+2.0.*-dev	0.0.3	false
+2.0.*-dev	0.0.4	false
+2.0.*-dev	10.0.0	false
+2.0.*-dev	1.10.0	false
+2.0.*-dev	dev-main	false
+2.0.*-dev	dev-master	false
+2.0.*-dev	dev-feature/x	false
+2.0.*-dev	1.x-dev	false
+2.0.*-dev	2.0.x-dev	true
+2.0.*-dev	2.0.9999999.9999999-dev	true
+2.0.*-dev	1.0.0+build.7	false
+2.0.*-dev	v2.0.0-RC2	false
+2.0.*-dev	1.0.0.0	false
+2.0.*-dev	3.0.0-alpha	false
+2.0.*-dev	not a version	invalid-version
+2.0.*-dev	1.0.0-	false
+2.0.*-dev	~1	invalid-version
+1.0.x-dev	1.0.0	false
+1.0.x-dev	1.0	false
+1.0.x-dev	1	false
+1.0.x-dev	v1.2.3	false
+1.0.x-dev	1.2.3.4	false
+1.0.x-dev	0.9.9	false
+1.0.x-dev	1.0.0-alpha1	false
+1.0.x-dev	1.0.0-a1	false
+1.0.x-dev	1.0.0-beta2	false
+1.0.x-dev	1.0.0-b2	false
+1.0.x-dev	1.0.0-RC1	false
+1.0.x-dev	1.0.0-rc1	false
+1.0.x-dev	1.0.0-patch1	false
+1.0.x-dev	1.0.0-pl1	false
+1.0.x-dev	1.0.0-p1	false
+1.0.x-dev	1.0.0-dev	false
+1.0.x-dev	1.0.0-stable	false
+1.0.x-dev	1.1.0	false
+1.0.x-dev	1.2.0	false
+1.0.x-dev	1.2.3	false
+1.0.x-dev	1.2.4	false
+1.0.x-dev	1.3.0	false
+1.0.x-dev	1.9.9	false
+1.0.x-dev	2.0.0	false
+1.0.x-dev	2.0.0-beta1	false
+1.0.x-dev	2.0.1	false
+1.0.x-dev	2.1.0	false
+1.0.x-dev	3.0.0	false
+1.0.x-dev	0.3.0	false
+1.0.x-dev	0.3.5	false
+1.0.x-dev	0.4.0	false
+1.0.x-dev	0.0.3	false
+1.0.x-dev	0.0.4	false
+1.0.x-dev	10.0.0	false
+1.0.x-dev	1.10.0	false
+1.0.x-dev	dev-main	false
+1.0.x-dev	dev-master	false
+1.0.x-dev	dev-feature/x	false
+1.0.x-dev	1.x-dev	false
+1.0.x-dev	2.0.x-dev	false
+1.0.x-dev	2.0.9999999.9999999-dev	false
+1.0.x-dev	1.0.0+build.7	false
+1.0.x-dev	v2.0.0-RC2	false
+1.0.x-dev	1.0.0.0	false
+1.0.x-dev	3.0.0-alpha	false
+1.0.x-dev	not a version	invalid-version
+1.0.x-dev	1.0.0-	false
+1.0.x-dev	~1	invalid-version
+>=1.0-dev	1.0.0	true
+>=1.0-dev	1.0	true
+>=1.0-dev	1	true
+>=1.0-dev	v1.2.3	true
+>=1.0-dev	1.2.3.4	true
+>=1.0-dev	0.9.9	false
+>=1.0-dev	1.0.0-alpha1	true
+>=1.0-dev	1.0.0-a1	true
+>=1.0-dev	1.0.0-beta2	true
+>=1.0-dev	1.0.0-b2	true
+>=1.0-dev	1.0.0-RC1	true
+>=1.0-dev	1.0.0-rc1	true
+>=1.0-dev	1.0.0-patch1	true
+>=1.0-dev	1.0.0-pl1	true
+>=1.0-dev	1.0.0-p1	true
+>=1.0-dev	1.0.0-dev	true
+>=1.0-dev	1.0.0-stable	true
+>=1.0-dev	1.1.0	true
+>=1.0-dev	1.2.0	true
+>=1.0-dev	1.2.3	true
+>=1.0-dev	1.2.4	true
+>=1.0-dev	1.3.0	true
+>=1.0-dev	1.9.9	true
+>=1.0-dev	2.0.0	true
+>=1.0-dev	2.0.0-beta1	true
+>=1.0-dev	2.0.1	true
+>=1.0-dev	2.1.0	true
+>=1.0-dev	3.0.0	true
+>=1.0-dev	0.3.0	false
+>=1.0-dev	0.3.5	false
+>=1.0-dev	0.4.0	false
+>=1.0-dev	0.0.3	false
+>=1.0-dev	0.0.4	false
+>=1.0-dev	10.0.0	true
+>=1.0-dev	1.10.0	true
+>=1.0-dev	dev-main	false
+>=1.0-dev	dev-master	false
+>=1.0-dev	dev-feature/x	false
+>=1.0-dev	1.x-dev	true
+>=1.0-dev	2.0.x-dev	true
+>=1.0-dev	2.0.9999999.9999999-dev	true
+>=1.0-dev	1.0.0+build.7	true
+>=1.0-dev	v2.0.0-RC2	true
+>=1.0-dev	1.0.0.0	true
+>=1.0-dev	3.0.0-alpha	true
+>=1.0-dev	not a version	invalid-version
+>=1.0-dev	1.0.0-	true
+>=1.0-dev	~1	invalid-version
+<1.0-dev	1.0.0	false
+<1.0-dev	1.0	false
+<1.0-dev	1	false
+<1.0-dev	v1.2.3	false
+<1.0-dev	1.2.3.4	false
+<1.0-dev	0.9.9	true
+<1.0-dev	1.0.0-alpha1	false
+<1.0-dev	1.0.0-a1	false
+<1.0-dev	1.0.0-beta2	false
+<1.0-dev	1.0.0-b2	false
+<1.0-dev	1.0.0-RC1	false
+<1.0-dev	1.0.0-rc1	false
+<1.0-dev	1.0.0-patch1	false
+<1.0-dev	1.0.0-pl1	false
+<1.0-dev	1.0.0-p1	false
+<1.0-dev	1.0.0-dev	false
+<1.0-dev	1.0.0-stable	false
+<1.0-dev	1.1.0	false
+<1.0-dev	1.2.0	false
+<1.0-dev	1.2.3	false
+<1.0-dev	1.2.4	false
+<1.0-dev	1.3.0	false
+<1.0-dev	1.9.9	false
+<1.0-dev	2.0.0	false
+<1.0-dev	2.0.0-beta1	false
+<1.0-dev	2.0.1	false
+<1.0-dev	2.1.0	false
+<1.0-dev	3.0.0	false
+<1.0-dev	0.3.0	true
+<1.0-dev	0.3.5	true
+<1.0-dev	0.4.0	true
+<1.0-dev	0.0.3	true
+<1.0-dev	0.0.4	true
+<1.0-dev	10.0.0	false
+<1.0-dev	1.10.0	false
+<1.0-dev	dev-main	false
+<1.0-dev	dev-master	false
+<1.0-dev	dev-feature/x	false
+<1.0-dev	1.x-dev	false
+<1.0-dev	2.0.x-dev	false
+<1.0-dev	2.0.9999999.9999999-dev	false
+<1.0-dev	1.0.0+build.7	false
+<1.0-dev	v2.0.0-RC2	false
+<1.0-dev	1.0.0.0	false
+<1.0-dev	3.0.0-alpha	false
+<1.0-dev	not a version	invalid-version
+<1.0-dev	1.0.0-	false
+<1.0-dev	~1	invalid-version
+1.0.0-dev	1.0.0	false
+1.0.0-dev	1.0	false
+1.0.0-dev	1	false
+1.0.0-dev	v1.2.3	false
+1.0.0-dev	1.2.3.4	false
+1.0.0-dev	0.9.9	false
+1.0.0-dev	1.0.0-alpha1	false
+1.0.0-dev	1.0.0-a1	false
+1.0.0-dev	1.0.0-beta2	false
+1.0.0-dev	1.0.0-b2	false
+1.0.0-dev	1.0.0-RC1	false
+1.0.0-dev	1.0.0-rc1	false
+1.0.0-dev	1.0.0-patch1	false
+1.0.0-dev	1.0.0-pl1	false
+1.0.0-dev	1.0.0-p1	false
+1.0.0-dev	1.0.0-dev	true
+1.0.0-dev	1.0.0-stable	false
+1.0.0-dev	1.1.0	false
+1.0.0-dev	1.2.0	false
+1.0.0-dev	1.2.3	false
+1.0.0-dev	1.2.4	false
+1.0.0-dev	1.3.0	false
+1.0.0-dev	1.9.9	false
+1.0.0-dev	2.0.0	false
+1.0.0-dev	2.0.0-beta1	false
+1.0.0-dev	2.0.1	false
+1.0.0-dev	2.1.0	false
+1.0.0-dev	3.0.0	false
+1.0.0-dev	0.3.0	false
+1.0.0-dev	0.3.5	false
+1.0.0-dev	0.4.0	false
+1.0.0-dev	0.0.3	false
+1.0.0-dev	0.0.4	false
+1.0.0-dev	10.0.0	false
+1.0.0-dev	1.10.0	false
+1.0.0-dev	dev-main	false
+1.0.0-dev	dev-master	false
+1.0.0-dev	dev-feature/x	false
+1.0.0-dev	1.x-dev	false
+1.0.0-dev	2.0.x-dev	false
+1.0.0-dev	2.0.9999999.9999999-dev	false
+1.0.0-dev	1.0.0+build.7	false
+1.0.0-dev	v2.0.0-RC2	false
+1.0.0-dev	1.0.0.0	false
+1.0.0-dev	3.0.0-alpha	false
+1.0.0-dev	not a version	invalid-version
+1.0.0-dev	1.0.0-	false
+1.0.0-dev	~1	invalid-version
+!=dev-main	1.0.0	true
+!=dev-main	1.0	true
+!=dev-main	1	true
+!=dev-main	v1.2.3	true
+!=dev-main	1.2.3.4	true
+!=dev-main	0.9.9	true
+!=dev-main	1.0.0-alpha1	true
+!=dev-main	1.0.0-a1	true
+!=dev-main	1.0.0-beta2	true
+!=dev-main	1.0.0-b2	true
+!=dev-main	1.0.0-RC1	true
+!=dev-main	1.0.0-rc1	true
+!=dev-main	1.0.0-patch1	true
+!=dev-main	1.0.0-pl1	true
+!=dev-main	1.0.0-p1	true
+!=dev-main	1.0.0-dev	true
+!=dev-main	1.0.0-stable	true
+!=dev-main	1.1.0	true
+!=dev-main	1.2.0	true
+!=dev-main	1.2.3	true
+!=dev-main	1.2.4	true
+!=dev-main	1.3.0	true
+!=dev-main	1.9.9	true
+!=dev-main	2.0.0	true
+!=dev-main	2.0.0-beta1	true
+!=dev-main	2.0.1	true
+!=dev-main	2.1.0	true
+!=dev-main	3.0.0	true
+!=dev-main	0.3.0	true
+!=dev-main	0.3.5	true
+!=dev-main	0.4.0	true
+!=dev-main	0.0.3	true
+!=dev-main	0.0.4	true
+!=dev-main	10.0.0	true
+!=dev-main	1.10.0	true
+!=dev-main	dev-main	false
+!=dev-main	dev-master	true
+!=dev-main	dev-feature/x	true
+!=dev-main	1.x-dev	true
+!=dev-main	2.0.x-dev	true
+!=dev-main	2.0.9999999.9999999-dev	true
+!=dev-main	1.0.0+build.7	true
+!=dev-main	v2.0.0-RC2	true
+!=dev-main	1.0.0.0	true
+!=dev-main	3.0.0-alpha	true
+!=dev-main	not a version	invalid-version
+!=dev-main	1.0.0-	true
+!=dev-main	~1	invalid-version
+~>1.2	1.0.0	invalid-constraint
+~>1.2	1.0	invalid-constraint
+~>1.2	1	invalid-constraint
+~>1.2	v1.2.3	invalid-constraint
+~>1.2	1.2.3.4	invalid-constraint
+~>1.2	0.9.9	invalid-constraint
+~>1.2	1.0.0-alpha1	invalid-constraint
+~>1.2	1.0.0-a1	invalid-constraint
+~>1.2	1.0.0-beta2	invalid-constraint
+~>1.2	1.0.0-b2	invalid-constraint
+~>1.2	1.0.0-RC1	invalid-constraint
+~>1.2	1.0.0-rc1	invalid-constraint
+~>1.2	1.0.0-patch1	invalid-constraint
+~>1.2	1.0.0-pl1	invalid-constraint
+~>1.2	1.0.0-p1	invalid-constraint
+~>1.2	1.0.0-dev	invalid-constraint
+~>1.2	1.0.0-stable	invalid-constraint
+~>1.2	1.1.0	invalid-constraint
+~>1.2	1.2.0	invalid-constraint
+~>1.2	1.2.3	invalid-constraint
+~>1.2	1.2.4	invalid-constraint
+~>1.2	1.3.0	invalid-constraint
+~>1.2	1.9.9	invalid-constraint
+~>1.2	2.0.0	invalid-constraint
+~>1.2	2.0.0-beta1	invalid-constraint
+~>1.2	2.0.1	invalid-constraint
+~>1.2	2.1.0	invalid-constraint
+~>1.2	3.0.0	invalid-constraint
+~>1.2	0.3.0	invalid-constraint
+~>1.2	0.3.5	invalid-constraint
+~>1.2	0.4.0	invalid-constraint
+~>1.2	0.0.3	invalid-constraint
+~>1.2	0.0.4	invalid-constraint
+~>1.2	10.0.0	invalid-constraint
+~>1.2	1.10.0	invalid-constraint
+~>1.2	dev-main	invalid-constraint
+~>1.2	dev-master	invalid-constraint
+~>1.2	dev-feature/x	invalid-constraint
+~>1.2	1.x-dev	invalid-constraint
+~>1.2	2.0.x-dev	invalid-constraint
+~>1.2	2.0.9999999.9999999-dev	invalid-constraint
+~>1.2	1.0.0+build.7	invalid-constraint
+~>1.2	v2.0.0-RC2	invalid-constraint
+~>1.2	1.0.0.0	invalid-constraint
+~>1.2	3.0.0-alpha	invalid-constraint
+~>1.2	not a version	invalid-constraint
+~>1.2	1.0.0-	invalid-constraint
+~>1.2	~1	invalid-constraint
+latest	1.0.0	invalid-constraint
+latest	1.0	invalid-constraint
+latest	1	invalid-constraint
+latest	v1.2.3	invalid-constraint
+latest	1.2.3.4	invalid-constraint
+latest	0.9.9	invalid-constraint
+latest	1.0.0-alpha1	invalid-constraint
+latest	1.0.0-a1	invalid-constraint
+latest	1.0.0-beta2	invalid-constraint
+latest	1.0.0-b2	invalid-constraint
+latest	1.0.0-RC1	invalid-constraint
+latest	1.0.0-rc1	invalid-constraint
+latest	1.0.0-patch1	invalid-constraint
+latest	1.0.0-pl1	invalid-constraint
+latest	1.0.0-p1	invalid-constraint
+latest	1.0.0-dev	invalid-constraint
+latest	1.0.0-stable	invalid-constraint
+latest	1.1.0	invalid-constraint
+latest	1.2.0	invalid-constraint
+latest	1.2.3	invalid-constraint
+latest	1.2.4	invalid-constraint
+latest	1.3.0	invalid-constraint
+latest	1.9.9	invalid-constraint
+latest	2.0.0	invalid-constraint
+latest	2.0.0-beta1	invalid-constraint
+latest	2.0.1	invalid-constraint
+latest	2.1.0	invalid-constraint
+latest	3.0.0	invalid-constraint
+latest	0.3.0	invalid-constraint
+latest	0.3.5	invalid-constraint
+latest	0.4.0	invalid-constraint
+latest	0.0.3	invalid-constraint
+latest	0.0.4	invalid-constraint
+latest	10.0.0	invalid-constraint
+latest	1.10.0	invalid-constraint
+latest	dev-main	invalid-constraint
+latest	dev-master	invalid-constraint
+latest	dev-feature/x	invalid-constraint
+latest	1.x-dev	invalid-constraint
+latest	2.0.x-dev	invalid-constraint
+latest	2.0.9999999.9999999-dev	invalid-constraint
+latest	1.0.0+build.7	invalid-constraint
+latest	v2.0.0-RC2	invalid-constraint
+latest	1.0.0.0	invalid-constraint
+latest	3.0.0-alpha	invalid-constraint
+latest	not a version	invalid-constraint
+latest	1.0.0-	invalid-constraint
+latest	~1	invalid-constraint
+>=1.0.0 || <2	1.0.0	true
+>=1.0.0 || <2	1.0	true
+>=1.0.0 || <2	1	true
+>=1.0.0 || <2	v1.2.3	true
+>=1.0.0 || <2	1.2.3.4	true
+>=1.0.0 || <2	0.9.9	true
+>=1.0.0 || <2	1.0.0-alpha1	true
+>=1.0.0 || <2	1.0.0-a1	true
+>=1.0.0 || <2	1.0.0-beta2	true
+>=1.0.0 || <2	1.0.0-b2	true
+>=1.0.0 || <2	1.0.0-RC1	true
+>=1.0.0 || <2	1.0.0-rc1	true
+>=1.0.0 || <2	1.0.0-patch1	true
+>=1.0.0 || <2	1.0.0-pl1	true
+>=1.0.0 || <2	1.0.0-p1	true
+>=1.0.0 || <2	1.0.0-dev	true
+>=1.0.0 || <2	1.0.0-stable	true
+>=1.0.0 || <2	1.1.0	true
+>=1.0.0 || <2	1.2.0	true
+>=1.0.0 || <2	1.2.3	true
+>=1.0.0 || <2	1.2.4	true
+>=1.0.0 || <2	1.3.0	true
+>=1.0.0 || <2	1.9.9	true
+>=1.0.0 || <2	2.0.0	true
+>=1.0.0 || <2	2.0.0-beta1	true
+>=1.0.0 || <2	2.0.1	true
+>=1.0.0 || <2	2.1.0	true
+>=1.0.0 || <2	3.0.0	true
+>=1.0.0 || <2	0.3.0	true
+>=1.0.0 || <2	0.3.5	true
+>=1.0.0 || <2	0.4.0	true
+>=1.0.0 || <2	0.0.3	true
+>=1.0.0 || <2	0.0.4	true
+>=1.0.0 || <2	10.0.0	true
+>=1.0.0 || <2	1.10.0	true
+>=1.0.0 || <2	dev-main	false
+>=1.0.0 || <2	dev-master	false
+>=1.0.0 || <2	dev-feature/x	false
+>=1.0.0 || <2	1.x-dev	true
+>=1.0.0 || <2	2.0.x-dev	true
+>=1.0.0 || <2	2.0.9999999.9999999-dev	true
+>=1.0.0 || <2	1.0.0+build.7	true
+>=1.0.0 || <2	v2.0.0-RC2	true
+>=1.0.0 || <2	1.0.0.0	true
+>=1.0.0 || <2	3.0.0-alpha	true
+>=1.0.0 || <2	not a version	invalid-version
+>=1.0.0 || <2	1.0.0-	true
+>=1.0.0 || <2	~1	invalid-version
+1.0.0 - 	1.0.0	invalid-constraint
+1.0.0 - 	1.0	invalid-constraint
+1.0.0 - 	1	invalid-constraint
+1.0.0 - 	v1.2.3	invalid-constraint
+1.0.0 - 	1.2.3.4	invalid-constraint
+1.0.0 - 	0.9.9	invalid-constraint
+1.0.0 - 	1.0.0-alpha1	invalid-constraint
+1.0.0 - 	1.0.0-a1	invalid-constraint
+1.0.0 - 	1.0.0-beta2	invalid-constraint
+1.0.0 - 	1.0.0-b2	invalid-constraint
+1.0.0 - 	1.0.0-RC1	invalid-constraint
+1.0.0 - 	1.0.0-rc1	invalid-constraint
+1.0.0 - 	1.0.0-patch1	invalid-constraint
+1.0.0 - 	1.0.0-pl1	invalid-constraint
+1.0.0 - 	1.0.0-p1	invalid-constraint
+1.0.0 - 	1.0.0-dev	invalid-constraint
+1.0.0 - 	1.0.0-stable	invalid-constraint
+1.0.0 - 	1.1.0	invalid-constraint
+1.0.0 - 	1.2.0	invalid-constraint
+1.0.0 - 	1.2.3	invalid-constraint
+1.0.0 - 	1.2.4	invalid-constraint
+1.0.0 - 	1.3.0	invalid-constraint
+1.0.0 - 	1.9.9	invalid-constraint
+1.0.0 - 	2.0.0	invalid-constraint
+1.0.0 - 	2.0.0-beta1	invalid-constraint
+1.0.0 - 	2.0.1	invalid-constraint
+1.0.0 - 	2.1.0	invalid-constraint
+1.0.0 - 	3.0.0	invalid-constraint
+1.0.0 - 	0.3.0	invalid-constraint
+1.0.0 - 	0.3.5	invalid-constraint
+1.0.0 - 	0.4.0	invalid-constraint
+1.0.0 - 	0.0.3	invalid-constraint
+1.0.0 - 	0.0.4	invalid-constraint
+1.0.0 - 	10.0.0	invalid-constraint
+1.0.0 - 	1.10.0	invalid-constraint
+1.0.0 - 	dev-main	invalid-constraint
+1.0.0 - 	dev-master	invalid-constraint
+1.0.0 - 	dev-feature/x	invalid-constraint
+1.0.0 - 	1.x-dev	invalid-constraint
+1.0.0 - 	2.0.x-dev	invalid-constraint
+1.0.0 - 	2.0.9999999.9999999-dev	invalid-constraint
+1.0.0 - 	1.0.0+build.7	invalid-constraint
+1.0.0 - 	v2.0.0-RC2	invalid-constraint
+1.0.0 - 	1.0.0.0	invalid-constraint
+1.0.0 - 	3.0.0-alpha	invalid-constraint
+1.0.0 - 	not a version	invalid-constraint
+1.0.0 - 	1.0.0-	invalid-constraint
+1.0.0 - 	~1	invalid-constraint
+^1.2.3-	1.0.0	false
+^1.2.3-	1.0	false
+^1.2.3-	1	false
+^1.2.3-	v1.2.3	true
+^1.2.3-	1.2.3.4	true
+^1.2.3-	0.9.9	false
+^1.2.3-	1.0.0-alpha1	false
+^1.2.3-	1.0.0-a1	false
+^1.2.3-	1.0.0-beta2	false
+^1.2.3-	1.0.0-b2	false
+^1.2.3-	1.0.0-RC1	false
+^1.2.3-	1.0.0-rc1	false
+^1.2.3-	1.0.0-patch1	false
+^1.2.3-	1.0.0-pl1	false
+^1.2.3-	1.0.0-p1	false
+^1.2.3-	1.0.0-dev	false
+^1.2.3-	1.0.0-stable	false
+^1.2.3-	1.1.0	false
+^1.2.3-	1.2.0	false
+^1.2.3-	1.2.3	true
+^1.2.3-	1.2.4	true
+^1.2.3-	1.3.0	true
+^1.2.3-	1.9.9	true
+^1.2.3-	2.0.0	false
+^1.2.3-	2.0.0-beta1	false
+^1.2.3-	2.0.1	false
+^1.2.3-	2.1.0	false
+^1.2.3-	3.0.0	false
+^1.2.3-	0.3.0	false
+^1.2.3-	0.3.5	false
+^1.2.3-	0.4.0	false
+^1.2.3-	0.0.3	false
+^1.2.3-	0.0.4	false
+^1.2.3-	10.0.0	false
+^1.2.3-	1.10.0	true
+^1.2.3-	dev-main	false
+^1.2.3-	dev-master	false
+^1.2.3-	dev-feature/x	false
+^1.2.3-	1.x-dev	true
+^1.2.3-	2.0.x-dev	false
+^1.2.3-	2.0.9999999.9999999-dev	false
+^1.2.3-	1.0.0+build.7	false
+^1.2.3-	v2.0.0-RC2	false
+^1.2.3-	1.0.0.0	false
+^1.2.3-	3.0.0-alpha	false
+^1.2.3-	not a version	invalid-version
+^1.2.3-	1.0.0-	false
+^1.2.3-	~1	invalid-version
+	1.0.0	invalid-constraint
+	1.0	invalid-constraint
+	1	invalid-constraint
+	v1.2.3	invalid-constraint
+	1.2.3.4	invalid-constraint
+	0.9.9	invalid-constraint
+	1.0.0-alpha1	invalid-constraint
+	1.0.0-a1	invalid-constraint
+	1.0.0-beta2	invalid-constraint
+	1.0.0-b2	invalid-constraint
+	1.0.0-RC1	invalid-constraint
+	1.0.0-rc1	invalid-constraint
+	1.0.0-patch1	invalid-constraint
+	1.0.0-pl1	invalid-constraint
+	1.0.0-p1	invalid-constraint
+	1.0.0-dev	invalid-constraint
+	1.0.0-stable	invalid-constraint
+	1.1.0	invalid-constraint
+	1.2.0	invalid-constraint
+	1.2.3	invalid-constraint
+	1.2.4	invalid-constraint
+	1.3.0	invalid-constraint
+	1.9.9	invalid-constraint
+	2.0.0	invalid-constraint
+	2.0.0-beta1	invalid-constraint
+	2.0.1	invalid-constraint
+	2.1.0	invalid-constraint
+	3.0.0	invalid-constraint
+	0.3.0	invalid-constraint
+	0.3.5	invalid-constraint
+	0.4.0	invalid-constraint
+	0.0.3	invalid-constraint
+	0.0.4	invalid-constraint
+	10.0.0	invalid-constraint
+	1.10.0	invalid-constraint
+	dev-main	invalid-constraint
+	dev-master	invalid-constraint
+	dev-feature/x	invalid-constraint
+	1.x-dev	invalid-constraint
+	2.0.x-dev	invalid-constraint
+	2.0.9999999.9999999-dev	invalid-constraint
+	1.0.0+build.7	invalid-constraint
+	v2.0.0-RC2	invalid-constraint
+	1.0.0.0	invalid-constraint
+	3.0.0-alpha	invalid-constraint
+	not a version	invalid-constraint
+	1.0.0-	invalid-constraint
+	~1	invalid-constraint
+foo	1.0.0	invalid-constraint
+foo	1.0	invalid-constraint
+foo	1	invalid-constraint
+foo	v1.2.3	invalid-constraint
+foo	1.2.3.4	invalid-constraint
+foo	0.9.9	invalid-constraint
+foo	1.0.0-alpha1	invalid-constraint
+foo	1.0.0-a1	invalid-constraint
+foo	1.0.0-beta2	invalid-constraint
+foo	1.0.0-b2	invalid-constraint
+foo	1.0.0-RC1	invalid-constraint
+foo	1.0.0-rc1	invalid-constraint
+foo	1.0.0-patch1	invalid-constraint
+foo	1.0.0-pl1	invalid-constraint
+foo	1.0.0-p1	invalid-constraint
+foo	1.0.0-dev	invalid-constraint
+foo	1.0.0-stable	invalid-constraint
+foo	1.1.0	invalid-constraint
+foo	1.2.0	invalid-constraint
+foo	1.2.3	invalid-constraint
+foo	1.2.4	invalid-constraint
+foo	1.3.0	invalid-constraint
+foo	1.9.9	invalid-constraint
+foo	2.0.0	invalid-constraint
+foo	2.0.0-beta1	invalid-constraint
+foo	2.0.1	invalid-constraint
+foo	2.1.0	invalid-constraint
+foo	3.0.0	invalid-constraint
+foo	0.3.0	invalid-constraint
+foo	0.3.5	invalid-constraint
+foo	0.4.0	invalid-constraint
+foo	0.0.3	invalid-constraint
+foo	0.0.4	invalid-constraint
+foo	10.0.0	invalid-constraint
+foo	1.10.0	invalid-constraint
+foo	dev-main	invalid-constraint
+foo	dev-master	invalid-constraint
+foo	dev-feature/x	invalid-constraint
+foo	1.x-dev	invalid-constraint
+foo	2.0.x-dev	invalid-constraint
+foo	2.0.9999999.9999999-dev	invalid-constraint
+foo	1.0.0+build.7	invalid-constraint
+foo	v2.0.0-RC2	invalid-constraint
+foo	1.0.0.0	invalid-constraint
+foo	3.0.0-alpha	invalid-constraint
+foo	not a version	invalid-constraint
+foo	1.0.0-	invalid-constraint
+foo	~1	invalid-constraint
+1.0.0 as 2.0.0	1.0.0	true
+1.0.0 as 2.0.0	1.0	true
+1.0.0 as 2.0.0	1	true
+1.0.0 as 2.0.0	v1.2.3	false
+1.0.0 as 2.0.0	1.2.3.4	false
+1.0.0 as 2.0.0	0.9.9	false
+1.0.0 as 2.0.0	1.0.0-alpha1	false
+1.0.0 as 2.0.0	1.0.0-a1	false
+1.0.0 as 2.0.0	1.0.0-beta2	false
+1.0.0 as 2.0.0	1.0.0-b2	false
+1.0.0 as 2.0.0	1.0.0-RC1	false
+1.0.0 as 2.0.0	1.0.0-rc1	false
+1.0.0 as 2.0.0	1.0.0-patch1	false
+1.0.0 as 2.0.0	1.0.0-pl1	false
+1.0.0 as 2.0.0	1.0.0-p1	false
+1.0.0 as 2.0.0	1.0.0-dev	false
+1.0.0 as 2.0.0	1.0.0-stable	true
+1.0.0 as 2.0.0	1.1.0	false
+1.0.0 as 2.0.0	1.2.0	false
+1.0.0 as 2.0.0	1.2.3	false
+1.0.0 as 2.0.0	1.2.4	false
+1.0.0 as 2.0.0	1.3.0	false
+1.0.0 as 2.0.0	1.9.9	false
+1.0.0 as 2.0.0	2.0.0	false
+1.0.0 as 2.0.0	2.0.0-beta1	false
+1.0.0 as 2.0.0	2.0.1	false
+1.0.0 as 2.0.0	2.1.0	false
+1.0.0 as 2.0.0	3.0.0	false
+1.0.0 as 2.0.0	0.3.0	false
+1.0.0 as 2.0.0	0.3.5	false
+1.0.0 as 2.0.0	0.4.0	false
+1.0.0 as 2.0.0	0.0.3	false
+1.0.0 as 2.0.0	0.0.4	false
+1.0.0 as 2.0.0	10.0.0	false
+1.0.0 as 2.0.0	1.10.0	false
+1.0.0 as 2.0.0	dev-main	false
+1.0.0 as 2.0.0	dev-master	false
+1.0.0 as 2.0.0	dev-feature/x	false
+1.0.0 as 2.0.0	1.x-dev	false
+1.0.0 as 2.0.0	2.0.x-dev	false
+1.0.0 as 2.0.0	2.0.9999999.9999999-dev	false
+1.0.0 as 2.0.0	1.0.0+build.7	true
+1.0.0 as 2.0.0	v2.0.0-RC2	false
+1.0.0 as 2.0.0	1.0.0.0	true
+1.0.0 as 2.0.0	3.0.0-alpha	false
+1.0.0 as 2.0.0	not a version	invalid-version
+1.0.0 as 2.0.0	1.0.0-	true
+1.0.0 as 2.0.0	~1	invalid-version
+^1.0@foo	1.0.0	invalid-constraint
+^1.0@foo	1.0	invalid-constraint
+^1.0@foo	1	invalid-constraint
+^1.0@foo	v1.2.3	invalid-constraint
+^1.0@foo	1.2.3.4	invalid-constraint
+^1.0@foo	0.9.9	invalid-constraint
+^1.0@foo	1.0.0-alpha1	invalid-constraint
+^1.0@foo	1.0.0-a1	invalid-constraint
+^1.0@foo	1.0.0-beta2	invalid-constraint
+^1.0@foo	1.0.0-b2	invalid-constraint
+^1.0@foo	1.0.0-RC1	invalid-constraint
+^1.0@foo	1.0.0-rc1	invalid-constraint
+^1.0@foo	1.0.0-patch1	invalid-constraint
+^1.0@foo	1.0.0-pl1	invalid-constraint
+^1.0@foo	1.0.0-p1	invalid-constraint
+^1.0@foo	1.0.0-dev	invalid-constraint
+^1.0@foo	1.0.0-stable	invalid-constraint
+^1.0@foo	1.1.0	invalid-constraint
+^1.0@foo	1.2.0	invalid-constraint
+^1.0@foo	1.2.3	invalid-constraint
+^1.0@foo	1.2.4	invalid-constraint
+^1.0@foo	1.3.0	invalid-constraint
+^1.0@foo	1.9.9	invalid-constraint
+^1.0@foo	2.0.0	invalid-constraint
+^1.0@foo	2.0.0-beta1	invalid-constraint
+^1.0@foo	2.0.1	invalid-constraint
+^1.0@foo	2.1.0	invalid-constraint
+^1.0@foo	3.0.0	invalid-constraint
+^1.0@foo	0.3.0	invalid-constraint
+^1.0@foo	0.3.5	invalid-constraint
+^1.0@foo	0.4.0	invalid-constraint
+^1.0@foo	0.0.3	invalid-constraint
+^1.0@foo	0.0.4	invalid-constraint
+^1.0@foo	10.0.0	invalid-constraint
+^1.0@foo	1.10.0	invalid-constraint
+^1.0@foo	dev-main	invalid-constraint
+^1.0@foo	dev-master	invalid-constraint
+^1.0@foo	dev-feature/x	invalid-constraint
+^1.0@foo	1.x-dev	invalid-constraint
+^1.0@foo	2.0.x-dev	invalid-constraint
+^1.0@foo	2.0.9999999.9999999-dev	invalid-constraint
+^1.0@foo	1.0.0+build.7	invalid-constraint
+^1.0@foo	v2.0.0-RC2	invalid-constraint
+^1.0@foo	1.0.0.0	invalid-constraint
+^1.0@foo	3.0.0-alpha	invalid-constraint
+^1.0@foo	not a version	invalid-constraint
+^1.0@foo	1.0.0-	invalid-constraint
+^1.0@foo	~1	invalid-constraint
+2.0-beta1	1.0.0	false
+2.0-beta1	1.0	false
+2.0-beta1	1	false
+2.0-beta1	v1.2.3	false
+2.0-beta1	1.2.3.4	false
+2.0-beta1	0.9.9	false
+2.0-beta1	1.0.0-alpha1	false
+2.0-beta1	1.0.0-a1	false
+2.0-beta1	1.0.0-beta2	false
+2.0-beta1	1.0.0-b2	false
+2.0-beta1	1.0.0-RC1	false
+2.0-beta1	1.0.0-rc1	false
+2.0-beta1	1.0.0-patch1	false
+2.0-beta1	1.0.0-pl1	false
+2.0-beta1	1.0.0-p1	false
+2.0-beta1	1.0.0-dev	false
+2.0-beta1	1.0.0-stable	false
+2.0-beta1	1.1.0	false
+2.0-beta1	1.2.0	false
+2.0-beta1	1.2.3	false
+2.0-beta1	1.2.4	false
+2.0-beta1	1.3.0	false
+2.0-beta1	1.9.9	false
+2.0-beta1	2.0.0	false
+2.0-beta1	2.0.0-beta1	true
+2.0-beta1	2.0.1	false
+2.0-beta1	2.1.0	false
+2.0-beta1	3.0.0	false
+2.0-beta1	0.3.0	false
+2.0-beta1	0.3.5	false
+2.0-beta1	0.4.0	false
+2.0-beta1	0.0.3	false
+2.0-beta1	0.0.4	false
+2.0-beta1	10.0.0	false
+2.0-beta1	1.10.0	false
+2.0-beta1	dev-main	false
+2.0-beta1	dev-master	false
+2.0-beta1	dev-feature/x	false
+2.0-beta1	1.x-dev	false
+2.0-beta1	2.0.x-dev	false
+2.0-beta1	2.0.9999999.9999999-dev	false
+2.0-beta1	1.0.0+build.7	false
+2.0-beta1	v2.0.0-RC2	false
+2.0-beta1	1.0.0.0	false
+2.0-beta1	3.0.0-alpha	false
+2.0-beta1	not a version	invalid-version
+2.0-beta1	1.0.0-	false
+2.0-beta1	~1	invalid-version
+>=2.0-RC1 <3.0	1.0.0	false
+>=2.0-RC1 <3.0	1.0	false
+>=2.0-RC1 <3.0	1	false
+>=2.0-RC1 <3.0	v1.2.3	false
+>=2.0-RC1 <3.0	1.2.3.4	false
+>=2.0-RC1 <3.0	0.9.9	false
+>=2.0-RC1 <3.0	1.0.0-alpha1	false
+>=2.0-RC1 <3.0	1.0.0-a1	false
+>=2.0-RC1 <3.0	1.0.0-beta2	false
+>=2.0-RC1 <3.0	1.0.0-b2	false
+>=2.0-RC1 <3.0	1.0.0-RC1	false
+>=2.0-RC1 <3.0	1.0.0-rc1	false
+>=2.0-RC1 <3.0	1.0.0-patch1	false
+>=2.0-RC1 <3.0	1.0.0-pl1	false
+>=2.0-RC1 <3.0	1.0.0-p1	false
+>=2.0-RC1 <3.0	1.0.0-dev	false
+>=2.0-RC1 <3.0	1.0.0-stable	false
+>=2.0-RC1 <3.0	1.1.0	false
+>=2.0-RC1 <3.0	1.2.0	false
+>=2.0-RC1 <3.0	1.2.3	false
+>=2.0-RC1 <3.0	1.2.4	false
+>=2.0-RC1 <3.0	1.3.0	false
+>=2.0-RC1 <3.0	1.9.9	false
+>=2.0-RC1 <3.0	2.0.0	true
+>=2.0-RC1 <3.0	2.0.0-beta1	false
+>=2.0-RC1 <3.0	2.0.1	true
+>=2.0-RC1 <3.0	2.1.0	true
+>=2.0-RC1 <3.0	3.0.0	false
+>=2.0-RC1 <3.0	0.3.0	false
+>=2.0-RC1 <3.0	0.3.5	false
+>=2.0-RC1 <3.0	0.4.0	false
+>=2.0-RC1 <3.0	0.0.3	false
+>=2.0-RC1 <3.0	0.0.4	false
+>=2.0-RC1 <3.0	10.0.0	false
+>=2.0-RC1 <3.0	1.10.0	false
+>=2.0-RC1 <3.0	dev-main	false
+>=2.0-RC1 <3.0	dev-master	false
+>=2.0-RC1 <3.0	dev-feature/x	false
+>=2.0-RC1 <3.0	1.x-dev	false
+>=2.0-RC1 <3.0	2.0.x-dev	true
+>=2.0-RC1 <3.0	2.0.9999999.9999999-dev	true
+>=2.0-RC1 <3.0	1.0.0+build.7	false
+>=2.0-RC1 <3.0	v2.0.0-RC2	true
+>=2.0-RC1 <3.0	1.0.0.0	false
+>=2.0-RC1 <3.0	3.0.0-alpha	false
+>=2.0-RC1 <3.0	not a version	invalid-version
+>=2.0-RC1 <3.0	1.0.0-	false
+>=2.0-RC1 <3.0	~1	invalid-version
+1.0.0-beta1	1.0.0	false
+1.0.0-beta1	1.0	false
+1.0.0-beta1	1	false
+1.0.0-beta1	v1.2.3	false
+1.0.0-beta1	1.2.3.4	false
+1.0.0-beta1	0.9.9	false
+1.0.0-beta1	1.0.0-alpha1	false
+1.0.0-beta1	1.0.0-a1	false
+1.0.0-beta1	1.0.0-beta2	false
+1.0.0-beta1	1.0.0-b2	false
+1.0.0-beta1	1.0.0-RC1	false
+1.0.0-beta1	1.0.0-rc1	false
+1.0.0-beta1	1.0.0-patch1	false
+1.0.0-beta1	1.0.0-pl1	false
+1.0.0-beta1	1.0.0-p1	false
+1.0.0-beta1	1.0.0-dev	false
+1.0.0-beta1	1.0.0-stable	false
+1.0.0-beta1	1.1.0	false
+1.0.0-beta1	1.2.0	false
+1.0.0-beta1	1.2.3	false
+1.0.0-beta1	1.2.4	false
+1.0.0-beta1	1.3.0	false
+1.0.0-beta1	1.9.9	false
+1.0.0-beta1	2.0.0	false
+1.0.0-beta1	2.0.0-beta1	false
+1.0.0-beta1	2.0.1	false
+1.0.0-beta1	2.1.0	false
+1.0.0-beta1	3.0.0	false
+1.0.0-beta1	0.3.0	false
+1.0.0-beta1	0.3.5	false
+1.0.0-beta1	0.4.0	false
+1.0.0-beta1	0.0.3	false
+1.0.0-beta1	0.0.4	false
+1.0.0-beta1	10.0.0	false
+1.0.0-beta1	1.10.0	false
+1.0.0-beta1	dev-main	false
+1.0.0-beta1	dev-master	false
+1.0.0-beta1	dev-feature/x	false
+1.0.0-beta1	1.x-dev	false
+1.0.0-beta1	2.0.x-dev	false
+1.0.0-beta1	2.0.9999999.9999999-dev	false
+1.0.0-beta1	1.0.0+build.7	false
+1.0.0-beta1	v2.0.0-RC2	false
+1.0.0-beta1	1.0.0.0	false
+1.0.0-beta1	3.0.0-alpha	false
+1.0.0-beta1	not a version	invalid-version
+1.0.0-beta1	1.0.0-	false
+1.0.0-beta1	~1	invalid-version
+>1.0.0-alpha1	1.0.0	true
+>1.0.0-alpha1	1.0	true
+>1.0.0-alpha1	1	true
+>1.0.0-alpha1	v1.2.3	true
+>1.0.0-alpha1	1.2.3.4	true
+>1.0.0-alpha1	0.9.9	false
+>1.0.0-alpha1	1.0.0-alpha1	false
+>1.0.0-alpha1	1.0.0-a1	false
+>1.0.0-alpha1	1.0.0-beta2	true
+>1.0.0-alpha1	1.0.0-b2	true
+>1.0.0-alpha1	1.0.0-RC1	true
+>1.0.0-alpha1	1.0.0-rc1	true
+>1.0.0-alpha1	1.0.0-patch1	true
+>1.0.0-alpha1	1.0.0-pl1	true
+>1.0.0-alpha1	1.0.0-p1	true
+>1.0.0-alpha1	1.0.0-dev	false
+>1.0.0-alpha1	1.0.0-stable	true
+>1.0.0-alpha1	1.1.0	true
+>1.0.0-alpha1	1.2.0	true
+>1.0.0-alpha1	1.2.3	true
+>1.0.0-alpha1	1.2.4	true
+>1.0.0-alpha1	1.3.0	true
+>1.0.0-alpha1	1.9.9	true
+>1.0.0-alpha1	2.0.0	true
+>1.0.0-alpha1	2.0.0-beta1	true
+>1.0.0-alpha1	2.0.1	true
+>1.0.0-alpha1	2.1.0	true
+>1.0.0-alpha1	3.0.0	true
+>1.0.0-alpha1	0.3.0	false
+>1.0.0-alpha1	0.3.5	false
+>1.0.0-alpha1	0.4.0	false
+>1.0.0-alpha1	0.0.3	false
+>1.0.0-alpha1	0.0.4	false
+>1.0.0-alpha1	10.0.0	true
+>1.0.0-alpha1	1.10.0	true
+>1.0.0-alpha1	dev-main	false
+>1.0.0-alpha1	dev-master	false
+>1.0.0-alpha1	dev-feature/x	false
+>1.0.0-alpha1	1.x-dev	true
+>1.0.0-alpha1	2.0.x-dev	true
+>1.0.0-alpha1	2.0.9999999.9999999-dev	true
+>1.0.0-alpha1	1.0.0+build.7	true
+>1.0.0-alpha1	v2.0.0-RC2	true
+>1.0.0-alpha1	1.0.0.0	true
+>1.0.0-alpha1	3.0.0-alpha	true
+>1.0.0-alpha1	not a version	invalid-version
+>1.0.0-alpha1	1.0.0-	true
+>1.0.0-alpha1	~1	invalid-version
+<=2.0.0-beta1	1.0.0	true
+<=2.0.0-beta1	1.0	true
+<=2.0.0-beta1	1	true
+<=2.0.0-beta1	v1.2.3	true
+<=2.0.0-beta1	1.2.3.4	true
+<=2.0.0-beta1	0.9.9	true
+<=2.0.0-beta1	1.0.0-alpha1	true
+<=2.0.0-beta1	1.0.0-a1	true
+<=2.0.0-beta1	1.0.0-beta2	true
+<=2.0.0-beta1	1.0.0-b2	true
+<=2.0.0-beta1	1.0.0-RC1	true
+<=2.0.0-beta1	1.0.0-rc1	true
+<=2.0.0-beta1	1.0.0-patch1	true
+<=2.0.0-beta1	1.0.0-pl1	true
+<=2.0.0-beta1	1.0.0-p1	true
+<=2.0.0-beta1	1.0.0-dev	true
+<=2.0.0-beta1	1.0.0-stable	true
+<=2.0.0-beta1	1.1.0	true
+<=2.0.0-beta1	1.2.0	true
+<=2.0.0-beta1	1.2.3	true
+<=2.0.0-beta1	1.2.4	true
+<=2.0.0-beta1	1.3.0	true
+<=2.0.0-beta1	1.9.9	true
+<=2.0.0-beta1	2.0.0	false
+<=2.0.0-beta1	2.0.0-beta1	true
+<=2.0.0-beta1	2.0.1	false
+<=2.0.0-beta1	2.1.0	false
+<=2.0.0-beta1	3.0.0	false
+<=2.0.0-beta1	0.3.0	true
+<=2.0.0-beta1	0.3.5	true
+<=2.0.0-beta1	0.4.0	true
+<=2.0.0-beta1	0.0.3	true
+<=2.0.0-beta1	0.0.4	true
+<=2.0.0-beta1	10.0.0	false
+<=2.0.0-beta1	1.10.0	true
+<=2.0.0-beta1	dev-main	false
+<=2.0.0-beta1	dev-master	false
+<=2.0.0-beta1	dev-feature/x	false
+<=2.0.0-beta1	1.x-dev	true
+<=2.0.0-beta1	2.0.x-dev	false
+<=2.0.0-beta1	2.0.9999999.9999999-dev	false
+<=2.0.0-beta1	1.0.0+build.7	true
+<=2.0.0-beta1	v2.0.0-RC2	false
+<=2.0.0-beta1	1.0.0.0	true
+<=2.0.0-beta1	3.0.0-alpha	false
+<=2.0.0-beta1	not a version	invalid-version
+<=2.0.0-beta1	1.0.0-	true
+<=2.0.0-beta1	~1	invalid-version
+1.0.0-RC1 - 1.0.0-RC3	1.0.0	false
+1.0.0-RC1 - 1.0.0-RC3	1.0	false
+1.0.0-RC1 - 1.0.0-RC3	1	false
+1.0.0-RC1 - 1.0.0-RC3	v1.2.3	false
+1.0.0-RC1 - 1.0.0-RC3	1.2.3.4	false
+1.0.0-RC1 - 1.0.0-RC3	0.9.9	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-alpha1	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-a1	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-beta2	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-b2	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-RC1	true
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-rc1	true
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-patch1	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-pl1	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-p1	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-dev	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-stable	false
+1.0.0-RC1 - 1.0.0-RC3	1.1.0	false
+1.0.0-RC1 - 1.0.0-RC3	1.2.0	false
+1.0.0-RC1 - 1.0.0-RC3	1.2.3	false
+1.0.0-RC1 - 1.0.0-RC3	1.2.4	false
+1.0.0-RC1 - 1.0.0-RC3	1.3.0	false
+1.0.0-RC1 - 1.0.0-RC3	1.9.9	false
+1.0.0-RC1 - 1.0.0-RC3	2.0.0	false
+1.0.0-RC1 - 1.0.0-RC3	2.0.0-beta1	false
+1.0.0-RC1 - 1.0.0-RC3	2.0.1	false
+1.0.0-RC1 - 1.0.0-RC3	2.1.0	false
+1.0.0-RC1 - 1.0.0-RC3	3.0.0	false
+1.0.0-RC1 - 1.0.0-RC3	0.3.0	false
+1.0.0-RC1 - 1.0.0-RC3	0.3.5	false
+1.0.0-RC1 - 1.0.0-RC3	0.4.0	false
+1.0.0-RC1 - 1.0.0-RC3	0.0.3	false
+1.0.0-RC1 - 1.0.0-RC3	0.0.4	false
+1.0.0-RC1 - 1.0.0-RC3	10.0.0	false
+1.0.0-RC1 - 1.0.0-RC3	1.10.0	false
+1.0.0-RC1 - 1.0.0-RC3	dev-main	false
+1.0.0-RC1 - 1.0.0-RC3	dev-master	false
+1.0.0-RC1 - 1.0.0-RC3	dev-feature/x	false
+1.0.0-RC1 - 1.0.0-RC3	1.x-dev	false
+1.0.0-RC1 - 1.0.0-RC3	2.0.x-dev	false
+1.0.0-RC1 - 1.0.0-RC3	2.0.9999999.9999999-dev	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0+build.7	false
+1.0.0-RC1 - 1.0.0-RC3	v2.0.0-RC2	false
+1.0.0-RC1 - 1.0.0-RC3	1.0.0.0	false
+1.0.0-RC1 - 1.0.0-RC3	3.0.0-alpha	false
+1.0.0-RC1 - 1.0.0-RC3	not a version	invalid-version
+1.0.0-RC1 - 1.0.0-RC3	1.0.0-	false
+1.0.0-RC1 - 1.0.0-RC3	~1	invalid-version
+1.0.0+build.7	1.0.0	true
+1.0.0+build.7	1.0	true
+1.0.0+build.7	1	true
+1.0.0+build.7	v1.2.3	false
+1.0.0+build.7	1.2.3.4	false
+1.0.0+build.7	0.9.9	false
+1.0.0+build.7	1.0.0-alpha1	false
+1.0.0+build.7	1.0.0-a1	false
+1.0.0+build.7	1.0.0-beta2	false
+1.0.0+build.7	1.0.0-b2	false
+1.0.0+build.7	1.0.0-RC1	false
+1.0.0+build.7	1.0.0-rc1	false
+1.0.0+build.7	1.0.0-patch1	false
+1.0.0+build.7	1.0.0-pl1	false
+1.0.0+build.7	1.0.0-p1	false
+1.0.0+build.7	1.0.0-dev	false
+1.0.0+build.7	1.0.0-stable	true
+1.0.0+build.7	1.1.0	false
+1.0.0+build.7	1.2.0	false
+1.0.0+build.7	1.2.3	false
+1.0.0+build.7	1.2.4	false
+1.0.0+build.7	1.3.0	false
+1.0.0+build.7	1.9.9	false
+1.0.0+build.7	2.0.0	false
+1.0.0+build.7	2.0.0-beta1	false
+1.0.0+build.7	2.0.1	false
+1.0.0+build.7	2.1.0	false
+1.0.0+build.7	3.0.0	false
+1.0.0+build.7	0.3.0	false
+1.0.0+build.7	0.3.5	false
+1.0.0+build.7	0.4.0	false
+1.0.0+build.7	0.0.3	false
+1.0.0+build.7	0.0.4	false
+1.0.0+build.7	10.0.0	false
+1.0.0+build.7	1.10.0	false
+1.0.0+build.7	dev-main	false
+1.0.0+build.7	dev-master	false
+1.0.0+build.7	dev-feature/x	false
+1.0.0+build.7	1.x-dev	false
+1.0.0+build.7	2.0.x-dev	false
+1.0.0+build.7	2.0.9999999.9999999-dev	false
+1.0.0+build.7	1.0.0+build.7	true
+1.0.0+build.7	v2.0.0-RC2	false
+1.0.0+build.7	1.0.0.0	true
+1.0.0+build.7	3.0.0-alpha	false
+1.0.0+build.7	not a version	invalid-version
+1.0.0+build.7	1.0.0-	true
+1.0.0+build.7	~1	invalid-version
+~2.0.0@dev	1.0.0	false
+~2.0.0@dev	1.0	false
+~2.0.0@dev	1	false
+~2.0.0@dev	v1.2.3	false
+~2.0.0@dev	1.2.3.4	false
+~2.0.0@dev	0.9.9	false
+~2.0.0@dev	1.0.0-alpha1	false
+~2.0.0@dev	1.0.0-a1	false
+~2.0.0@dev	1.0.0-beta2	false
+~2.0.0@dev	1.0.0-b2	false
+~2.0.0@dev	1.0.0-RC1	false
+~2.0.0@dev	1.0.0-rc1	false
+~2.0.0@dev	1.0.0-patch1	false
+~2.0.0@dev	1.0.0-pl1	false
+~2.0.0@dev	1.0.0-p1	false
+~2.0.0@dev	1.0.0-dev	false
+~2.0.0@dev	1.0.0-stable	false
+~2.0.0@dev	1.1.0	false
+~2.0.0@dev	1.2.0	false
+~2.0.0@dev	1.2.3	false
+~2.0.0@dev	1.2.4	false
+~2.0.0@dev	1.3.0	false
+~2.0.0@dev	1.9.9	false
+~2.0.0@dev	2.0.0	true
+~2.0.0@dev	2.0.0-beta1	true
+~2.0.0@dev	2.0.1	true
+~2.0.0@dev	2.1.0	false
+~2.0.0@dev	3.0.0	false
+~2.0.0@dev	0.3.0	false
+~2.0.0@dev	0.3.5	false
+~2.0.0@dev	0.4.0	false
+~2.0.0@dev	0.0.3	false
+~2.0.0@dev	0.0.4	false
+~2.0.0@dev	10.0.0	false
+~2.0.0@dev	1.10.0	false
+~2.0.0@dev	dev-main	false
+~2.0.0@dev	dev-master	false
+~2.0.0@dev	dev-feature/x	false
+~2.0.0@dev	1.x-dev	false
+~2.0.0@dev	2.0.x-dev	true
+~2.0.0@dev	2.0.9999999.9999999-dev	true
+~2.0.0@dev	1.0.0+build.7	false
+~2.0.0@dev	v2.0.0-RC2	true
+~2.0.0@dev	1.0.0.0	false
+~2.0.0@dev	3.0.0-alpha	false
+~2.0.0@dev	not a version	invalid-version
+~2.0.0@dev	1.0.0-	false
+~2.0.0@dev	~1	invalid-version
+>=1.0.0-dev <2.0.0-dev	1.0.0	true
+>=1.0.0-dev <2.0.0-dev	1.0	true
+>=1.0.0-dev <2.0.0-dev	1	true
+>=1.0.0-dev <2.0.0-dev	v1.2.3	true
+>=1.0.0-dev <2.0.0-dev	1.2.3.4	true
+>=1.0.0-dev <2.0.0-dev	0.9.9	false
+>=1.0.0-dev <2.0.0-dev	1.0.0-alpha1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-a1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-beta2	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-b2	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-RC1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-rc1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-patch1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-pl1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-p1	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-dev	true
+>=1.0.0-dev <2.0.0-dev	1.0.0-stable	true
+>=1.0.0-dev <2.0.0-dev	1.1.0	true
+>=1.0.0-dev <2.0.0-dev	1.2.0	true
+>=1.0.0-dev <2.0.0-dev	1.2.3	true
+>=1.0.0-dev <2.0.0-dev	1.2.4	true
+>=1.0.0-dev <2.0.0-dev	1.3.0	true
+>=1.0.0-dev <2.0.0-dev	1.9.9	true
+>=1.0.0-dev <2.0.0-dev	2.0.0	false
+>=1.0.0-dev <2.0.0-dev	2.0.0-beta1	false
+>=1.0.0-dev <2.0.0-dev	2.0.1	false
+>=1.0.0-dev <2.0.0-dev	2.1.0	false
+>=1.0.0-dev <2.0.0-dev	3.0.0	false
+>=1.0.0-dev <2.0.0-dev	0.3.0	false
+>=1.0.0-dev <2.0.0-dev	0.3.5	false
+>=1.0.0-dev <2.0.0-dev	0.4.0	false
+>=1.0.0-dev <2.0.0-dev	0.0.3	false
+>=1.0.0-dev <2.0.0-dev	0.0.4	false
+>=1.0.0-dev <2.0.0-dev	10.0.0	false
+>=1.0.0-dev <2.0.0-dev	1.10.0	true
+>=1.0.0-dev <2.0.0-dev	dev-main	false
+>=1.0.0-dev <2.0.0-dev	dev-master	false
+>=1.0.0-dev <2.0.0-dev	dev-feature/x	false
+>=1.0.0-dev <2.0.0-dev	1.x-dev	true
+>=1.0.0-dev <2.0.0-dev	2.0.x-dev	false
+>=1.0.0-dev <2.0.0-dev	2.0.9999999.9999999-dev	false
+>=1.0.0-dev <2.0.0-dev	1.0.0+build.7	true
+>=1.0.0-dev <2.0.0-dev	v2.0.0-RC2	false
+>=1.0.0-dev <2.0.0-dev	1.0.0.0	true
+>=1.0.0-dev <2.0.0-dev	3.0.0-alpha	false
+>=1.0.0-dev <2.0.0-dev	not a version	invalid-version
+>=1.0.0-dev <2.0.0-dev	1.0.0-	true
+>=1.0.0-dev <2.0.0-dev	~1	invalid-version

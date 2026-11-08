@@ -68,6 +68,18 @@ Rubyの実装は [`packages/core/src/providers/rubygems/`](packages/core/src/pro
 
 `ruby` や `bundle` の実行、インストール済み gem の読み込み、依存関係グラフのいずれもここには含まれません。
 
+### Composerの実装
+
+Composerの実装は [`packages/core/src/providers/composer/`](packages/core/src/providers/composer/) にあります。[`parse.ts`](packages/core/src/providers/composer/parse.ts) は jsonc-parser の AST から `require` と `require-dev` を読み、名前を小文字にそろえ(`composer.lock`、`installed.json`、Packagist はいずれも小文字でパッケージを管理しています)、プラットフォームパッケージ(`php`、`ext-*`、`lib-*`、`composer-*-api`)は捨てます。これらはライセンスを持つパッケージではなく、PHP 自体への制約だからです。あわせて `config.vendor-dir`、`minimum-stability`、`prefer-stable`、`repositories` が Packagist を無効化しているかどうかも読み取ります。
+
+解決は npm と同じく vendor → lock → レジストリの順に進みます。[`installed.ts`](packages/core/src/providers/composer/installed.ts) は `<vendor-dir>/composer/installed.json`(Composer 2 のオブジェクト形式と Composer 1 の配列形式の両方)を読みます。Composer はホイスティングをしないので、親ディレクトリは探索しません。[`lockfile.ts`](packages/core/src/providers/composer/lockfile.ts) は `composer.lock` を読み、[`client.ts`](packages/core/src/providers/composer/client.ts) は Packagist の p2 エンドポイントに問い合わせます。ディスク上の2つのファイルはどちらも各パッケージの `license` を持っているので、そこでのヒットはバージョンの固定ではなく、答えそのものです。[`metadata.ts`](packages/core/src/providers/composer/metadata.ts) は3つのソースを1つの `PackageRecord` に落とし込み、共通のルールを担います。`license` 配列は Composer の定義上「いずれかを選べる」という意味なので `OR` でつなぎます — Go の deps.dev が `AND` なのとは逆です。レコードの `require.php` は `phpVersion` になります。ホバータイトルの Packagist へのリンクは、レコードの `notification-url` が Packagist のもの(または p2 由来)であるときだけ付けるので、`path`/`vcs` 由来のパッケージが 404 になるリンクを持つことはありません。
+
+vendor や lock のバージョンは、マニフェストの制約を今も満たしている場合にだけ報告します。そのため古くなった lock は嘘をつかず、Packagist へ落ちていきます。`dev-*` ブランチは、制約自身の `as` 句、レコードの `extra.branch-alias`、lock の `aliases` というエイリアスを通じて制約を満たせます。これは Composer 自身が `^1.0` を `dev-main` で満たせるようにしている仕組みと同じです。ブランチが Packagist から解決されることはありません。
+
+[`spec.ts`](packages/core/src/providers/composer/spec.ts) は `composer/semver`(`VersionParser::normalize`、`parseConstraints`、`parseStability`、PHP の `version_compare`)の移植で、npm や Cargo の範囲指定とは独立しています。実際のライブラリが生成した TSV のオラクルに対してテストされており、再生成の方法は [`composer-provenance.md`](test/fixtures/lockfiles/composer-provenance.md) に書いてあります。文章での説明とオラクルが食い違うときはオラクルが正です。lock がない場合の候補選定は Composer の安定度ルールに従います。明示的な `@flag` はそのパッケージについて `minimum-stability` を置き換え、制約に書かれたプレリリースは下限を下げ、`prefer-stable` はより高い不安定版よりも安定版を優先します。p2 のレスポンスは minified 形式(各バージョンは前のバージョンから変わったキーだけを持ち、`"__unset"` はキーの削除を表す)なので、読む前に展開します。展開済みのリストはキャッシュしますが、見つからなかった結果はキャッシュしません。p2 は静的な CDN 配信の JSON なので、リクエストは `maxConcurrentRequests` の範囲で並列に送りますが、HTTP 429 が返った場合はすべてのクライアントが1分間送信を止め、リトライはしません。
+
+`composer` コマンドの実行、プライベートリポジトリ(Private Packagist、Satis、`vcs`/`path` リポジトリ)、`COMPOSER_VENDOR_DIR` の扱い、`replace`/`provide` の解決、依存関係グラフのいずれもここには含まれません。
+
 ## 別のエコシステムを追加する
 
 `LicenseProvider` を実装し、登録し、有効化と設定を接続します。
@@ -156,7 +168,7 @@ npm run package           # .vsixをビルド
 
 `npm test` はTypeScriptのソースに対して直接Vitestを実行します。事前にコンパイルする必要はありません。`packages/vscode-extension` のテストスイートは、加えてビルド済みの `dist/extension.js` が存在する場合はそれも読み込みます。バンドル自体が拡張機能を壊すことがあるためです。エントリーポイントが `require()` の呼び出しを実行時まで遅延させる依存関係は、ソースに対しては問題なく解決されても、拡張機能ホスト内では失敗することがあります。このチェックを黙ってスキップさせず実際に働かせるには、先に `npm run compile` を実行してください。
 
-Cargo、MoonBit、Goはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml`、`moon.mod`、`go.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
+Cargo、MoonBit、Go、Composerはそれぞれ専用のIntegrationテスト用ワークスペースを持ち、`Cargo.toml`、`moon.mod`、`go.mod` はプレーンテキストに関連付けられています。これは、ディスパッチが言語登録にひそかに依存してしまうことがないようにするためです(`composer.json` はJSONのままにしてあり、npmプロバイダーに横取りされないことを確認しています)。ドキュメントを開いたり拡張機能のコマンドを呼び出したりする前の自動アクティベーションを確認したうえで、URIベースのワークスペース/ロックファイルの読み込み、キャッシュされたメタデータ、ホバーのリンク、未保存のパース、設定をテストします。このフィクスチャではレジストリへのアクセスは無効化されています。最小サポートのホストで動作確認するには、`npm run test:integration` を実行する際に `PLV_VSCODE_VERSION=1.90.0` を設定してください。指定しない場合は現在の安定版ホストが使用されます。
 
 コミット前に `npm run format` を実行してください。CIでは `format:check` と `lint` が強制されます。
 
@@ -169,7 +181,7 @@ Cargo、MoonBit、Goはそれぞれ専用のIntegrationテスト用ワークス�
 
 [`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
 
-プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)、`go.test.ts`(Go)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/)、[`test/fixtures/go-workspace/`](test/fixtures/go-workspace/) のフィクスチャを共通で使っています。
+プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)、`go.test.ts`(Go)、`rubygems.test.ts`(Ruby)、`composer.test.ts`(Composer)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/)、[`test/fixtures/go-workspace/`](test/fixtures/go-workspace/)、[`test/fixtures/ruby-workspace/`](test/fixtures/ruby-workspace/)、[`test/fixtures/composer-workspace/`](test/fixtures/composer-workspace/) のフィクスチャを共通で使っています。
 
 ## リリース
 
