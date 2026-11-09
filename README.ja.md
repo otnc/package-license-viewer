@@ -50,17 +50,19 @@
 | Neovim | ✅ (実験的) | インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。言語サーバーは初回利用時にnpmで自動ビルドされます — `:help package_license_viewer` を参照してください(英語のみ)。 |
 | Vim | ✅ (実験的) | Neovimと同様に対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — `:help package_license_viewer` を参照してください(英語のみ)。 |
 
-Vim/NeoVimプラグインはリポジトリ直下にあるので、どのプラグインマネージャー(lazy.nvim、vim.pack、mini.deps、packer.nvim、paq-nvim、vim-plug、dein.vim、vim-jetpack、ネイティブパッケージなど)でも `otnc/package-license-viewer` を指定するだけでインストールできます。`rtp` オプションやbuildフックは要りません。
+Vim/NeoVimプラグインはリポジトリ直下にあるので、どのプラグインマネージャーでも `otnc/package-license-viewer` を指定するだけでインストールできます。`rtp` オプションやbuildフックは要りません。
 
-```lua
--- lazy.nvim
-{ "otnc/package-license-viewer" }
-```
-
-```vim
-" vim-plug
-Plug 'otnc/package-license-viewer'
-```
+| プラグインマネージャー | エディタ | インストール |
+| --- | --- | --- |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | Neovim | `{ "otnc/package-license-viewer" }` |
+| vim.pack | Neovim 0.12以降 | `vim.pack.add({ "https://github.com/otnc/package-license-viewer" })` |
+| [mini.deps](https://github.com/echasnovski/mini.deps) | Neovim | `MiniDeps.add("otnc/package-license-viewer")` |
+| [packer.nvim](https://github.com/wbthomason/packer.nvim) | Neovim | `use("otnc/package-license-viewer")` |
+| [paq-nvim](https://github.com/savq/paq-nvim) | Neovim | `"otnc/package-license-viewer",` |
+| [vim-plug](https://github.com/junegunn/vim-plug) | Vim / Neovim | `Plug 'otnc/package-license-viewer'` |
+| [dein.vim](https://github.com/Shougo/dein.vim) | Vim / Neovim | `call dein#add('otnc/package-license-viewer')` |
+| [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
+| ネイティブパッケージ(`:help packages`) | Vim / Neovim | `~/.vim/pack/plugins/start/` に `git clone` |
 
 Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応ファイルを初めて開いたとき(と更新後)にバックグラウンドでビルドされます。各マネージャーの書き方と設定は [`:help package_license_viewer`](doc/package_license_viewer.txt) を参照してください(英語のみ)。
 

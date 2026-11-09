@@ -50,17 +50,19 @@ See [docs/resolution-details.md](docs/resolution-details.md) for exactly how eac
 | Neovim | ✅ (experimental) | Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server is built with npm automatically on first use — see `:help package_license_viewer`. |
 | Vim | ✅ (experimental) | Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`. |
 
-The Vim/Neovim plugin lives at the repository root, so any plugin manager (lazy.nvim, vim.pack, mini.deps, packer.nvim, paq-nvim, vim-plug, dein.vim, vim-jetpack, native packages, …) installs it from just `otnc/package-license-viewer`, with no `rtp` option or build hook:
+The Vim/Neovim plugin lives at the repository root, so every plugin manager installs it from just `otnc/package-license-viewer`, with no `rtp` option or build hook:
 
-```lua
--- lazy.nvim
-{ "otnc/package-license-viewer" }
-```
-
-```vim
-" vim-plug
-Plug 'otnc/package-license-viewer'
-```
+| Plugin manager | Editor | Install |
+| --- | --- | --- |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | Neovim | `{ "otnc/package-license-viewer" }` |
+| vim.pack | Neovim 0.12+ | `vim.pack.add({ "https://github.com/otnc/package-license-viewer" })` |
+| [mini.deps](https://github.com/echasnovski/mini.deps) | Neovim | `MiniDeps.add("otnc/package-license-viewer")` |
+| [packer.nvim](https://github.com/wbthomason/packer.nvim) | Neovim | `use("otnc/package-license-viewer")` |
+| [paq-nvim](https://github.com/savq/paq-nvim) | Neovim | `"otnc/package-license-viewer",` |
+| [vim-plug](https://github.com/junegunn/vim-plug) | Vim / Neovim | `Plug 'otnc/package-license-viewer'` |
+| [dein.vim](https://github.com/Shougo/dein.vim) | Vim / Neovim | `call dein#add('otnc/package-license-viewer')` |
+| [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
+| Native packages (`:help packages`) | Vim / Neovim | `git clone` into `~/.vim/pack/plugins/start/` |
 
 It needs Node.js 22+ and npm on `$PATH`; the language server is built in the background the first time a supported file is opened, and again after an update. See [`:help package_license_viewer`](doc/package_license_viewer.txt) for every manager and for configuration.
 
