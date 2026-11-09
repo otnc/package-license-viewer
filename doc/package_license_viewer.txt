@@ -25,49 +25,55 @@ here as a Node-based language server
 2. Requirements                          *package_license_viewer-requirements*
 
 - Node.js 22+ on `$PATH` (or set |g:package_license_viewer_node_command|).
-- The language server built: from the repository root, >
-    npm install
-    npm run compile:lsp
-<
-  This produces `packages/lsp-server/dist/lspServer.js`. It is not published as a separate,
-  pre-built artifact yet, so a plugin manager's build hook (see
-  |package_license_viewer-installation|) is the easiest way to keep it
-  built without a manual step.
+- npm on `$PATH`. The language server
+  (`packages/lsp-server/dist/lspServer.js`) is built automatically, in the
+  background, the first time a supported file is opened, and again whenever
+  a plugin manager update leaves it older than its sources. The build runs
+  `npm ci` then `npm run compile:lsp` in the plugin's directory;
+  annotations appear once it finishes.
 - Plain Vim: 9.0+, with |+job|, |+channel| and |+textprop| (`:version` shows
   these). Neovim: 0.8+, for `vim.lsp.start()`.
 
 ==============================================================================
 3. Installation                          *package_license_viewer-installation*
 
-This plugin's source lives inside the main extension's repository, at
-`packages/vim-plugin` — point your plugin manager's runtime path there,
-and give it a build hook that runs |package_license_viewer-requirements|'s
-`npm install && npm run compile:lsp` once, in the repository root, on
-install and update. Three examples: >
+The plugin lives at the root of the repository, so any plugin manager
+installs it from just `otnc/package-license-viewer` — no `rtp` option, no
+build hook: >
 
-    -- lazy.nvim has no built-in `rtp` option like vim-plug/packer, so `config` appends the path and sources `plugin/` itself (appending to 'runtimepath' alone does not auto-source it).
-    {
-      "otnc/package-license-viewer",
-      config = function()
-        vim.opt.rtp:append(vim.fn.stdpath("data") .. "/lazy/package-license-viewer/packages/vim-plugin")
-        vim.cmd("runtime! plugin/package_license_viewer.vim")
-      end,
-      build = "npm install && npm run compile:lsp",
-    }
+    -- lazy.nvim
+    { "otnc/package-license-viewer" }
 
-    " vim-plug (Vim or Neovim)
-    Plug 'otnc/package-license-viewer', {'rtp': 'packages/vim-plugin', 'do': 'npm install && npm run compile:lsp'}
+    -- vim.pack (Neovim 0.12+)
+    vim.pack.add({ "https://github.com/otnc/package-license-viewer" })
+
+    -- mini.deps
+    MiniDeps.add("otnc/package-license-viewer")
 
     -- packer.nvim
-    use({
-      "otnc/package-license-viewer",
-      rtp = "packages/vim-plugin",
-      run = "npm install && npm run compile:lsp",
-    })
+    use("otnc/package-license-viewer")
+
+    -- paq-nvim
+    "otnc/package-license-viewer",
+
+    " vim-plug (Vim or Neovim)
+    Plug 'otnc/package-license-viewer'
+
+    " dein.vim
+    call dein#add('otnc/package-license-viewer')
+
+    " vim-jetpack
+    Jetpack 'otnc/package-license-viewer'
+
+    " Vim/Neovim native packages (|packages|), no plugin manager
+    " git clone https://github.com/otnc/package-license-viewer
+    "   ~/.vim/pack/plugins/start/package-license-viewer
+    " then, once: :helptags ALL
 <
-If your plugin manager has no build-hook concept, run the two commands
-by hand from wherever it cloned the repository, and re-run them after
-every update.
+To build the server at install time instead of on first use, give your
+plugin manager's build hook `npm ci && npm run compile:lsp` (e.g. lazy.nvim's
+`build`, vim-plug's `do`, packer's `run`). It is optional: an up-to-date
+server is never rebuilt.
 
 ==============================================================================
 4. Commands                                   *package_license_viewer-commands*
@@ -98,7 +104,9 @@ g:package_license_viewer_node_command  (default: `'node'`)
 g:package_license_viewer_server_path   (default: `''`)
     Path to `lspServer.js`. Left empty, it is resolved relative to this
     plugin's own location (`<repo>/packages/lsp-server/dist/lspServer.js`)
-    — set this if you install the server somewhere else.
+    and built automatically (see |package_license_viewer-requirements|).
+    Set this if you install the server somewhere else; it is then never
+    built.
 
                                       *g:package_license_viewer_settings*
 g:package_license_viewer_settings      (default: `{}`)
@@ -138,8 +146,8 @@ Both share the same server and the same wire format
 7. Known limitations                      *package_license_viewer-limitations*
 
 - `packages/lsp-server/dist/lspServer.js` is not published as a pre-built
-  artifact; it has to be built, ideally via a plugin manager's build hook
-  — see |package_license_viewer-installation|.
+  artifact, so the first use (and the first use after an update) builds it
+  with npm, which takes a while and needs network access.
 - Settings only apply at startup (Neovim) or when you explicitly run
   |:PackageLicenseViewerRefresh| after editing them (plain Vim) — see
   |g:package_license_viewer_settings|. Neither editor watches for a change

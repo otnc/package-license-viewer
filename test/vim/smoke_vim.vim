@@ -1,9 +1,10 @@
 scriptencoding utf-8
 " Headless smoke test for the plain-Vim half of the plugin (job/channel transport,
 " prop_add rendering). Run with:
-"   vim -u DEFAULTS -N -Es -S packages/vim-plugin/test/smoke_vim.vim
-" with PLV_LSP_SERVER_PATH, PLV_VIM_PLUGIN_DIR, PLV_FIXTURE_PACKAGE_JSON and
-" PLV_RESULT_FILE set in the environment — see .github/workflows/ci.yml.
+"   vim -u DEFAULTS -N -Es -S test/vim/smoke_vim.vim
+" with the server built (npm run compile:lsp) and PLV_VIM_PLUGIN_DIR (the repo
+" root), PLV_FIXTURE_PACKAGE_JSON and PLV_RESULT_FILE set in the environment —
+" see .github/workflows/ci.yml.
 "
 " It opens test/fixtures/workspace/package.json (useRegistry disabled) and waits
 " for the plv-local-pkg line to get a real "plv_license" text property containing
@@ -15,7 +16,6 @@ scriptencoding utf-8
 " which don't exist until the default color scheme is loaded.
 runtime! syntax/syncolor.vim
 
-let g:package_license_viewer_server_path = expand($PLV_LSP_SERVER_PATH)
 let g:package_license_viewer_settings = {'npm': {'useRegistry': v:false}}
 
 " Added to 'runtimepath' (rather than sourced directly) so the autoload/

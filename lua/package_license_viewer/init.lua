@@ -5,15 +5,51 @@ local M = {}
 local ns = vim.api.nvim_create_namespace("package_license_viewer")
 local client_id = nil
 
+local building = false
+local build_failed = false
+local waiting = {} -- bufnr -> true, attached once the build below finishes
+
 local function server_cmd()
-  local source = debug.getinfo(1, "S").source:sub(2) -- strip the leading '@'
-  -- .../packages/vim-plugin/lua/package_license_viewer/init.lua -> .../packages/vim-plugin
-  local plugin_root = vim.fn.fnamemodify(source, ":p:h:h:h")
-  local server_path = vim.g.package_license_viewer_server_path
-  if server_path == nil or server_path == "" then
-    server_path = plugin_root .. "/../lsp-server/dist/lspServer.js"
+  return {
+    vim.g.package_license_viewer_node_command or "node",
+    vim.fn["package_license_viewer#ServerPath"](),
+    "--stdio",
+  }
+end
+
+local function on_built()
+  building = false
+  local bufs = waiting
+  waiting = {}
+  for bufnr in pairs(bufs) do
+    if vim.api.nvim_buf_is_loaded(bufnr) then
+      M.attach(bufnr)
+    end
   end
-  return { vim.g.package_license_viewer_node_command or "node", server_path, "--stdio" }
+end
+
+-- Same steps as plain Vim's (autoload/package_license_viewer.vim), run one after another in the repository root: on first use, and again after a plugin manager update leaves the bundle older than its sources.
+local function build(steps)
+  building = true
+  local root = vim.fn["package_license_viewer#Root"]()
+  local function on_exit(_, code)
+    if code ~= 0 then
+      building = false
+      build_failed = true
+      vim.notify(
+        ("package_license_viewer: `%s` failed (exit %d) in %s"):format(table.concat(steps[1], " "), code, root),
+        vim.log.levels.ERROR
+      )
+    elseif #steps > 1 then
+      build(vim.list_slice(steps, 2))
+    else
+      on_built()
+    end
+  end
+  -- e.g. npm not installed: jobstart() returns -1 and on_exit never comes
+  if vim.fn.jobstart(steps[1], { cwd = root, on_exit = on_exit }) <= 0 then
+    on_exit(nil, -1)
+  end
 end
 
 local function on_annotations(_, result, _)
@@ -52,7 +88,15 @@ end
 
 --- Starts (or reuses) the language server and attaches the given buffer to it.
 function M.attach(bufnr)
-  if vim.g.package_license_viewer_enabled == 0 then
+  if vim.g.package_license_viewer_enabled == 0 or build_failed then
+    return
+  end
+  if building or vim.fn["package_license_viewer#NeedsBuild"]() == 1 then
+    waiting[bufnr] = true
+    if not building then
+      vim.notify("package_license_viewer: building the language server (first run or after an update)...")
+      build(vim.fn["package_license_viewer#BuildSteps"]())
+    end
     return
   end
   client_id = vim.lsp.start({

@@ -1,9 +1,9 @@
 -- Headless smoke test for the Neovim half of the plugin (vim.lsp.start() transport,
 -- nvim_buf_set_extmark() rendering). Run with:
---   nvim --headless -u NONE --cmd "set rtp+=<repo>/packages/vim-plugin" \
---     -c "luafile packages/vim-plugin/test/smoke_nvim.lua"
--- with PLV_LSP_SERVER_PATH, PLV_FIXTURE_PACKAGE_JSON and PLV_RESULT_FILE set in
--- the environment — see .github/workflows/ci.yml.
+--   nvim --headless -u NONE --cmd "set rtp+=<repo>" \
+--     -c "luafile test/vim/smoke_nvim.lua"
+-- with the server built (npm run compile:lsp) and PLV_FIXTURE_PACKAGE_JSON and
+-- PLV_RESULT_FILE set in the environment — see .github/workflows/ci.yml.
 --
 -- It opens test/fixtures/workspace/package.json (useRegistry disabled) and waits
 -- for an extmark whose virtual text contains "MIT", the annotation plv-local-pkg
@@ -11,7 +11,6 @@
 -- dependency there is either missing from node_modules or would need a network
 -- request, so this stays deterministic without touching the network.
 
-vim.g.package_license_viewer_server_path = os.getenv("PLV_LSP_SERVER_PATH")
 vim.g.package_license_viewer_settings = { npm = { useRegistry = false } }
 
 -- -u NONE turns off Neovim's automatic 'loadplugins' startup step, so
