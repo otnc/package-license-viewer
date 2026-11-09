@@ -1,5 +1,5 @@
 scriptencoding utf-8
-" Vim's half of the plugin: a minimal LSP client over job/channel, and rendering with prop_add()/popup_atcursor(). Not used on Neovim — see plugin/package_license_viewer.vim and lua/package_license_viewer/init.lua, which replace this entirely with vim.lsp.start() and nvim_buf_set_extmark().
+" Vim's half of the plugin: a minimal LSP client over job/channel, and rendering with prop_add()/popup_atcursor(). Neovim only uses the server path/build helpers below — see plugin/package_license_viewer.vim and lua/package_license_viewer/init.lua, which replace the rest with vim.lsp.start() and nvim_buf_set_extmark().
 
 let s:job = v:null
 let s:channel = v:null
@@ -12,6 +12,10 @@ let s:change_timer = -1
 " bufnr -> {'uri': string, 'version': number}
 let s:attached = {}
 let s:prop_types_ready = 0
+let s:building = 0
+let s:build_failed = 0
+" autoload/ -> the repository root, which is also the plugin root every plugin manager puts on 'runtimepath'
+let s:root = expand('<sfile>:p:h:h')
 
 function! s:EnsurePropTypes() abort
   if s:prop_types_ready
@@ -25,17 +29,82 @@ endfunction
 
 " ---- transport --------------------------------------------------------------
 
+function! package_license_viewer#Root() abort
+  return s:root
+endfunction
+
 function! package_license_viewer#ServerPath() abort
   if !empty(g:package_license_viewer_server_path)
     return g:package_license_viewer_server_path
   endif
-  " packages/vim-plugin/autoload/ -> packages/vim-plugin/ -> packages/ -> packages/lsp-server/dist/lspServer.js
-  let here = expand('<script>:p:h')
-  return simplify(here . '/../../lsp-server/dist/lspServer.js')
+  return s:root . '/packages/lsp-server/dist/lspServer.js'
+endfunction
+
+" Run one after another in the repository root, as plain jobs rather than through 'shell' (a user's fish/nushell/PowerShell can't be trusted to understand `&&`). npm ci never rewrites package-lock.json, so a plugin manager's next update doesn't trip over a dirty checkout.
+function! package_license_viewer#BuildSteps() abort
+  " npm is a .cmd script on Windows, which a job only finds by its full name
+  let npm = has('win32') ? 'npm.cmd' : 'npm'
+  return [[npm, 'ci', '--no-audit', '--no-fund'], [npm, 'run', 'compile:lsp']]
+endfunction
+
+" True when the bundled server is missing, or older than its sources — a plugin manager update pulls new sources but never rebuilds them. Never true for a user-supplied g:package_license_viewer_server_path.
+function! package_license_viewer#NeedsBuild() abort
+  if !empty(g:package_license_viewer_server_path)
+    return 0
+  endif
+  let built = getftime(package_license_viewer#ServerPath())
+  if built == -1
+    return 1
+  endif
+  let sources = glob(s:root . '/packages/core/src/**/*.ts', 1, 1)
+    \ + glob(s:root . '/packages/lsp-server/src/**/*.ts', 1, 1)
+    \ + [s:root . '/package-lock.json']
+  return max(map(sources, 'getftime(v:val)')) > built
+endfunction
+
+function! s:Build(steps) abort
+  let s:building = 1
+  let job = job_start(a:steps[0], {
+    \ 'cwd': s:root,
+    \ 'in_io': 'null',
+    \ 'out_io': 'null',
+    \ 'err_io': 'null',
+    \ 'exit_cb': {job, status -> s:OnBuildExit(a:steps, status)},
+    \ })
+  " e.g. npm not installed: no exit_cb ever comes
+  if job_status(job) ==# 'fail'
+    call s:OnBuildExit(a:steps, -1)
+  endif
+endfunction
+
+function! s:OnBuildExit(steps, status) abort
+  if a:status != 0
+    let s:building = 0
+    let s:build_failed = 1
+    echohl ErrorMsg
+    echom printf('package_license_viewer: `%s` failed (exit %d) in %s', join(a:steps[0]), a:status, s:root)
+    echohl None
+    return
+  endif
+  if len(a:steps) > 1
+    call s:Build(a:steps[1:])
+    return
+  endif
+  let s:building = 0
+  " Starts the server; everything Attach() queued with s:AfterInit() meanwhile runs once it initializes.
+  call s:EnsureServer()
 endfunction
 
 function! s:EnsureServer() abort
   if s:job isnot v:null && job_status(s:job) ==# 'run'
+    return
+  endif
+  if s:building || s:build_failed
+    return
+  endif
+  if package_license_viewer#NeedsBuild()
+    echom 'package_license_viewer: building the language server (first run or after an update)...'
+    call s:Build(package_license_viewer#BuildSteps())
     return
   endif
   call s:EnsurePropTypes()

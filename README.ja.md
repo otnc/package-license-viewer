@@ -4,7 +4,7 @@
 
 [![VS Code Marketplace Version](https://vsmarketplacebadges.dev/version/otoneko1102.package-license-viewer.svg)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
 [![VS Code Marketplace Installs](https://vsmarketplacebadges.dev/installs-short/otoneko1102.package-license-viewer.svg)](https://marketplace.visualstudio.com/items?itemName=otoneko1102.package-license-viewer)
-[![Vim/NeoVim](https://img.shields.io/badge/Vim%2FNeoVim-experimental-yellow)](packages/vim-plugin)
+[![Vim/NeoVim](https://img.shields.io/badge/Vim%2FNeoVim-experimental-yellow)](doc/package_license_viewer.txt)
 [![CI](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/github/license/otnc/package-license-viewer)](LICENSE)
 
@@ -27,83 +27,31 @@
 
 注釈にカーソルを合わせると、解決されたバージョン、情報の取得元、パッケージのホームページへのリンクが表示されます。
 
-## サポート言語
-
-| 言語 | サポート状況 | Version | パッケージマネージャー | 最初の貢献者 | 備考 |
-| --- | --- | --- | --- | --- | --- |
-| JavaScript / TypeScript | ✅ | ✅ | npm, pnpm, yarn (classic / berry), bun | [@otnc](https://github.com/otnc) | `package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応 |
-| Deno / JSR | ✅ | ✅ | jsr, `npm:` 指定子 | [@otnc](https://github.com/otnc) | 上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決 |
-| Go | ✅ | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` の requirement を `replace` を反映したうえでdeps.devと突き合わせて解決。ローカルにGoのインストールは不要で、`GOPRIVATE` に一致するモジュールは問い合わせない |
-| Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要 |
-| MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要 |
-| Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` と `*.gemspec` の宣言を rubygems.org / `Gemfile.lock` と突き合わせて解決。ローカルにRubyのインストールは不要 |
-| PHP | ✅ | ✅ | Composer | [@v420v](https://github.com/v420v) | `composer.json` の requirement を `vendor/` / `composer.lock` / Packagist と突き合わせて解決。ローカルにPHPやComposerのインストールは不要 |
-| Python | ❌ | ❌ | pip, uv, poetry |  | 対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| あなたの言語? |  |  |  |  | ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照) |
+::docs-table{#supported-languages}
 
 各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 
-## エディタ
+::docs-table{#editors}
 
-| エディタ | サポート状況 | 備考 |
+Vim/NeoVimプラグインはリポジトリ直下にあるので、どのプラグインマネージャーでも `otnc/package-license-viewer` を指定するだけでインストールできます。`rtp` オプションやbuildフックは要りません。
+
+| プラグインマネージャー | エディタ | インストール |
 | --- | --- | --- |
-| VS Code | ✅ | 全機能に対応: インライン注釈、hover、`packageLicenseViewer.*` の全設定。 |
-| Neovim | ✅ (実験的) | インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`、またはプラグインマネージャーのbuildフック) — `:help package_license_viewer` を参照してください(英語のみ)。 |
-| Vim | ✅ (実験的) | Neovimと同様に対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — `:help package_license_viewer` を参照してください(英語のみ)。 |
+| [lazy.nvim](https://github.com/folke/lazy.nvim) | Neovim | `{ "otnc/package-license-viewer" }` |
+| vim.pack | Neovim 0.12以降 | `vim.pack.add({ "https://github.com/otnc/package-license-viewer" })` |
+| [mini.deps](https://github.com/echasnovski/mini.deps) | Neovim | `MiniDeps.add("otnc/package-license-viewer")` |
+| [packer.nvim](https://github.com/wbthomason/packer.nvim) | Neovim | `use("otnc/package-license-viewer")` |
+| [paq-nvim](https://github.com/savq/paq-nvim) | Neovim | `"otnc/package-license-viewer",` |
+| [vim-plug](https://github.com/junegunn/vim-plug) | Vim / Neovim | `Plug 'otnc/package-license-viewer'` |
+| [dein.vim](https://github.com/Shougo/dein.vim) | Vim / Neovim | `call dein#add('otnc/package-license-viewer')` |
+| [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
+| ネイティブパッケージ(`:help packages`) | Vim / Neovim | `~/.vim/pack/plugins/start/` に `git clone` |
 
-Vim/NeoVimプラグインは [`packages/vim-plugin`](packages/vim-plugin) にあります。セットアップと設定については `:help package_license_viewer` を参照してください(英語のみ)。
+Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応ファイルを初めて開いたとき(と更新後)にバックグラウンドでビルドされます。各マネージャーの書き方と設定は [`:help package_license_viewer`](doc/package_license_viewer.txt) を参照してください(英語のみ)。
 
-## コマンド
+::docs-table{#commands}
 
-| コマンド | 説明 |
-| --- | --- |
-| `Package License Viewer: Refresh License Annotations` | ローカルのメタデータ、ロックファイル、Cargoワークスペースの宣言を読み直して再描画します。依存関係を変更した後に使用してください。 |
-| `Package License Viewer: Clear License Cache` | レジストリからキャッシュした内容をすべて破棄します。 |
-| `Package License Viewer: Toggle Inline License Annotations` | インラインのライセンス注釈のオン/オフを切り替えます。 |
-
-## 設定
-
-| 設定 | デフォルト値 | 説明 |
-| --- | --- | --- |
-| `packageLicenseViewer.enabled` | `true` | インラインのライセンス注釈を表示します。 |
-| `packageLicenseViewer.format` | `${license}` | 注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`。 |
-| `packageLicenseViewer.showResolvedVersion` | `false` | 解決されたバージョンを付加します(例: `MIT · 4.17.21`)。 |
-| `packageLicenseViewer.showNodeEngine` | `true` | パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。 |
-| `packageLicenseViewer.showRubyVersion` | `true` | gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。 |
-| `packageLicenseViewer.showRustVersion` | `true` | crateに `rust-version` (MSRV) の指定があれば付加します(例: `MIT (Rust: >=1.56)`)。 |
-| `packageLicenseViewer.showGoVersion` | `true` | モジュールのバージョンに `go` ディレクティブの指定があれば付加します(例: `MIT (Go: >=1.21)`)。 |
-| `packageLicenseViewer.showPhpVersion` | `true` | パッケージに `require.php` の指定があれば付加します(例: `MIT (PHP: >=8.1)`)。 |
-| `packageLicenseViewer.unknownText` | `""` | ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。 |
-| `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。 |
-| `packageLicenseViewer.licenseColor` | `charts.green` | 注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。 |
-| `packageLicenseViewer.margin` | `0 0 0 1.5em` | 注釈の前に付けるCSSマージン。 |
-| `packageLicenseViewer.cacheTtlHours` | `168` | キャッシュしたレジストリ結果の有効期間。`0` でディスクキャッシュを無効化します。 |
-| `packageLicenseViewer.requestTimeoutMs` | `8000` | レジストリへの1リクエストあたりのタイムアウト。 |
-| `packageLicenseViewer.maxConcurrentRequests` | `8` | レジストリへの並列リクエスト数。 |
-| `packageLicenseViewer.npm.enabled` | `true` | `package.json` の注釈を有効にします。 |
-| `packageLicenseViewer.npm.registry` | `https://registry.npmjs.org` | レジストリのベースURL。 |
-| `packageLicenseViewer.npm.useRegistry` | `true` | レジストリへの問い合わせを許可します。`false` にすると完全オフラインで動作します。 |
-| `packageLicenseViewer.npm.useLockfiles` | `true` | 正確なピン留めバージョンを得るためにロックファイルを読み込みます。 |
-| `packageLicenseViewer.npm.sections` | 標準の4セクション | 常に注釈を付けるセクション。 |
-| `packageLicenseViewer.npm.autoDetectSections` | `true` | キーが `dependencies` で終わるその他のトップレベルオブジェクトにも注釈を付けます。 |
-| `packageLicenseViewer.npm.pnpmWorkspaceCatalogs` | `true` | `pnpm-workspace.yaml` の `catalog:` / `catalogs:` セクションにも注釈を付けます。 |
-| `packageLicenseViewer.jsr.enabled` | `true` | Deno / import mapマニフェストの注釈を有効にします。 |
-| `packageLicenseViewer.jsr.registry` | `https://jsr.io` | JSRレジストリのベースURL。 |
-| `packageLicenseViewer.jsr.apiUrl` | `https://api.jsr.io` | ライセンス情報を取得するJSR APIのベースURL。 |
-| `packageLicenseViewer.crates.enabled` | `true` | `Cargo.toml` の依存関係宣言に注釈を付けます。 |
-| `packageLicenseViewer.crates.useRegistry` | `true` | crates.ioへのリクエストを許可します。無効にした場合もキャッシュ済みの公開メタデータは利用できます。 |
-| `packageLicenseViewer.crates.useLockfiles` | `true` | 該当する `Cargo.lock` 内で一意に一致するcrates.ioのバージョンを優先します。 |
-| `packageLicenseViewer.moonbit.enabled` | `true` | `moon.mod` / `moon.mod.json` の依存関係宣言に注釈を付けます。 |
-| `packageLicenseViewer.moonbit.useRegistry` | `true` | mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。 |
-| `packageLicenseViewer.moonbit.useRegistryIndex` | `true` | `moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。 |
-| `packageLicenseViewer.go.enabled` | `true` | `go.mod` の requirement に注釈を付けます。 |
-| `packageLicenseViewer.go.useRegistry` | `true` | deps.devへのリクエストと、`go` ディレクティブ取得のためのGoモジュールプロキシからの各バージョンの `go.mod` の読み取りを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
-| `packageLicenseViewer.rubygems.enabled` | `true` | `Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。 |
-| `packageLicenseViewer.rubygems.useRegistry` | `true` | rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。 |
-| `packageLicenseViewer.rubygems.useLockfiles` | `true` | `Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。 |
-| `packageLicenseViewer.composer.enabled` | `true` | `composer.json` の `require` / `require-dev` に注釈を付けます。 |
-| `packageLicenseViewer.composer.useLockfiles` | `true` | `vendor/` に何もインストールされていないとき、`composer.lock` からロックされたバージョンとそのライセンスを読みます。 |
-| `packageLicenseViewer.composer.useRegistry` | `true` | Packagistへのリクエストを許可します。無効にした場合も、インストール済みパッケージ、`composer.lock`、キャッシュ済みのメタデータは利用できます。 |
+::docs-table{#settings}
 
 ## コントリビュート
 

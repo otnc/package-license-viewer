@@ -33,8 +33,8 @@
         "ja": "✅ (実験的)"
       },
       "notes": {
-        "en": "Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server currently has to be built locally (`npm run compile:lsp`, or a plugin manager's build hook) — see `:help package_license_viewer`.",
-        "ja": "インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。現状は言語サーバーをローカルでビルドする必要があります(`npm run compile:lsp`、またはプラグインマネージャーのbuildフック) — `:help package_license_viewer` を参照してください(英語のみ)。"
+        "en": "Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server is built with npm automatically on first use — see `:help package_license_viewer`.",
+        "ja": "インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。言語サーバーは初回利用時にnpmで自動ビルドされます — `:help package_license_viewer` を参照してください(英語のみ)。"
       }
     },
     {

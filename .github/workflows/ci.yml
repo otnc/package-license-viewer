@@ -41,8 +41,8 @@ jobs:
       - run: npm ci
       - run: xvfb-run -a npm run test:integration
 
-  # Lints and smoke-tests packages/vim-plugin, the only part of the repo not covered by the
-  # Node-based jobs above.
+  # Lints and smoke-tests the Vim/Neovim plugin (plugin/, autoload/, lua/ at the repo root), the
+  # only part of the repo not covered by the Node-based jobs above.
   vim-plugin:
     runs-on: ubuntu-latest
     steps:
@@ -65,38 +65,63 @@ jobs:
           python3 -m venv /tmp/vint-venv
           /tmp/vint-venv/bin/pip install "setuptools<81" vim-vint
 
-      # vint and luacheck both auto-discover their config (.vintrc.yaml / .luacheckrc) by
-      # searching upward from the current directory, so both run from inside the package.
+      # vint and luacheck both auto-discover their config (.vintrc.yaml / .luacheckrc) from the current directory.
       - name: Lint VimScript
-        working-directory: packages/vim-plugin
-        run: /tmp/vint-venv/bin/vint autoload plugin test
+        run: /tmp/vint-venv/bin/vint autoload plugin test/vim
 
       - name: Lint Lua
-        working-directory: packages/vim-plugin
-        run: luacheck lua test/smoke_nvim.lua
+        run: luacheck lua test/vim/smoke_nvim.lua
 
       # Headless smoke tests: open test/fixtures/workspace/package.json (useRegistry disabled)
       # through each editor's real transport and assert the plv-local-pkg line gets its "MIT"
       # annotation — the same fixture the VS Code integration suite uses, so it never needs the
-      # network and stays deterministic.
+      # network and stays deterministic. Neither sets g:package_license_viewer_server_path, so they
+      # also cover finding the server built above relative to the repo root, as a plugin manager
+      # install does.
       - name: Vim smoke test
         env:
-          PLV_LSP_SERVER_PATH: ${{ github.workspace }}/packages/lsp-server/dist/lspServer.js
-          PLV_VIM_PLUGIN_DIR: ${{ github.workspace }}/packages/vim-plugin
+          PLV_VIM_PLUGIN_DIR: ${{ github.workspace }}
           PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
           PLV_RESULT_FILE: /tmp/plv-vim-result.txt
         run: |
-          vim -u DEFAULTS -N -Es -S packages/vim-plugin/test/smoke_vim.vim
+          vim -u DEFAULTS -N -Es -S test/vim/smoke_vim.vim
           grep -qx PASS /tmp/plv-vim-result.txt || (echo "::error::Vim smoke test did not find the expected annotation" && exit 1)
 
       - name: Neovim smoke test
         env:
-          PLV_LSP_SERVER_PATH: ${{ github.workspace }}/packages/lsp-server/dist/lspServer.js
           PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
           PLV_RESULT_FILE: /tmp/plv-nvim-result.txt
         run: |
-          nvim --headless -u NONE --cmd "set rtp+=${{ github.workspace }}/packages/vim-plugin" -c "luafile packages/vim-plugin/test/smoke_nvim.lua"
+          nvim --headless -u NONE --cmd "set rtp+=${{ github.workspace }}" -c "luafile test/vim/smoke_nvim.lua"
           grep -qx PASS /tmp/plv-nvim-result.txt || (echo "::error::Neovim smoke test did not find the expected annotation" && exit 1)
+
+      # Fresh-install smoke tests: the committed tree (git archive, so no node_modules or built
+      # server) unpacked under pack/*/start/ and loaded as a native package. Every plugin manager
+      # boils down to that, and with nothing built yet they also cover the first-run
+      # `npm ci && npm run compile:lsp` every real install goes through.
+      - name: Vim fresh-install smoke test
+        env:
+          PLV_PACKPATH: /tmp/plv-vim-pack
+          PLV_TIMEOUT_SEC: 300
+          PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
+          PLV_RESULT_FILE: /tmp/plv-vim-fresh-result.txt
+        run: |
+          mkdir -p "$PLV_PACKPATH/pack/plv/start/package-license-viewer"
+          git archive HEAD | tar -x -C "$PLV_PACKPATH/pack/plv/start/package-license-viewer"
+          vim -u DEFAULTS -N -Es -S test/vim/smoke_vim.vim
+          grep -qx PASS "$PLV_RESULT_FILE" || (echo "::error::Vim fresh-install smoke test did not find the expected annotation" && exit 1)
+
+      - name: Neovim fresh-install smoke test
+        env:
+          PLV_PACKPATH: /tmp/plv-nvim-pack
+          PLV_TIMEOUT_SEC: 300
+          PLV_FIXTURE_PACKAGE_JSON: ${{ github.workspace }}/test/fixtures/workspace/package.json
+          PLV_RESULT_FILE: /tmp/plv-nvim-fresh-result.txt
+        run: |
+          mkdir -p "$PLV_PACKPATH/pack/plv/start/package-license-viewer"
+          git archive HEAD | tar -x -C "$PLV_PACKPATH/pack/plv/start/package-license-viewer"
+          nvim --headless -u NONE -c "luafile test/vim/smoke_nvim.lua"
+          grep -qx PASS "$PLV_RESULT_FILE" || (echo "::error::Neovim fresh-install smoke test did not find the expected annotation" && exit 1)
 
   package:
     runs-on: ubuntu-latest

@@ -18,8 +18,9 @@ packages/
   core/              # editor-agnostic: providers, cache, format, net (current src/ minus vscode APIs)
   vscode-extension/  # current extension: annotator.ts, extension.ts, package.json, vsix packaging
   lsp-server/        # Node LSP server built on `core`, spawned by the Vim/Neovim plugin
-  vim-plugin/         # VimScript plugin (`plugin/`, `autoload/`) + `lua/` for Neovim-only extras
 ```
+
+The Vim/Neovim plugin (`plugin/`, `autoload/`, `lua/`, `doc/`) lives at the repository root rather than under `packages/`, so every plugin manager installs it from just `otnc/package-license-viewer` without an `rtp` option.
 
 `packages/core` is what makes the sharing real: `providers/*`, `cache.ts`, `format.ts`, `net.ts` do not need `vscode` today except at the type level (`vscode.TextDocument`, `vscode.CancellationToken` in `LicenseProvider`). Replacing those with small local interfaces —
 
@@ -48,7 +49,7 @@ A standard `vscode-languageserver` (Node) server wrapping `packages/core`:
 
 This keeps the exact resolution behavior (three-step npm lookup, Cargo's registry/lockfile logic, JSR routing) identical across editors, since it is the same `core` code running underneath.
 
-## Vim / Neovim plugin (`packages/vim-plugin`)
+## Vim / Neovim plugin (repository root)
 
 ### Editor capability differences
 
@@ -65,7 +66,7 @@ Neovim gets an optional `lua/` layer, loaded only `if has('nvim')`, that replace
 ### Structure
 
 ```
-packages/vim-plugin/
+<repo root>/
   plugin/package_license_viewer.vim   # commands, autocmds, entry point
   autoload/package_license_viewer.vim # LSP client, rendering, config (Vim-compatible)
   lua/package_license_viewer/init.lua # Neovim-only transport/rendering overrides
@@ -80,13 +81,13 @@ No change to the extension point itself: a new ecosystem is still "implement `Li
 
 - [x] Editor-agnostic interfaces (`TextDocumentLike`, `CancellationLike`, `UriLike`, `FileSystemLike`, `ProviderHost`) — `packages/core/src/providers/` has no `vscode` import left at all; VS Code extension keeps working unchanged on top of it
 - [x] `packages/lsp-server`: wraps the same providers, `packageLicenseViewer/annotations` notification, hover
-- [x] `packages/vim-plugin`: VimScript LSP client + `prop_add` rendering, verified against a real `packages/lsp-server/dist/lspServer.js` on Vim 9.2 (job/channel/textprop)
-- [x] `packages/vim-plugin/lua`: Neovim transport/rendering overrides (`vim.lsp.start()` + `nvim_buf_set_extmark()`), verified on Neovim 0.12
-- [x] Docs: `:help` file for the Vim/Neovim plugin (`packages/vim-plugin/doc/package_license_viewer.txt`)
+- [x] Vim plugin (`plugin/`, `autoload/`): VimScript LSP client + `prop_add` rendering, verified against a real `packages/lsp-server/dist/lspServer.js` on Vim 9.2 (job/channel/textprop)
+- [x] `lua/`: Neovim transport/rendering overrides (`vim.lsp.start()` + `nvim_buf_set_extmark()`), verified on Neovim 0.12
+- [x] Docs: `:help` file for the Vim/Neovim plugin (`doc/package_license_viewer.txt`)
 - [x] README section pointing at the Vim/Neovim plugin (the Editors table)
 - [x] Settings sync (`g:package_license_viewer_settings` / Neovim's `vim.lsp.start({ settings = ... })`, flattened server-side into the same `packageLicenseViewer.<key>` shape `vscode.workspace.getConfiguration` reads)
 - [x] Cancellation of in-flight resolutions on rapid edits — the server tracks one `CancellationTokenSource` per document URI and cancels the previous one on every `publishAnnotations` call, so a slow stale resolution can never overwrite newer, correct annotations. Verified with a race-condition test: an edit fired immediately after the first, with no delay, published exactly one notification with the final content, never the stale intermediate one — both against plain `tsc` output and the esbuild bundle
 - [x] Document a build step instead of a silent manual requirement — `:help package_license_viewer`'s new Installation section gives working `lazy.nvim`/`vim-plug`/`packer.nvim` configs with a build hook that runs `npm install && npm run compile:lsp`. `packages/lsp-server/dist/lspServer.js` itself is still not published as a pre-built artifact — that's a separate, bigger step (its own release/versioning story) than just documenting how to build it
 - [x] Physical `packages/core`/`packages/vscode-extension`/`packages/lsp-server` npm-workspaces split — `packages/core` compiles to plain JS (`npm run compile -w @plv/core`) and is consumed both by `esbuild` (bundled into `dist/extension.js`/`dist/lspServer.js`) and directly at test time; `vsce package`/`vsce publish` run with `--no-dependencies` from `packages/vscode-extension` (esbuild already inlines every runtime dependency), and a `prepack.mjs` script copies the shared icon/README/CHANGELOG in from the repo root since vsce only packages files inside the extension's own directory
-- [x] CI: lint/test the Vim plugin — `vint` (VimScript) and `luacheck` (Lua) via `.vintrc.yaml`/`.luacheckrc` in `packages/vim-plugin`, plus headless Vim and Neovim smoke tests (`packages/vim-plugin/test/smoke_vim.vim`, `smoke_nvim.lua`) that open the same offline `test/fixtures/workspace/package.json` the VS Code integration suite uses and assert the real annotation renders through each editor's actual transport
+- [x] CI: lint/test the Vim plugin — `vint` (VimScript) and `luacheck` (Lua) via `.vintrc.yaml`/`.luacheckrc` at the repository root, plus headless Vim and Neovim smoke tests (`test/vim/smoke_vim.vim`, `smoke_nvim.lua`) that open the same offline `test/fixtures/workspace/package.json` the VS Code integration suite uses and assert the real annotation renders through each editor's actual transport
 - [ ] Package the Vim plugin for `vim-plug`/`packer`/`lazy.nvim` (a registered plugin listing, not just documented manual install)
