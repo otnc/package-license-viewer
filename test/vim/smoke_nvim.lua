@@ -17,7 +17,17 @@ vim.g.package_license_viewer_settings = { npm = { useRegistry = false } }
 -- plugin/package_license_viewer.vim (added to 'runtimepath' by --cmd before
 -- this file runs) needs to be sourced explicitly, the same way a real
 -- plugin manager's automatic loading would have done it.
-vim.cmd("runtime! plugin/package_license_viewer.vim")
+--
+-- With PLV_PACKPATH set, the plugin is instead a fresh clone under
+-- $PLV_PACKPATH/pack/*/start/, loaded as a native package (:help packages) — and,
+-- with no server built there yet, this also covers the first-run auto-build.
+local packpath = os.getenv("PLV_PACKPATH")
+if packpath then
+  vim.opt.packpath:prepend(packpath)
+  vim.cmd("packloadall")
+else
+  vim.cmd("runtime! plugin/package_license_viewer.vim")
+end
 
 vim.cmd("edit " .. os.getenv("PLV_FIXTURE_PACKAGE_JSON"))
 
@@ -42,7 +52,8 @@ local function has_mit_annotation()
 end
 
 local ok = false
-local deadline = vim.loop.now() + 10000
+-- PLV_TIMEOUT_SEC: long enough for the first-run npm ci + compile when PLV_PACKPATH is set
+local deadline = vim.loop.now() + (tonumber(os.getenv("PLV_TIMEOUT_SEC")) or 10) * 1000
 while vim.loop.now() < deadline do
   vim.wait(100)
   if has_mit_annotation() then

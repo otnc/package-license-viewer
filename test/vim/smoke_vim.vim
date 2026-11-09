@@ -18,11 +18,19 @@ runtime! syntax/syncolor.vim
 
 let g:package_license_viewer_settings = {'npm': {'useRegistry': v:false}}
 
-" Added to 'runtimepath' (rather than sourced directly) so the autoload/
-" functions plugin/package_license_viewer.vim's autocmds call are actually
-" discoverable, the same way a real plugin manager installs this plugin.
-execute 'set runtimepath+=' . expand($PLV_VIM_PLUGIN_DIR)
-runtime! plugin/package_license_viewer.vim
+" With PLV_PACKPATH set, the plugin is instead a fresh clone under
+" $PLV_PACKPATH/pack/*/start/, loaded as a native package (|packages|) — and,
+" with no server built there yet, this also covers the first-run auto-build.
+if !empty($PLV_PACKPATH)
+  execute 'set packpath^=' . expand($PLV_PACKPATH)
+  packloadall
+else
+  " Added to 'runtimepath' (rather than sourced directly) so the autoload/
+  " functions plugin/package_license_viewer.vim's autocmds call are actually
+  " discoverable, the same way a real plugin manager installs this plugin.
+  execute 'set runtimepath+=' . expand($PLV_VIM_PLUGIN_DIR)
+  runtime! plugin/package_license_viewer.vim
+endif
 execute 'edit ' . expand($PLV_FIXTURE_PACKAGE_JSON)
 
 function! s:HasMitAnnotation() abort
@@ -38,7 +46,9 @@ endfunction
 
 let s:deadline = reltime()
 let s:ok = 0
-while reltimefloat(reltime(s:deadline)) < 10.0
+" PLV_TIMEOUT_SEC: long enough for the first-run npm ci + compile when PLV_PACKPATH is set
+let s:timeout = empty($PLV_TIMEOUT_SEC) ? 10.0 : str2float($PLV_TIMEOUT_SEC)
+while reltimefloat(reltime(s:deadline)) < s:timeout
   sleep 100m
   if s:HasMitAnnotation()
     let s:ok = 1
