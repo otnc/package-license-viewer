@@ -1,0 +1,24 @@
+{
+  "name": "@plv/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Command-line license reporting and linting for dependency manifests.",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "plv": "dist/plv.js"
+  },
+  "scripts": {
+    "compile": "esbuild src/index.ts --bundle --platform=node --target=node22 --main-fields=module,main --alias:@plv/core=../core/src/index.ts --external:vscode --outfile=dist/plv.js",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@plv/core": "*",
+    "vscode-languageserver-textdocument": "^1.0.14"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.28.2"
+  }
+}

@@ -33,6 +33,8 @@ Whichever language you write the rest of the subject in, keep the [Conventional 
 
 Everything hangs off one interface, [`LicenseProvider`](packages/core/src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts); nothing else needs to change to add one.
 
+The VS Code extension, the LSP server, and the [CLI](docs/cli.md) use the same providers from `packages/core`.
+
 Everything a provider doesn't have to worry about is shared:
 
 - [`packages/vscode-extension/src/annotator.ts`](packages/vscode-extension/src/annotator.ts) — debouncing, cancellation, concurrency limits, flicker-free redrawing, decoration and hover rendering
@@ -48,6 +50,8 @@ For exactly how each ecosystem resolves a license (npm/JSR precedence, package-m
 ## アーキテクチャ
 
 すべては [`LicenseProvider`](packages/core/src/providers/types.ts) という1つのインターフェースにぶら下がっています。プロバイダーはマニフェストを依存関係のリストに変換し(`parse`)、それぞれをライセンスに解決します(`resolve`)。プロバイダーは [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts) に登録されており、新しいプロバイダーを追加する際に他のファイルを変更する必要はありません。
+
+VS Code 拡張、LSP サーバー、[CLI](docs/cli.md) は、`packages/core` のプロバイダーを共通で使います。
 
 プロバイダーが気にする必要のないことは、すべて共通化されています。
 
@@ -405,12 +409,14 @@ Cargo、MoonBit、Go、Composerはそれぞれ専用のIntegrationテスト用�
 :::kiritan{locale=en}
 ## Testing
 
-Test code is split across two tiers — different tools on purpose, not an inconsistency:
+Each test suite runs in the environment it exercises.
+
+- **CLI smoke tests** run the built CLI as a separate process. Run `npm run compile:cli`, then `node --test packages/cli/test/cli.test.mjs`.
 
 - **Unit tests** run with Vitest, one project per package (`vitest.config.ts` at the repo root wires the two together via `test.projects`). [`packages/core/test/*.test.ts`](packages/core/test/) imports provider/cache/format source directly — no compile step, no real `vscode` at all for most of it, since these tests exercise the `ProviderHost`/`FileSystemLike`/`UriLike` abstractions through an in-memory fake host ([`test/support/fakeHost.ts`](packages/core/test/support/fakeHost.ts)) rather than any editor. The handful of `config.ts`/`log.ts`/`format.ts` calls that still touch real `vscode` APIs as values (`workspace.getConfiguration`, `window.createOutputChannel`, `MarkdownString`) go through a small stub aliased in as `"vscode"` via `vitest.config.ts`'s `resolve.alias` ([`test/support/vscodeStub.ts`](packages/core/test/support/vscodeStub.ts)). [`packages/vscode-extension/test/unit/*.test.ts`](packages/vscode-extension/test/unit/) tests `Annotator` and `extension.ts` against a fuller `vscode` stub of its own (same aliasing approach, plus `Uri`/decorations/commands/etc.) and also loads the real bundled `dist/extension.js` when it exists, through a `Module._load` patch scoped to that one test file — bundling can break the extension on its own, and that require() is the only way to exercise the actual shipped output rather than source.
 - **Integration tests** ([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/)) run inside a real VS Code via `@vscode/test-cli`. They're compiled by that package's own `tsc` pass (`npm run build-tests`) rather than run through Vitest, since Vitest cannot run inside the real extension host process.
 
-[`test/fixtures/`](test/fixtures/) stays at the repository root, outside both packages, because it's shared data — real lockfiles and sample workspaces produced by actually running npm/pnpm/yarn/bun — not test code, and both tiers read from it.
+[`test/fixtures/`](test/fixtures/) contains shared lockfiles and sample workspaces produced by running npm, pnpm, Yarn, and Bun.
 
 When adding a provider or changing resolution logic, add a unit test next to the existing ones in [`packages/core/test/`](packages/core/test/), following whichever of `npm.test.ts` (npm/JSR), `crates.test.ts` (Cargo), `moonbit.test.ts` (MoonBit) or `go.test.ts` (Go), `rubygems.test.ts` (Ruby) or `composer.test.ts` (Composer) matches your ecosystem's shape. Reach for an integration test only when the behavior genuinely needs a real VS Code host (activation, `vscode.workspace.fs`, real settings) — the suites build on the fixtures under [`test/fixtures/workspace/`](test/fixtures/workspace/), [`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/), [`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/), [`test/fixtures/go-workspace/`](test/fixtures/go-workspace/), [`test/fixtures/ruby-workspace/`](test/fixtures/ruby-workspace/) and [`test/fixtures/composer-workspace/`](test/fixtures/composer-workspace/).
 :::
@@ -418,12 +424,14 @@ When adding a provider or changing resolution logic, add a unit test next to the
 :::kiritan{locale=ja}
 ## テスト
 
-テストコードは2つの階層に分かれています。これはツールが違うのが意図的な設計であり、整理すべき不統一ではありません。
+テストの対象に合わせて実行環境を分けています。
+
+- **CLI のスモークテスト**は、ビルド済みの CLI を別プロセスで起動して動作を確かめます。`npm run compile:cli` のあとに `node --test packages/cli/test/cli.test.mjs` を実行してください。
 
 - **ユニットテスト**はVitestで実行され、パッケージごとに1つのプロジェクトに分かれています(リポジトリルートの `vitest.config.ts` が `test.projects` で両者をまとめています)。[`packages/core/test/*.test.ts`](packages/core/test/) はプロバイダー・キャッシュ・フォーマット関連のソースを直接importします — コンパイル不要で、実際の `vscode` もほとんど必要としません。これらのテストは特定のエディタではなく、インメモリのフェイクホスト([`test/support/fakeHost.ts`](packages/core/test/support/fakeHost.ts))を通じて `ProviderHost`/`FileSystemLike`/`UriLike` の抽象化そのものをテストしているためです。`config.ts`/`log.ts`/`format.ts` の中で依然として実際の `vscode` API を値として呼び出す一部分(`workspace.getConfiguration`、`window.createOutputChannel`、`MarkdownString`)は、`vitest.config.ts` の `resolve.alias` で `"vscode"` としてエイリアスした小さなスタブ([`test/support/vscodeStub.ts`](packages/core/test/support/vscodeStub.ts))経由で動きます。[`packages/vscode-extension/test/unit/*.test.ts`](packages/vscode-extension/test/unit/) は `Annotator` と `extension.ts` を、同じエイリアス方式によるより本格的な独自の `vscode` スタブ(`Uri`/デコレーション/コマンドなども含む)に対してテストし、加えてビルド済みの実際の `dist/extension.js` が存在する場合はそれも、そのテストファイルだけに限定した `Module._load` パッチ経由で読み込みます。バンドル自体が拡張機能を壊すことがあり、実際に出荷されるものをソースの代わりに動作確認できるのはそのrequire()だけだからです。
 - **Integrationテスト**([`packages/vscode-extension/test/integration/*.test.ts`](packages/vscode-extension/test/integration/))は `@vscode/test-cli` を使って実際のVS Code内で実行します。Vitestではなく、そのパッケージ自身の `tsc` パス(`npm run build-tests`)でコンパイルされます。Vitestは実際の拡張機能ホストのプロセス内では実行できないためです。
 
-[`test/fixtures/`](test/fixtures/) はリポジトリのルート、どちらのパッケージの外側にも置かれたままです。これは実際に npm/pnpm/yarn/bun を動かして生成したロックファイルやサンプルワークスペースといった共有データであり、テストコードではなく、両方の階層がここから読み込むためです。
+[`test/fixtures/`](test/fixtures/) には、npm、pnpm、Yarn、Bun で生成したロックファイルとサンプルワークスペースを置いています。各テストで共通して使います。
 
 プロバイダーの追加や解決ロジックの変更を行う際は、[`packages/core/test/`](packages/core/test/) 内の既存のテストの隣にユニットテストを追加してください。対象のエコシステムの形に近いもの、`npm.test.ts`(npm/JSR)、`crates.test.ts`(Cargo)、`moonbit.test.ts`(MoonBit)、`go.test.ts`(Go)、`rubygems.test.ts`(Ruby)、`composer.test.ts`(Composer)のいずれかに倣ってください。Integrationテストが必要になるのは、実際のVS Codeホスト(アクティベーション、`vscode.workspace.fs`、実際の設定)に本当に依存する挙動を検証する場合だけです。各テストスイートは [`test/fixtures/workspace/`](test/fixtures/workspace/)、[`test/fixtures/cargo-workspace/`](test/fixtures/cargo-workspace/)、[`test/fixtures/moonbit-workspace/`](test/fixtures/moonbit-workspace/)、[`test/fixtures/go-workspace/`](test/fixtures/go-workspace/)、[`test/fixtures/ruby-workspace/`](test/fixtures/ruby-workspace/)、[`test/fixtures/composer-workspace/`](test/fixtures/composer-workspace/) のフィクスチャを共通で使っています。
 :::

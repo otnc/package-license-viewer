@@ -10,7 +10,8 @@
     "packages/*"
   ],
   "scripts": {
-    "compile": "npm run compile:lsp && npm run compile:vscode",
+    "compile": "npm run compile:lsp && npm run compile:vscode && npm run compile:cli",
+    "compile:cli": "npm run compile -w @plv/cli",
     "compile:lsp": "npm run compile -w @plv/lsp-server",
     "watch:lsp": "npm run watch -w @plv/lsp-server",
     "compile:vscode": "npm run compile -w package-license-viewer",
