@@ -2,10 +2,11 @@ name: release
 
 # Run this workflow manually and give it a version. It bumps package.json, updates CHANGELOG.md from Conventional Commits (via git-cliff, see cliff.toml), builds the .vsix, publishes it, then commits, tags and creates the GitHub Release.
 #
-# Publishing is skipped automatically when VSCE_PAT is absent, so this workflow is usable
-# before you have a token.
+# Each registry is skipped automatically when its token is absent.
 #   VSCE_PAT  Azure DevOps PAT with the Marketplace > Manage scope
 #             https://marketplace.visualstudio.com/manage
+#   OVSX_PAT  Open VSX access token with publishing access to the otoneko1102 namespace
+#             https://github.com/eclipse-openvsx/openvsx/wiki/Publishing-Extensions
 on:
   workflow_dispatch:
     inputs:
@@ -24,6 +25,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      vsix: ${{ steps.bump.outputs.vsix }}
     env:
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
     steps:
@@ -129,3 +132,30 @@ jobs:
             echo "| VS Code Marketplace | ${{ !inputs.dry_run && env.VSCE_PAT != '' && 'published' || 'skipped' }} |"
             echo "| Tag and GitHub Release | ${{ !inputs.dry_run && 'created' || 'skipped (dry run)' }} |"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  publish-open-vsx:
+    needs: release
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    steps:
+      - uses: actions/setup-node@v4
+        if: ${{ env.OVSX_PAT != '' }}
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v4
+        if: ${{ env.OVSX_PAT != '' }}
+        with:
+          name: vsix
+
+      - name: Publish to Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
+        env:
+          VSIX: ${{ needs.release.outputs.vsix }}
+        run: npx --yes ovsx publish "$VSIX"
+
+      - name: Summary
+        run: echo "Open VSX publishing ${{ env.OVSX_PAT != '' && 'succeeded' || 'was skipped because OVSX_PAT is unset' }}." >> "$GITHUB_STEP_SUMMARY"
