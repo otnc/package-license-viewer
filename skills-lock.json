@@ -5,61 +5,61 @@
       "source": "ro80t/hush",
       "sourceType": "github",
       "skillPath": "skills/hush/SKILL.md",
-      "computedHash": "bc4c35c783c5aac0e30636592d040b0e64e14b969d1f3f2b93daa711925c9839"
+      "computedHash": "fb5b49a60ed691934fab9143c126c7c801b282352129246e844f8d16a5dd2674"
     },
     "hush-fix": {
       "source": "ro80t/hush",
       "sourceType": "github",
       "skillPath": "skills/hush-fix/SKILL.md",
-      "computedHash": "a3f6e0b98984b0305b1c0bd5af107b9034be537d4c94f2566b9e2654fc8b6392"
+      "computedHash": "c4fa82fdf1b5f3dfa38130c3ffd1b989af8d69e453ced9dd9a58da5d27286a51"
     },
     "hush-review": {
       "source": "ro80t/hush",
       "sourceType": "github",
       "skillPath": "skills/hush-review/SKILL.md",
-      "computedHash": "dd9414f55feab1f83a0d6c4c1b8cfe15fd525fb63090c56812ea8a7ca6c480da"
+      "computedHash": "bfe62505e9a31b5b69bf864bed945ae8ef02b9542f555854977a78b17b9ab035"
     },
     "js-ts-business-crud-transforms": {
       "source": "icyJoseph/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/js-ts-business-crud-transforms/SKILL.md",
-      "computedHash": "64e9b134f0099dd10bd558a38e26b4ddd3d190b9409c02525145337e6bf7513c"
+      "computedHash": "785ce46589abff14ed0e9b529eb14f0a42d5b9816ae75f3efafc65f99aeb8af6"
     },
     "js-ts-performance-readability": {
       "source": "icyJoseph/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/js-ts-performance-readability/SKILL.md",
-      "computedHash": "c29a1d1066e3847ab925714df950f3cce187e8d877353e9ca1d3599db440d38a"
+      "computedHash": "1deacf6936509a097c81ac234bf4f0b202301a09fcd8bd60d2ab5ef1679bbd9b"
     },
     "kiritan": {
       "source": "otnc/kiritan",
       "sourceType": "github",
       "skillPath": "skills/kiritan/SKILL.md",
-      "computedHash": "dc593c40edc8eb8f808e7495ca60b8845ae8236f7bb52cea32ca89ca4288abb6"
+      "computedHash": "2ad3b1834e97e74f2b0f48ea3d9a5020bcfe445e420d03103b789793320f9620"
     },
     "natural-japanese": {
       "source": "coji/natural-japanese",
       "sourceType": "github",
       "skillPath": "skills/natural-japanese/SKILL.md",
-      "computedHash": "fddcb0ad9dcf3f415e34964f4ef05f168d0c368e2657361e11a38caf01c9e541"
+      "computedHash": "cc03ed3294dbaf4744de05e078c197b6e42340e32945e653f2c5cdd5eebede7d"
     },
     "report-skills": {
       "source": "mizuamedesu/ReportSkills",
       "sourceType": "github",
       "skillPath": "skills/report-skills/SKILL.md",
-      "computedHash": "12e810635d144084cc4904a9dea2921e34ad3a1a4db40a6881e82a64ffadfaa0"
+      "computedHash": "3f89a827c9d5ed9dc9ce5741b7424fb412d8e4c30734a50b66ad091ab0c29e80"
     },
     "stop-ai-slop-jp": {
       "source": "iKora128/stop-ai-slop-jp",
       "sourceType": "github",
       "skillPath": "SKILL.md",
-      "computedHash": "39b85c919cd3158139441c167760345b8f3a2c9d1de44d4219cdeb8cc0b1e5e0"
+      "computedHash": "4165359286fda94f6d21888bce8286af3c13c7ddb2c162ecb7c311840ef5eeca"
     },
     "typescript-design": {
       "source": "fa0311/typescript-design-skill",
       "sourceType": "github",
       "skillPath": "skills/typescript-design/SKILL.md",
-      "computedHash": "7d032322845910a1105eb48c6dad59a73bff9f1e79a0c17636d8532c16b54247"
+      "computedHash": "3e88b6ee2ed0ad24c2024e3539aa731e2e400cd4bfc7ba48a3e4374507bf9165"
     }
   }
 }

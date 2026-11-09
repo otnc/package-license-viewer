@@ -65,14 +65,14 @@ suite("Ruby workspace", () => {
 
       // Cached metadata still answers while requests are turned off
       cache.set("rubygems:versions:v1:forked", [
-        { version: "1.0.0", licenses: ["MIT"], prerelease: false, platform: "ruby" },
+        { version: "0.1.7", licenses: ["MIT"], prerelease: false, platform: "ruby" },
       ]);
       const forked = await provider.resolve(entries[1], doc, noCancel);
       assert.equal(forked.license, "MIT");
-      assert.equal(forked.version, "1.0.0");
+      assert.equal(forked.version, "0.1.7");
       assert.match(
         buildHover(entries[1], forked)?.value ?? "",
-        /https:\/\/rubygems\.org\/gems\/forked\/versions\/1\.0\.0/
+        /https:\/\/rubygems\.org\/gems\/forked\/versions\/0\.1\.7/
       );
 
       const offline = await provider.resolve(entries[0], doc, noCancel);

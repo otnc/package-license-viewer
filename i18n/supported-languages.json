@@ -1,0 +1,139 @@
+{
+  "heading": {
+    "en": "Supported languages",
+    "ja": "サポート言語"
+  },
+  "columns": {
+    "language": {
+      "en": "Language",
+      "ja": "言語"
+    },
+    "support": {
+      "en": "Support",
+      "ja": "サポート状況"
+    },
+    "version": "Version",
+    "managers": {
+      "en": "Package managers",
+      "ja": "パッケージマネージャー"
+    },
+    "contributor": {
+      "en": "First contributor",
+      "ja": "最初の貢献者"
+    },
+    "notes": {
+      "en": "Notes",
+      "ja": "備考"
+    }
+  },
+  "rows": [
+    {
+      "language": "JavaScript / TypeScript",
+      "support": "✅",
+      "version": "✅",
+      "managers": {
+        "en": "npm, pnpm, yarn (classic & berry), bun",
+        "ja": "npm, pnpm, yarn (classic / berry), bun"
+      },
+      "contributor": "[@otnc](https://github.com/otnc)",
+      "notes": {
+        "en": "`package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs",
+        "ja": "`package.json` に加え、`deno.json`/`jsr.json`/`import_map.json`、pnpmワークスペースカタログにも対応"
+      }
+    },
+    {
+      "language": "Deno / JSR",
+      "support": "✅",
+      "version": "✅",
+      "managers": {
+        "en": "jsr, `npm:` specifiers",
+        "ja": "jsr, `npm:` 指定子"
+      },
+      "contributor": "[@otnc](https://github.com/otnc)",
+      "notes": {
+        "en": "Same manifests as above — `jsr:` and `npm:` specifiers are both resolved",
+        "ja": "上記と同じマニフェストを対象に、`jsr:` と `npm:` の両方の指定子を解決"
+      }
+    },
+    {
+      "language": "Go",
+      "support": "✅",
+      "version": "✅",
+      "managers": "go mod",
+      "contributor": "[@otnc](https://github.com/otnc)",
+      "notes": {
+        "en": "`go.mod` requirements, with `replace` applied, resolved against deps.dev; no local Go install needed, and modules matching `GOPRIVATE` are never looked up",
+        "ja": "`go.mod` の requirement を `replace` を反映したうえでdeps.devと突き合わせて解決。ローカルにGoのインストールは不要で、`GOPRIVATE` に一致するモジュールは問い合わせない"
+      }
+    },
+    {
+      "language": "Rust",
+      "support": "✅",
+      "version": "✅",
+      "managers": "Cargo",
+      "contributor": "[@bem130](https://github.com/bem130)",
+      "notes": {
+        "en": "`Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed",
+        "ja": "`Cargo.toml` の宣言をcrates.io / `Cargo.lock` と突き合わせて解決。ローカルにCargoのインストールは不要"
+      }
+    },
+    {
+      "language": "MoonBit",
+      "support": "✅",
+      "version": "❌",
+      "managers": "moon",
+      "contributor": "[@Allianaab2m](https://github.com/Allianaab2m)",
+      "notes": {
+        "en": "`moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed",
+        "ja": "`moon.mod` / `moon.mod.json` を `.mooncakes`、ローカルのレジストリインデックス、mooncakes.io と突き合わせて解決。ローカルに `moon` のインストールは不要"
+      }
+    },
+    {
+      "language": "Ruby",
+      "support": "✅",
+      "version": "✅",
+      "managers": "bundler, gem",
+      "contributor": "[@muse-chan](https://github.com/muse-chan)",
+      "notes": {
+        "en": "`Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed",
+        "ja": "`Gemfile` と `*.gemspec` の宣言を rubygems.org / `Gemfile.lock` と突き合わせて解決。ローカルにRubyのインストールは不要"
+      }
+    },
+    {
+      "language": "PHP",
+      "support": "✅",
+      "version": "✅",
+      "managers": "Composer",
+      "contributor": "[@v420v](https://github.com/v420v)",
+      "notes": {
+        "en": "`composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed",
+        "ja": "`composer.json` の requirement を `vendor/` / `composer.lock` / Packagist と突き合わせて解決。ローカルにPHPやComposerのインストールは不要"
+      }
+    },
+    {
+      "language": "Python",
+      "support": "❌",
+      "version": "❌",
+      "managers": "pip, uv, poetry",
+      "contributor": "",
+      "notes": {
+        "en": "Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14)",
+        "ja": "対応予定 — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14)"
+      }
+    },
+    {
+      "language": {
+        "en": "Your language?",
+        "ja": "あなたの言語?"
+      },
+      "support": "",
+      "version": "",
+      "managers": "",
+      "contributor": "",
+      "notes": {
+        "en": "Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem))",
+        "ja": "ここにない言語のサポートも歓迎します。[Issue](https://github.com/otnc/package-license-viewer/issues) やプルリクエストをお送りください([CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem) を参照)"
+      }
+    }
+  ]
+}

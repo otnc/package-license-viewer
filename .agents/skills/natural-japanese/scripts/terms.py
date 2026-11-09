@@ -8,14 +8,14 @@
 """terms.py — 専門用語候補（カタカナ複合語・ASCII英略語・固有名詞）を初出順に抽出する。
 
 設計原則「検出は機械、判断はAI」に基づき、有用な専門用語かどうか、初出で説明済みかどうか
-の判断は行わない（has_gloss_hint はあくまでヒント）。文体憲法第4条（初出で説明すべき用語）
+の判断は行わない（has_gloss_hint はあくまでヒント）。SKILL.md §2 の原則4（初出で説明すべき用語）
 の確認材料として使う。
 
 使い方:
     uv run scripts/terms.py <file.md> [--json]
 
 入力エラー（ファイル不在・ディレクトリ指定・読み取り不可等）は exit code 1、
-それ以外は exit code 0（判断は人間/AIに委ねる。他の検査層エントリと同じ方針）。
+それ以外は exit code 0（判断は人間/AIに委ねる。ほかの検査スクリプトと同じ方針）。
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from textcore import (
 # sudachipy の解析結果から、専門用語候補（カタカナ複合語・ASCII英略語・
 # 固有名詞らしき語）を機械的に列挙する。有用な専門用語かどうか、初出で
 # 説明済みかどうかの判断は行わない（has_gloss_hint はあくまでヒント）。
-# 文体憲法第4条（初出で説明すべき用語）の確認材料として AI に渡す素材。
+# SKILL.md §2 の原則4（初出で説明すべき用語）の確認材料として AI に渡す素材。
 # ---------------------------------------------------------------------------
 
 _KATAKANA_CHAR_RE = re.compile(r"^[ァ-ヶー]+$")
@@ -62,8 +62,8 @@ def _is_katakana_token(surface: str) -> bool:
 
 
 # 英字が先頭大文字で残りが英数字（"Cloudflare" "TypeScript" 等）の語。
-# sudachipy の辞書は未登録の製品名/固有名詞をしばしば「名詞,普通名詞」に倒す
-# （固有名詞タグに乗らない）ため、POS だけに頼ると製品名を取りこぼす。
+# sudachipy の辞書は未登録の製品名/固有名詞をしばしば「名詞,普通名詞」と解析する
+# （固有名詞の品詞が付かない）ため、POS だけに頼ると製品名を取りこぼす。
 # 表層の形（先頭大文字+英数字）という単純なヒューリスティクスで補う
 # （除外辞書は作らない方針のため、あくまで形のみで判定する）。
 _CAPITALIZED_LATIN_WORD_RE = re.compile(r"^[A-Z][a-zA-Z0-9]*$")
@@ -124,7 +124,7 @@ def build_term_inventory(raw_text: str) -> list[dict]:
 
     # 見出し行は mask_markdown_structure() で空文字化されるため、見出しテキストも
     # 用語抽出の対象に含めたい場合は別途生テキストから拾って合流させる
-    # （制品名・専門用語が見出しで最初に登場するケースを取りこぼさないため）。
+    # （製品名・専門用語が見出しで最初に登場するケースを取りこぼさないため）。
     heading_lines: list[tuple[int, str]] = []
     for no, line in iter_lines_with_no(masked_comments):
         if _HEADING_RE.match(line):

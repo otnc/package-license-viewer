@@ -11,6 +11,7 @@ This is the detailed reference for how each supported ecosystem resolves a licen
 | `go.mod` | `require`, single-line and block form, direct and `// indirect` alike, with `replace` applied |
 | `Gemfile` | `gem` calls, in and out of `group` blocks |
 | `*.gemspec` | `add_dependency`, `add_runtime_dependency`, `add_development_dependency` |
+| `composer.json` | `require` and `require-dev`; platform packages (`php`, `ext-*`, `lib-*`, `composer-*-api`) are skipped |
 
 ## npm / JSR
 
@@ -127,3 +128,35 @@ Licenses come from rubygems.org's versions API (`GET /api/v1/versions/<name>.jso
 `git:`, `github:` and `path:` gems, and gems declared under a `source` block (or a per-gem `source:`) pointing anywhere other than rubygems.org, are skipped: their names are never sent to rubygems.org. A `GEM` section of Gemfile.lock served by a private server is likewise ignored, since its names may collide with public ones. `gemspec` directives in a Gemfile, `eval_gemfile`, `ruby` version directives and other Bundler DSL calls are not interpreted.
 
 No Ruby or Bundler installation is required. The extension never runs `ruby` or `bundle`, reads installed gems, or opens license files. It does not resolve dependency graphs or list transitive dependencies — Gemfile.lock entries are only used to pin a declared gem's version, never annotated themselves. Setting `rubygems.useRegistry` to `false` stops requests while still using cached answers, and `rubygems.useLockfiles` to `false` ignores Gemfile.lock.
+
+## Composer
+
+```jsonc
+// composer.json
+{
+  "require": {
+    "php": ">=8.1", // (nothing: a platform package)
+    "psr/log": "^3.0", // MIT
+    "acme/internal": "dev-main" // MIT (from composer.lock; no Packagist link for a path repository)
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11.0" // BSD-3-Clause
+  }
+}
+```
+
+Comments above illustrate annotations, not changes the extension writes to files. The `require` and `require-dev` sections are read from the JSON syntax tree, so a half-typed manifest still yields whatever can be read. Names are lowercased, as `composer.lock`, `installed.json` and Packagist all key packages that way. Platform packages — `php`, `php-64bit`, `hhvm`, `ext-*`, `lib-*`, `composer-plugin-api`, `composer-runtime-api` — are not annotated: they constrain PHP itself, not a package with a license.
+
+The lookup path is:
+
+1. Look in `<vendor-dir>/composer/installed.json` beside the manifest (`config.vendor-dir` is honored; the default is `vendor`). Composer writes every installed package's full record there, license included, so one read answers every dependency. Parent directories are not searched: Composer never hoists, and a monorepo root's `vendor/` would report the wrong version for a nested manifest.
+2. Otherwise look in `composer.lock`, whose `packages` and `packages-dev` records also carry the license.
+3. Otherwise ask Packagist (`https://repo.packagist.org/p2/<vendor>/<name>.json`) and choose the highest version satisfying the constraint under Composer's stability rules: `minimum-stability` (default `stable`) is replaced for that package by an explicit `@flag`, lowered by a prerelease named in the constraint, and `prefer-stable` prefers a stable candidate over a higher unstable one.
+
+A vendored or locked version is used only if it still satisfies the constraint written in `composer.json`; a stale lock falls through to step 3 instead of reporting a version the manifest no longer asks for. A `dev-*` branch satisfies a numeric constraint through its aliases — the constraint's own `as` clause, the package's `extra.branch-alias`, or the lock's `aliases` — the way Composer itself lets `^1.0` be met by `dev-main`. Branch requirements resolve from steps 1 and 2 only; Packagist's separate `~dev` metadata is not fetched.
+
+Version constraints are interpreted exactly as `composer/semver` does, independently of npm ranges: `~1.2` means `>=1.2 <2.0`, `^0.3` means `>=0.3 <0.4`, `1.2.*`, hyphen ranges, `||`/`|` OR, space/comma AND, `@stability` flags, `as` aliases and `#ref` suffixes are all understood. Composer's `license` field is a string or an array; the array is disjunctive by Composer's definition ("pick one"), so several entries are joined with `OR`. A package declaring no license shows as unknown. Each package's own `require.php` constraint is shown after the license the way npm shows `engines.node`.
+
+The hover title links to `https://packagist.org/packages/<vendor>/<name>#<version>` only for a package known to come from Packagist — a p2 answer, or a lock/installed record whose `notification-url` is Packagist's. A package from a `path`, `vcs` or private repository keeps its license but gets no link. Packagist's p2 files are static CDN JSON; they are fetched in parallel under `maxConcurrentRequests`, the expanded version list is cached, a miss is not, and an HTTP 429 pauses every request for a minute without retrying. Private repositories (Private Packagist, Satis, `vcs`/`path` repositories) are never contacted; a manifest whose `repositories` sets `"packagist.org": false` sends nothing to Packagist at all.
+
+No PHP or Composer installation is required. The extension never runs `composer`, reads `~/.composer`, or opens license files, and it does not resolve dependency graphs. Setting `composer.useRegistry` to `false` stops requests while still using `vendor/`, `composer.lock` and cached answers, and `composer.useLockfiles` to `false` ignores `composer.lock`.

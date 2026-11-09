@@ -1,0 +1,260 @@
+{
+  "heading": {
+    "en": "Settings",
+    "ja": "設定"
+  },
+  "columns": {
+    "setting": {
+      "en": "Setting",
+      "ja": "設定"
+    },
+    "default": {
+      "en": "Default",
+      "ja": "デフォルト値"
+    },
+    "description": {
+      "en": "Description",
+      "ja": "説明"
+    }
+  },
+  "rows": {
+    "packageLicenseViewer.enabled": {
+      "description": {
+        "en": "Show inline license annotations.",
+        "ja": "インラインのライセンス注釈を表示します。"
+      }
+    },
+    "packageLicenseViewer.format": {
+      "description": {
+        "en": "Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`.",
+        "ja": "注釈のテンプレート。プレースホルダー: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`。"
+      }
+    },
+    "packageLicenseViewer.showResolvedVersion": {
+      "description": {
+        "en": "Append the resolved version, e.g. `MIT · 4.17.21`.",
+        "ja": "解決されたバージョンを付加します(例: `MIT · 4.17.21`)。"
+      }
+    },
+    "packageLicenseViewer.showNodeEngine": {
+      "description": {
+        "en": "Append the package's `engines.node` range, when it has one, e.g. `MIT (Node: >=20)`.",
+        "ja": "パッケージに `engines.node` の指定があれば付加します(例: `MIT (Node: >=20)`)。"
+      }
+    },
+    "packageLicenseViewer.showRubyVersion": {
+      "description": {
+        "en": "Append a gem's `required_ruby_version` range, when it has one, e.g. `MIT (Ruby: >=3.0)`.",
+        "ja": "gemに `required_ruby_version` の指定があれば付加します(例: `MIT (Ruby: >=3.0)`)。"
+      }
+    },
+    "packageLicenseViewer.showRustVersion": {
+      "description": {
+        "en": "Append a crate's `rust-version` (MSRV), when it has one, e.g. `MIT (Rust: >=1.56)`.",
+        "ja": "crateに `rust-version` (MSRV) の指定があれば付加します(例: `MIT (Rust: >=1.56)`)。"
+      }
+    },
+    "packageLicenseViewer.showGoVersion": {
+      "description": {
+        "en": "Append a module version's `go` directive, when it has one, e.g. `MIT (Go: >=1.21)`.",
+        "ja": "モジュールのバージョンに `go` ディレクティブの指定があれば付加します(例: `MIT (Go: >=1.21)`)。"
+      }
+    },
+    "packageLicenseViewer.showPhpVersion": {
+      "description": {
+        "en": "Append a package's `require.php` constraint, when it has one, e.g. `MIT (PHP: >=8.1)`.",
+        "ja": "パッケージに `require.php` の指定があれば付加します(例: `MIT (PHP: >=8.1)`)。"
+      }
+    },
+    "packageLicenseViewer.unknownText": {
+      "description": {
+        "en": "Text shown when the license is unknown. Empty means show nothing.",
+        "ja": "ライセンスが不明な場合に表示するテキスト。空文字なら何も表示しません。"
+      }
+    },
+    "packageLicenseViewer.annotationColor": {
+      "description": {
+        "en": "Theme color id, or a CSS color such as `#88888899`, for everything except the license itself.",
+        "ja": "ライセンス部分以外に使うテーマカラーID、または `#88888899` のようなCSSカラー。"
+      }
+    },
+    "packageLicenseViewer.licenseColor": {
+      "description": {
+        "en": "Theme color id, or a CSS color, used for just the license part of the annotation.",
+        "ja": "注釈のライセンス部分だけに使うテーマカラーID、またはCSSカラー。"
+      }
+    },
+    "packageLicenseViewer.margin": {
+      "description": {
+        "en": "CSS margin before the annotation.",
+        "ja": "注釈の前に付けるCSSマージン。"
+      }
+    },
+    "packageLicenseViewer.cacheTtlHours": {
+      "description": {
+        "en": "Lifetime of cached registry results. `0` disables the on-disk cache.",
+        "ja": "キャッシュしたレジストリ結果の有効期間。`0` でディスクキャッシュを無効化します。"
+      }
+    },
+    "packageLicenseViewer.requestTimeoutMs": {
+      "description": {
+        "en": "Timeout of a single registry request.",
+        "ja": "レジストリへの1リクエストあたりのタイムアウト。"
+      }
+    },
+    "packageLicenseViewer.maxConcurrentRequests": {
+      "description": {
+        "en": "Parallel registry requests.",
+        "ja": "レジストリへの並列リクエスト数。"
+      }
+    },
+    "packageLicenseViewer.npm.enabled": {
+      "description": {
+        "en": "Enable annotations for `package.json`.",
+        "ja": "`package.json` の注釈を有効にします。"
+      }
+    },
+    "packageLicenseViewer.npm.registry": {
+      "description": {
+        "en": "Registry base URL.",
+        "ja": "レジストリのベースURL。"
+      }
+    },
+    "packageLicenseViewer.npm.useRegistry": {
+      "description": {
+        "en": "Allow registry lookups. Set to `false` to stay fully offline.",
+        "ja": "レジストリへの問い合わせを許可します。`false` にすると完全オフラインで動作します。"
+      }
+    },
+    "packageLicenseViewer.npm.useLockfiles": {
+      "description": {
+        "en": "Read lockfiles for exact pinned versions.",
+        "ja": "正確なピン留めバージョンを得るためにロックファイルを読み込みます。"
+      }
+    },
+    "packageLicenseViewer.npm.sections": {
+      "defaultSummary": {
+        "en": "%{count} standard sections",
+        "ja": "標準の%{count}セクション"
+      },
+      "description": {
+        "en": "Sections that are always annotated.",
+        "ja": "常に注釈を付けるセクション。"
+      }
+    },
+    "packageLicenseViewer.npm.autoDetectSections": {
+      "description": {
+        "en": "Also annotate other top-level objects whose key ends with `dependencies`.",
+        "ja": "キーが `dependencies` で終わるその他のトップレベルオブジェクトにも注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.npm.pnpmWorkspaceCatalogs": {
+      "description": {
+        "en": "Also annotate the `catalog:` and `catalogs:` sections of `pnpm-workspace.yaml`.",
+        "ja": "`pnpm-workspace.yaml` の `catalog:` / `catalogs:` セクションにも注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.jsr.enabled": {
+      "description": {
+        "en": "Enable annotations for Deno / import map manifests.",
+        "ja": "Deno / import mapマニフェストの注釈を有効にします。"
+      }
+    },
+    "packageLicenseViewer.jsr.registry": {
+      "description": {
+        "en": "JSR registry base URL.",
+        "ja": "JSRレジストリのベースURL。"
+      }
+    },
+    "packageLicenseViewer.jsr.apiUrl": {
+      "description": {
+        "en": "JSR API base URL, where the license lives.",
+        "ja": "ライセンス情報を取得するJSR APIのベースURL。"
+      }
+    },
+    "packageLicenseViewer.crates.enabled": {
+      "description": {
+        "en": "Annotate dependency declarations in `Cargo.toml`.",
+        "ja": "`Cargo.toml` の依存関係宣言に注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.crates.useRegistry": {
+      "description": {
+        "en": "Allow crates.io requests. When disabled, existing cached public metadata can still be used.",
+        "ja": "crates.ioへのリクエストを許可します。無効にした場合もキャッシュ済みの公開メタデータは利用できます。"
+      }
+    },
+    "packageLicenseViewer.crates.useLockfiles": {
+      "description": {
+        "en": "Prefer a uniquely matching crates.io version in the applicable `Cargo.lock`.",
+        "ja": "該当する `Cargo.lock` 内で一意に一致するcrates.ioのバージョンを優先します。"
+      }
+    },
+    "packageLicenseViewer.moonbit.enabled": {
+      "description": {
+        "en": "Annotate dependency declarations in `moon.mod` / `moon.mod.json`.",
+        "ja": "`moon.mod` / `moon.mod.json` の依存関係宣言に注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.moonbit.useRegistry": {
+      "description": {
+        "en": "Allow mooncakes.io requests. When disabled, installed modules, the local registry index and existing cached metadata are still used.",
+        "ja": "mooncakes.ioへのリクエストを許可します。無効にした場合も、インストール済みモジュール・ローカルのレジストリインデックス・キャッシュ済みメタデータは利用できます。"
+      }
+    },
+    "packageLicenseViewer.moonbit.useRegistryIndex": {
+      "description": {
+        "en": "Read the registry index `moon update` keeps in `$MOON_HOME/registry/index`, so an installed toolchain resolves without any request.",
+        "ja": "`moon update` が `$MOON_HOME/registry/index` に保持するレジストリインデックスを読み込み、インストール済みツールチェーンがリクエストなしで解決できるようにします。"
+      }
+    },
+    "packageLicenseViewer.go.enabled": {
+      "description": {
+        "en": "Annotate the requirements in `go.mod`.",
+        "ja": "`go.mod` の requirement に注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.go.useRegistry": {
+      "description": {
+        "en": "Allow deps.dev requests, and reads of a version's `go.mod` from the Go module proxy for its `go` directive. Modules matching `GOPRIVATE`, `GONOPROXY` or `GONOSUMDB` are never looked up either way. When disabled, existing cached metadata is still used.",
+        "ja": "deps.devへのリクエストと、`go` ディレクティブ取得のためのGoモジュールプロキシからの各バージョンの `go.mod` の読み取りを許可します。`GOPRIVATE`、`GONOPROXY`、`GONOSUMDB` に一致するモジュールは、この設定に関係なく問い合わせません。無効にした場合もキャッシュ済みのメタデータは利用できます。"
+      }
+    },
+    "packageLicenseViewer.rubygems.enabled": {
+      "description": {
+        "en": "Annotate dependency declarations in `Gemfile` and `*.gemspec`.",
+        "ja": "`Gemfile` と `*.gemspec` の依存関係宣言に注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.rubygems.useRegistry": {
+      "description": {
+        "en": "Allow rubygems.org requests. When disabled, existing cached metadata can still be used.",
+        "ja": "rubygems.orgへのリクエストを許可します。無効にした場合もキャッシュ済みのメタデータは利用できます。"
+      }
+    },
+    "packageLicenseViewer.rubygems.useLockfiles": {
+      "description": {
+        "en": "Prefer a uniquely matching rubygems.org version in `Gemfile.lock`.",
+        "ja": "`Gemfile.lock` 内で一意に一致するrubygems.orgのバージョンを優先します。"
+      }
+    },
+    "packageLicenseViewer.composer.enabled": {
+      "description": {
+        "en": "Annotate the `require` and `require-dev` sections of `composer.json`.",
+        "ja": "`composer.json` の `require` / `require-dev` に注釈を付けます。"
+      }
+    },
+    "packageLicenseViewer.composer.useLockfiles": {
+      "description": {
+        "en": "Read `composer.lock` for the locked version and its license when nothing is installed under `vendor/`.",
+        "ja": "`vendor/` に何もインストールされていないとき、`composer.lock` からロックされたバージョンとそのライセンスを読みます。"
+      }
+    },
+    "packageLicenseViewer.composer.useRegistry": {
+      "description": {
+        "en": "Allow Packagist requests. When disabled, installed packages, `composer.lock` and existing cached metadata are still used.",
+        "ja": "Packagistへのリクエストを許可します。無効にした場合も、インストール済みパッケージ、`composer.lock`、キャッシュ済みのメタデータは利用できます。"
+      }
+    }
+  }
+}

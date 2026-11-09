@@ -1,19 +1,24 @@
 import { defineConfig } from "kiritan";
+import { readmeRenderer } from "./i18n/readme-renderer.mjs";
 
 export default defineConfig({
   locales: { default: "en", list: ["en", "ja"] },
   sources: [
-    { glob: "i18n/README.base.md", strategy: "inline" },
+    { glob: "i18n/README.base.md", strategy: "inline", renderer: "readme" },
     { glob: "i18n/CONTRIBUTING.base.md", strategy: "inline" },
   ],
   // {base}.md at the project root for the default locale (README.md, CONTRIBUTING.md), {base}.{locale}.md for every other locale (README.ja.md, CONTRIBUTING.ja.md).
   naming: { template: "{base}.{locale}.{ext}" },
-  // The switcher goes right after the H1. Both base files keep their H1 outside the per-locale blocks (so it's one shared heading node the switcher can anchor after), with its per-locale text supplied through these variables.
+  plugins: { renderers: { readme: readmeRenderer } },
+  markdown: { alertBlankLineSpaces: 3 },
+  // Keep each H1 outside locale blocks so the automatic switcher can anchor after it.
   switcher: { position: "after-heading" },
   interpolation: {
     variables: {
-      readmeTitle: { en: "Package License Viewer", ja: "Package License Viewer" },
       contributingTitle: { en: "Contributing", ja: "貢献について" },
+      contributorsHeading: { en: "Contributors", ja: "コントリビューター" },
+      authorHeading: { en: "Author", ja: "作者" },
+      licenseHeading: { en: "License", ja: "ライセンス" },
     },
   },
 });

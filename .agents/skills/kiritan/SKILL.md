@@ -2,7 +2,7 @@
 name: kiritan
 description: Helps write and maintain Kiritan-based i18n — editing base/*.base.md files with :::kiritan{...} directives, choosing the sidecar/inline/catalog document strategy or the colocated/split/centralized/embedded runtime strategy, running kiritan init/build/check/translate/extract/typegen, and avoiding common mistakes such as hand-editing generated output. Use when a repo has a *.kiritanconfig config file, a base/ directory of *.base.md sources, or generated docs carrying a `<!-- kiritan:untranslated -->` / `<!-- kiritan:hash ... -->` marker — or when asked to localize a README/doc, add or fix a translation, or resolve a `kiritan check` failure.
 license: WTFPL
-compatibility: Requires Node.js 22.7+ and the kiritan CLI (npm install -D kiritan).
+compatibility: Requires Node.js 18.3+ and the kiritan CLI (npm install -D kiritan).
 metadata:
   trigger: kiritan i18n documentation and runtime resource work
   language: en, ja

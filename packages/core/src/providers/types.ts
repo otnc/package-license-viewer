@@ -98,6 +98,8 @@ export interface LicenseInfo {
   readonly rustVersion?: string;
   /** The module version's declared `go` directive, normalized to a range, e.g. `">= 1.21"`, shown right after the license */
   readonly goVersion?: string;
+  /** The package's declared `require.php` constraint, e.g. `>=8.1`, shown right after the license */
+  readonly phpVersion?: string;
   /**
    * The exact name to look this package up as on npmjs.org, when it really is one — e.g. the alias target of an `npm:` specifier, not the local package.json key. Left unset for JSR packages: they are never published to npmjs.org under their JSR or npm-compatibility name, so a link there would 404. Used to link the hover title to `https://www.npmjs.com/package/<name>/v/<version>`.
    */

@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 8.0"
-gem "forked", "1.0"
+gem "forked", "0.1.7"
 gem "vendored", path: "../vendored"
 
 source "https://gems.example.com" do

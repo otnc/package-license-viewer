@@ -1,0 +1,36 @@
+{
+  "heading": {
+    "en": "Commands",
+    "ja": "コマンド"
+  },
+  "columns": {
+    "command": {
+      "en": "Command",
+      "ja": "コマンド"
+    },
+    "description": {
+      "en": "Description",
+      "ja": "説明"
+    }
+  },
+  "rows": {
+    "packageLicenseViewer.refresh": {
+      "description": {
+        "en": "Re-read local metadata, lockfiles and Cargo workspace declarations, then redraw. Use after dependency changes.",
+        "ja": "ローカルのメタデータ、ロックファイル、Cargoワークスペースの宣言を読み直して再描画します。依存関係を変更した後に使用してください。"
+      }
+    },
+    "packageLicenseViewer.clearCache": {
+      "description": {
+        "en": "Drop everything cached from the registries.",
+        "ja": "レジストリからキャッシュした内容をすべて破棄します。"
+      }
+    },
+    "packageLicenseViewer.toggle": {
+      "description": {
+        "en": "Turn the annotations on or off.",
+        "ja": "インラインのライセンス注釈のオン/オフを切り替えます。"
+      }
+    }
+  }
+}

@@ -38,7 +38,8 @@ export function formatAnnotationSegments(
     .replace(/\$\{nodeEngine\}/g, info.nodeEngine ?? "")
     .replace(/\$\{rubyVersion\}/g, info.rubyVersion ?? "")
     .replace(/\$\{rustVersion\}/g, info.rustVersion ?? "")
-    .replace(/\$\{goVersion\}/g, info.goVersion ?? "");
+    .replace(/\$\{goVersion\}/g, info.goVersion ?? "")
+    .replace(/\$\{phpVersion\}/g, info.phpVersion ?? "");
 
   const marker = "${license}";
   const markerIndex = template.indexOf(marker);
@@ -73,6 +74,10 @@ export function formatAnnotationSegments(
 
   if (config.showGoVersion && info.goVersion && !config.format.includes("${goVersion}")) {
     after += ` (Go: ${info.goVersion})`;
+  }
+
+  if (config.showPhpVersion && info.phpVersion && !config.format.includes("${phpVersion}")) {
+    after += ` (PHP: ${info.phpVersion})`;
   }
 
   // Trim only the outer edges — a leading/trailing space right next to the license value (as in "${name}: ${license}") is intentional and must survive.
@@ -139,6 +144,10 @@ export function buildHover(
 
   if (info.goVersion) {
     lines.push(`Go: \`${info.goVersion}\``);
+  }
+
+  if (info.phpVersion) {
+    lines.push(`PHP: \`${info.phpVersion}\``);
   }
 
   lines.push(`Resolved from: ${describeSource(info)}`);

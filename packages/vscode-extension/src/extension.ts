@@ -59,6 +59,7 @@ export function activate(context: vscode.ExtensionContext): void {
         event.affectsConfiguration(`${CONFIG_SECTION}.moonbit`) ||
         event.affectsConfiguration(`${CONFIG_SECTION}.go`) ||
         event.affectsConfiguration(`${CONFIG_SECTION}.rubygems`) ||
+        event.affectsConfiguration(`${CONFIG_SECTION}.composer`) ||
         event.affectsConfiguration(`${CONFIG_SECTION}.cacheTtlHours`)
       ) {
         annotator.invalidate();
