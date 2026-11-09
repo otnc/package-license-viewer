@@ -26,6 +26,8 @@ jobs:
       - run: npm run lint
       - run: npm run check-types
       - run: npm test
+      - run: npm run compile:cli
+      - run: node --test packages/cli/test/cli.test.mjs
       - run: npm run compile:lsp
 
   # Runs the extension inside a real VS Code instance. This is the only job that exercises
