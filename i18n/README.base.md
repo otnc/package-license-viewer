@@ -90,6 +90,18 @@ Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応�
 ::docs-table{id=settings}
 
 :::kiritan{locale=en}
+## Command line and CI
+
+Use the `plv` CLI to report dependency licenses or check them against an allowlist or denylist. See the [CLI guide](docs/cli.md) for build instructions, JSON output, and an efm-langserver configuration example.
+:::
+
+:::kiritan{locale=ja}
+## CLI と CI
+
+`plv` を使うと、コマンドラインで依存関係のライセンスを確認し、CI で許可リストや禁止リストと照合できます。ビルド手順、JSON 出力、efm-langserver の設定例は [CLI ガイド](docs/cli.md)（英語）を参照してください。
+:::
+
+:::kiritan{locale=en}
 ## Contributing
 
 Adding a new ecosystem is one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.
