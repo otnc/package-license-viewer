@@ -90,6 +90,8 @@ export interface LicenseInfo {
   readonly via?: string;
   /** URL to link from the hover */
   readonly homepage?: string;
+  /** The package's source repository URL, linked from the hover next to the homepage */
+  readonly repository?: string;
   /** The package's declared `engines.node` range, e.g. `">=18.0.0"`, shown right after the license */
   readonly nodeEngine?: string;
   /** The release's declared `required_ruby_version`, e.g. `">= 3.0"`, shown right after the license */

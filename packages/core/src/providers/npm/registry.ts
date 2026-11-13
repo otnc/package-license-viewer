@@ -2,6 +2,7 @@ import semver from "semver";
 import type { LicenseCache } from "../../cache";
 import { getSetting } from "../../config";
 import { NotFoundError, fetchJson } from "../../net";
+import { normalizeRepositoryUrl } from "../repository";
 import type { CancellationLike } from "../types";
 import { type NpmManifest, normalizeLicense, normalizeNodeEngine } from "./manifest";
 import { encodePackageName } from "./spec";
@@ -15,6 +16,7 @@ interface AbbreviatedPackument {
 export interface FetchedManifest {
   license?: string;
   homepage?: string;
+  repository?: string;
   nodeEngine?: string;
 }
 
@@ -22,6 +24,7 @@ function toFetchedManifest(manifest: NpmManifest): FetchedManifest {
   return {
     license: normalizeLicense(manifest),
     homepage: manifest.homepage,
+    repository: normalizeRepositoryUrl(manifest.repository),
     nodeEngine: normalizeNodeEngine(manifest),
   };
 }
@@ -93,8 +96,8 @@ export class NpmRegistryClient {
     token: CancellationLike
   ): Promise<FetchedManifest> {
     const encoded = encodePackageName(name);
-    // Versioned so that adding a field to FetchedManifest (as nodeEngine was) can't be masked for up to a week by a still-fresh cache entry from before that field existed.
-    const cacheKey = `${this.namespace}:manifest:v2:${encoded}@${version}`;
+    // Versioned so that adding a field to FetchedManifest (as nodeEngine was, and repository after it) can't be masked for up to a week by a still-fresh cache entry from before that field existed.
+    const cacheKey = `${this.namespace}:manifest:v3:${encoded}@${version}`;
     const cached = this.cache.get<FetchedManifest>(cacheKey);
     if (cached !== undefined) {
       return cached;

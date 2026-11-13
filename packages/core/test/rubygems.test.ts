@@ -312,7 +312,10 @@ test("provider resolves from the requirement, prefers RubyGems pages, and caches
     return versionsResponse([
       versionRecord("8.1.0.beta1", ["MIT"]),
       versionRecord("8.0.1", ["MIT"], {
-        metadata: { homepage_uri: "https://rubyonrails.org" },
+        metadata: {
+          homepage_uri: "https://rubyonrails.org",
+          source_code_uri: "https://github.com/rails/rails",
+        },
       }),
       versionRecord("7.2.0", ["MIT"]),
     ]);
@@ -328,8 +331,10 @@ test("provider resolves from the requirement, prefers RubyGems pages, and caches
     license: "MIT",
     version: "8.0.1",
     homepage: "https://rubyonrails.org",
+    repository: "https://github.com/rails/rails",
     via: "manifest requirement + RubyGems",
   });
+  expect(buildHover(entry, info)?.value).toContain("GitHub](https://github.com/rails/rails)");
   expect(buildHover(entry, info)?.value).toMatch(
     /https:\/\/rubygems\.org\/gems\/rails\/versions\/8\.0\.1/
   );
@@ -447,7 +452,7 @@ test("with the registry disabled, only cached metadata answers", async () => {
   expect(offline.source).toBe("unknown");
   expect(offline.detail).toMatch(/registry disabled/);
 
-  cache.set("rubygems:versions:v1:rails", [
+  cache.set("rubygems:versions:v2:rails", [
     { version: "8.0.1", licenses: ["MIT"], prerelease: false, platform: "ruby" },
   ]);
   const cached = await provider.resolve(entry, doc, noCancel);

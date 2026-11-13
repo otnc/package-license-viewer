@@ -25,7 +25,7 @@ Shows the license of every dependency inline at the end of the line, with the li
 }
 ```
 
-Hover an annotation to see the resolved version, where the information came from, and a link to the package homepage.
+Hover an annotation to see the resolved version, where the information came from, and links to the package's homepage and source repository.
 
 ## Supported languages
 

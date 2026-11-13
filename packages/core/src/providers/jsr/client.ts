@@ -19,6 +19,12 @@ interface JsrVersionMeta {
   yanked?: boolean;
 }
 
+/** The parts of `https://api.jsr.io/scopes/<scope>/packages/<name>` this client reads */
+interface JsrPackageInfo {
+  /** The GitHub repository the package is published from; JSR requires the link, but older packages can still have none */
+  githubRepository?: { owner?: string; name?: string } | null;
+}
+
 export interface JsrPackageId {
   readonly scope: string;
   readonly name: string;
@@ -70,6 +76,7 @@ export class JsrClient {
         return { source: "unknown", detail: `no published version matches "${spec}"` };
       }
       const license = await this.fetchLicense(id, version, token);
+      const repository = await this.fetchRepository(id, token);
       const packagePage = this.packageUrl(id, version);
       return {
         license: license ?? undefined,
@@ -78,6 +85,7 @@ export class JsrClient {
         via: "jsr.io",
         // JSR's API doesn't expose a separately declared homepage, so the package's own JSR page doubles as both — it's also what the hover title links to.
         homepage: packagePage,
+        repository,
         packagePageUrl: packagePage,
         detail: license ? undefined : "the package declares no license on JSR",
       };
@@ -162,5 +170,47 @@ export class JsrClient {
 
     this.cache.set(cacheKey, license ?? null);
     return license;
+  }
+
+  /**
+   * The package's source repository, as a browsable URL.
+   *
+   * JSR packages are published from a linked GitHub repository, and the API names it on
+   * the package endpoint — so for JSR the repository is always a `github.com` URL when
+   * there is one. Best-effort by design: the repository is decoration on the hover, so a
+   * failed lookup returns `undefined` rather than failing the resolution it rides along
+   * with, and only an answered lookup (a repository, or a package with none) is cached.
+   *
+   * Public for the same reason `fetchLicense` is: the npm provider needs it for a JSR
+   * package it found installed locally.
+   */
+  async fetchRepository(id: JsrPackageId, token: CancellationLike): Promise<string | undefined> {
+    const cacheKey = `jsr:repository:${id.scope}/${id.name}`;
+    const cached = this.cache.get<string | null>(cacheKey);
+    if (cached !== undefined) {
+      return cached ?? undefined;
+    }
+
+    let info: JsrPackageInfo;
+    try {
+      info = await fetchJson<JsrPackageInfo>(
+        `${this.apiUrl}/scopes/${encodeURIComponent(id.scope)}/packages/${encodeURIComponent(id.name)}`,
+        token
+      );
+    } catch {
+      return undefined;
+    }
+    const github = info.githubRepository;
+    const repository =
+      github &&
+      typeof github.owner === "string" &&
+      github.owner &&
+      typeof github.name === "string" &&
+      github.name
+        ? `https://github.com/${github.owner}/${github.name}`
+        : undefined;
+
+    this.cache.set(cacheKey, repository ?? null);
+    return repository;
   }
 }

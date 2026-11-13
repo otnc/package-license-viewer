@@ -1,4 +1,5 @@
 import { record } from "../../net";
+import { normalizeRepositoryUrl } from "../repository";
 import { normalizeVersion, parseStability, satisfies, type ValidConstraint } from "./spec";
 
 /** The `notification-url` Composer writes into every package record that came from Packagist */
@@ -17,6 +18,8 @@ export interface PackageRecord {
   /** One SPDX-ish expression; several declared licenses are a choice, joined with ` OR ` */
   readonly license?: string;
   readonly homepage?: string;
+  /** The record's `source` URL (its VCS), normalized to the browsable repository page */
+  readonly repository?: string;
   /** The package's own `require.php` constraint, trimmed */
   readonly phpVersion?: string;
   /** `extra.branch-alias` as written, e.g. `{ "dev-master": "3.x-dev" }` */
@@ -69,6 +72,7 @@ export function decodePackageRecord(
 
   const license = combineLicenses(value.license);
   const homepage = typeof value.homepage === "string" ? value.homepage.trim() : "";
+  const repository = normalizeRepositoryUrl(value.source);
   const php =
     record(value.require) && typeof value.require.php === "string" ? value.require.php.trim() : "";
   const branchAliases: Record<string, string> = {};
@@ -83,6 +87,7 @@ export function decodePackageRecord(
     versionNormalized,
     ...(license ? { license } : {}),
     ...(homepage ? { homepage } : {}),
+    ...(repository ? { repository } : {}),
     ...(php ? { phpVersion: php } : {}),
     branchAliases,
     fromPackagist:

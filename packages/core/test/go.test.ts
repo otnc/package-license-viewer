@@ -260,7 +260,7 @@ test("Go resolution looks each require up on deps.dev at the version replace lea
     source: "registry",
     license: "BSD-3-Clause",
     version: "v1.8.1",
-    homepage: "https://github.com/gorilla/mux",
+    repository: "https://github.com/gorilla/mux",
     packagePageUrl: "https://pkg.go.dev/github.com/gorilla/mux@v1.8.1",
     via: "deps.dev",
     detail: undefined,

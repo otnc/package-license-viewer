@@ -8,6 +8,7 @@ import {
   parseJsrPackageName,
   resolveViaNpmRegistry,
 } from "../jsr";
+import { normalizeRepositoryUrl } from "../repository";
 import type {
   CancellationLike,
   DependencyEntry,
@@ -139,6 +140,7 @@ export class NpmLicenseProvider implements LicenseProvider {
             version,
             source: "local",
             homepage: local.manifest.homepage,
+            repository: normalizeRepositoryUrl(local.manifest.repository),
             nodeEngine,
             registryPackageName,
           };
@@ -146,6 +148,7 @@ export class NpmLicenseProvider implements LicenseProvider {
         if (jsrId && version) {
           // The package.json inside node_modules never carries a license field for a JSR package (true even for packages that do declare one on JSR), so ask jsr.io for the license of the exact version that is already on disk.
           const jsrLicense = await this.jsr.fetchLicense(jsrId, version, token);
+          const repository = await this.jsr.fetchRepository(jsrId, token);
           const packagePage = this.jsr.packageUrl(jsrId, version);
           return {
             license: jsrLicense,
@@ -154,6 +157,7 @@ export class NpmLicenseProvider implements LicenseProvider {
             via: "node_modules + jsr.io",
             // Prefer the JSR page over whatever homepage node_modules happened to record — consistent with what a full JSR resolution returns, and it's what the hover title links to.
             homepage: packagePage,
+            repository,
             packagePageUrl: packagePage,
             nodeEngine,
             detail: jsrLicense ? undefined : "the package declares no license on JSR",
@@ -163,6 +167,7 @@ export class NpmLicenseProvider implements LicenseProvider {
           version,
           source: "local",
           homepage: local.manifest.homepage,
+          repository: normalizeRepositoryUrl(local.manifest.repository),
           nodeEngine,
           registryPackageName,
           detail: "no license field in the installed package.json",
@@ -237,7 +242,7 @@ export class NpmLicenseProvider implements LicenseProvider {
     token: CancellationLike
   ): Promise<LicenseInfo | undefined> {
     try {
-      const { license, homepage, nodeEngine } = await this.registry.fetchLicense(
+      const { license, homepage, repository, nodeEngine } = await this.registry.fetchLicense(
         name,
         version,
         token
@@ -247,6 +252,7 @@ export class NpmLicenseProvider implements LicenseProvider {
         version,
         source: license ? "registry" : "lockfile",
         homepage,
+        repository,
         nodeEngine,
         registryPackageName: name,
         detail: license ? undefined : "the published package declares no license",

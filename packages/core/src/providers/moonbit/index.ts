@@ -121,7 +121,7 @@ export class MoonbitLicenseProvider implements LicenseProvider {
       source: "registry",
       license: release.license,
       version: release.version,
-      homepage: homepageOf(release.repository),
+      repository: repositoryUrlOf(release.repository),
       packagePageUrl: modulePageUrl(entry.name, release.version),
       via,
       detail: describeMissingLicense(release.license, release.yanked),
@@ -135,7 +135,7 @@ function fromInstalled(name: string, installed: ModuleManifest): LicenseInfo {
     source: "local",
     license: installed.license,
     version,
-    homepage: homepageOf(installed.repository),
+    repository: repositoryUrlOf(installed.repository),
     packagePageUrl: pageUrl(name, version),
     via: "unpacked module (`.mooncakes`)",
     detail: installed.license ? undefined : "the unpacked module declares no license",
@@ -147,7 +147,7 @@ function fromIndex(name: string, indexed: IndexedRelease): LicenseInfo {
     source: "registry",
     license: indexed.license,
     version: indexed.version,
-    homepage: homepageOf(indexed.repository),
+    repository: repositoryUrlOf(indexed.repository),
     packagePageUrl: pageUrl(name, indexed.version),
     via: "local registry index (`moon update`)",
     detail: indexed.license ? undefined : "the published module declares no license",
@@ -173,7 +173,7 @@ function describeMissingLicense(license: string | undefined, yanked: boolean): s
 }
 
 /** `repository` is free text in a module manifest; only link it when it really is a URL */
-function homepageOf(repository: string | undefined): string | undefined {
+function repositoryUrlOf(repository: string | undefined): string | undefined {
   return repository && /^https?:\/\//i.test(repository) ? repository : undefined;
 }
 

@@ -87,7 +87,7 @@ suite("Composer workspace", () => {
       assert.deepEqual(offline, { source: "unknown", detail: "Packagist lookups are disabled" });
 
       // Cached metadata still answers while requests are turned off
-      cache.set("composer:packagist:v1:acme/missing", [
+      cache.set("composer:packagist:v2:acme/missing", [
         {
           name: "acme/missing",
           version: "1.4.0",

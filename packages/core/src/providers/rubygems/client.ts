@@ -12,6 +12,8 @@ export interface GemVersion {
   prerelease: boolean;
   platform?: string;
   homepage?: string;
+  /** The release's declared `source_code_uri` — where its source lives */
+  repository?: string;
   /** The release's `required_ruby_version`, e.g. `">= 3.0"` — `undefined` when unconstrained (the API reports `">= 0"`) */
   rubyVersion?: string;
 }
@@ -36,6 +38,8 @@ function decodeVersion(value: unknown): GemVersion {
   const metadata = record(value.metadata) ? value.metadata : undefined;
   const homepage =
     metadata && typeof metadata.homepage_uri === "string" ? metadata.homepage_uri : undefined;
+  const repository =
+    metadata && typeof metadata.source_code_uri === "string" ? metadata.source_code_uri : undefined;
   const licenses = Array.isArray(value.licenses)
     ? value.licenses.map((license) => license.trim()).filter((license) => license.length > 0)
     : undefined;
@@ -46,6 +50,7 @@ function decodeVersion(value: unknown): GemVersion {
     prerelease: value.prerelease,
     platform: typeof value.platform === "string" ? value.platform : undefined,
     homepage,
+    repository,
     // ">= 0" is how the API spells "no constraint declared"
     rubyVersion: rubyRequirement && rubyRequirement !== ">= 0" ? rubyRequirement : undefined,
   };
@@ -74,7 +79,8 @@ export class RubyGemsClient {
     name: string,
     token: CancellationLike
   ): Promise<{ kind: "found"; versions: GemVersion[] } | { kind: "unknown"; reason: string }> {
-    const listKey = `rubygems:versions:v1:${name}`;
+    // v2: v1 entries predate the repository field and would mask it for as long as they stay fresh
+    const listKey = `rubygems:versions:v2:${name}`;
     const cached = this.cache.get<GemVersion[]>(listKey);
     if (cached) return { kind: "found", versions: cached };
     if (!getSetting("rubygems.useRegistry", true)) {
@@ -122,7 +128,7 @@ export class RubyGemsClient {
     if (
       locked &&
       !getSetting("rubygems.useRegistry", true) &&
-      !this.cache.get<GemVersion[]>(`rubygems:versions:v1:${name}`)
+      !this.cache.get<GemVersion[]>(`rubygems:versions:v2:${name}`)
     ) {
       return { kind: "unknown", reason: "registry disabled; Gemfile.lock carries no license" };
     }

@@ -113,6 +113,8 @@ Every provider is expected to make the hover title clickable, the same way npm a
 
 If the registry also exposes a genuine, separately-declared homepage, put that in `homepage` as usual — `buildHover` already drops the `Homepage` line when it would just repeat the title link (as it does for JSR, which has no separate homepage of its own).
 
+Set `repository` the same way when the registry exposes the package's source repository: `buildHover` shows it beside the `Homepage` link, labelled `GitHub` (with the GitHub mark in front of the word) when the URL is on `github.com` and `Repository` otherwise. Normalize whatever the registry declares into a browsable `https:` URL first — npm's `repository` field alone has half a dozen shapes, and [`normalizeRepositoryUrl`](packages/core/src/providers/repository.ts) flattens them (Composer's `source` record goes through it too). Leave `repository` unset rather than guessing a URL from the package name.
+
 Python support is planned but not implemented yet — see the open issue linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
