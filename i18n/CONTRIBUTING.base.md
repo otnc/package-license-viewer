@@ -247,6 +247,8 @@ Every provider is expected to make the hover title clickable, the same way npm a
 
 If the registry also exposes a genuine, separately-declared homepage, put that in `homepage` as usual — `buildHover` already drops the `Homepage` line when it would just repeat the title link (as it does for JSR, which has no separate homepage of its own).
 
+Set `repository` the same way when the registry exposes the package's source repository: `buildHover` shows it beside the `Homepage` link, labelled `GitHub` (with the GitHub mark in front of the word) when the URL is on `github.com` and `Repository` otherwise. Normalize whatever the registry declares into a browsable `https:` URL first — npm's `repository` field alone has half a dozen shapes, and [`normalizeRepositoryUrl`](packages/core/src/providers/repository.ts) flattens them (Composer's `source` record goes through it too). Leave `repository` unset rather than guessing a URL from the package name.
+
 Python support is planned but not implemented yet — see the open issue linked from [README.md](README.md#supported-languages) for current status. These metadata endpoints may be useful:
 
 - PyPI: `https://pypi.org/pypi/<name>/<version>/json` → `info.license` / `info.classifiers`
@@ -267,6 +269,8 @@ npmやJSRと同様に、すべてのプロバイダーはホバータイトル�
 - **そのレジストリに実在しないものにリンクしない。** `file:`/`git`/ローカルパスの依存関係や、確信が持てないものについては、404になり得るURLにリンクするより、両方のフィールドを未設定のままにしてください。
 
 レジストリが本当に別途宣言されたホームページを公開している場合は、通常どおり `homepage` に設定してください — `buildHover` は、タイトルリンクと重複するだけの場合は既に `Homepage` の行を省略します(JSRのように、独自のホームページを持たない場合がそうです)。
+
+レジストリがパッケージのソースリポジトリも公開している場合は、同じように `repository` を設定してください。`buildHover` はそれを `Homepage` リンクの横に表示し、URLが `github.com` 上のものなら(GitHubのロゴを文字の前に付けて) `GitHub` と、そうでなければ `Repository` とラベルします。レジストリが宣言する値は、まずブラウザで開ける `https:` URLに正規化してください。npmの `repository` フィールドだけでも半ダースほどの形式があり、[`normalizeRepositoryUrl`](packages/core/src/providers/repository.ts) がそれらを平らげます(Composerの `source` レコードも同じものを通します)。パッケージ名からの推測でURLを作るくらいなら、`repository` は未設定のままにしてください。
 
 Pythonへの対応は予定されていますが、まだ実装されていません — 現在の状況は [README.md](README.md#サポート言語) からリンクされているIssueを参照してください。以下のメタデータエンドポイントが役立つかもしれません。
 

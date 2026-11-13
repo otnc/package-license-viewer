@@ -30,11 +30,11 @@ Shows the license of every dependency inline at the end of the line, with the li
 ```
 
 :::kiritan{locale=en}
-Hover an annotation to see the resolved version, where the information came from, and a link to the package homepage.
+Hover an annotation to see the resolved version, where the information came from, and links to the package's homepage and source repository.
 :::
 
 :::kiritan{locale=ja}
-注釈にカーソルを合わせると、解決されたバージョン、情報の取得元、パッケージのホームページへのリンクが表示されます。
+注釈にカーソルを合わせると、解決されたバージョン、情報の取得元、パッケージのホームページとソースリポジトリへのリンクが表示されます。
 :::
 
 ::docs-table{id=supported-languages}
