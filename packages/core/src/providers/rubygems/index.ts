@@ -134,6 +134,7 @@ export class RubyGemsLicenseProvider implements LicenseProvider {
       license,
       version: metadata.version,
       homepage: metadata.homepage,
+      repository: metadata.repository,
       packagePageUrl: `https://rubygems.org/gems/${encodeURIComponent(declaration.name)}/versions/${encodeURIComponent(metadata.version)}`,
       via,
       detail: license ? undefined : "license unavailable in published metadata",

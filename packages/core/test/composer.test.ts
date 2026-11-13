@@ -248,6 +248,7 @@ test("package records decode from lock/installed/p2 shapes", () => {
     version: "3.0.2",
     license: ["MIT"],
     homepage: "https://github.com/php-fig/log",
+    source: { type: "git", url: "https://github.com/php-fig/log.git", reference: "fe1a5c1" },
     require: { php: ">=8.0.0" },
     extra: { "branch-alias": { "dev-master": "3.x-dev" } },
     "notification-url": "https://packagist.org/downloads/",
@@ -258,6 +259,7 @@ test("package records decode from lock/installed/p2 shapes", () => {
     versionNormalized: "3.0.2.0",
     license: "MIT",
     homepage: "https://github.com/php-fig/log",
+    repository: "https://github.com/php-fig/log",
     phpVersion: ">=8.0.0",
     branchAliases: { "dev-master": "3.x-dev" },
     fromPackagist: true,
@@ -476,7 +478,7 @@ test("with composer.useRegistry off, only cached lists answer", async () => {
       kind: "unknown",
       reason: "Packagist lookups are disabled",
     });
-    cache.set("composer:packagist:v1:psr/log", [
+    cache.set("composer:packagist:v2:psr/log", [
       decodePackageRecord(
         { name: "psr/log", version: "3.0.2", license: ["MIT"] },
         { fromPackagist: true }

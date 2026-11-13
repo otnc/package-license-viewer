@@ -64,7 +64,7 @@ suite("Ruby workspace", () => {
       );
 
       // Cached metadata still answers while requests are turned off
-      cache.set("rubygems:versions:v1:forked", [
+      cache.set("rubygems:versions:v2:forked", [
         { version: "0.1.7", licenses: ["MIT"], prerelease: false, platform: "ruby" },
       ]);
       const forked = await provider.resolve(entries[1], doc, noCancel);

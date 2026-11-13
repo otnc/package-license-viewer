@@ -127,7 +127,8 @@ export class PackagistClient {
   }
 
   async versions(name: string, token: CancellationLike): Promise<VersionsResult> {
-    const key = `composer:packagist:v1:${name}`;
+    // v2: v1 entries predate PackageRecord.repository and would mask it for as long as they stay fresh
+    const key = `composer:packagist:v2:${name}`;
     const cached = this.cache.get<PackageRecord[]>(key);
     if (cached) return { kind: "found", versions: cached };
     if (!getSetting("composer.useRegistry", true)) {

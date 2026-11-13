@@ -73,7 +73,7 @@ test("Cargo resolution integrates with Annotator Refresh and independent manifes
   setSettings({ "packageLicenseViewer.crates.useRegistry": false });
   const cache = makeCache();
   onTestFinished(() => cache.dispose());
-  cache.set("crates:versions:v2:real", [{ version: "1.0.0", license: "MIT", yanked: false }]);
+  cache.set("crates:versions:v3:real", [{ version: "1.0.0", license: "MIT", yanked: false }]);
   const provider = new CratesLicenseProvider(cache, vscodeProviderHost);
   const editor = fakeEditor(
     fakeDocument('[dependencies]\na={package="real",version="1"}', "/project/Cargo.toml")
@@ -252,7 +252,7 @@ test("the production-capable bundle parses Cargo and renders a cached license", 
     globalState: {
       get() {
         return {
-          "crates:versions:v2:real": {
+          "crates:versions:v3:real": {
             t: Date.now(),
             v: [{ version: "1.0.0", license: "MIT", yanked: false }],
           },

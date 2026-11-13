@@ -202,6 +202,31 @@ test("a crate's rust_version is reported as the MSRV range it means", async () =
   });
 });
 
+test("a crate's repository is carried through from the version record", async () => {
+  const cache = makeCache();
+  onTestFinished(() => cache.dispose());
+  const client = new CratesClient(cache);
+  vi.spyOn(global, "fetch").mockImplementation((async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({
+      versions: [
+        apiVersion("1.0.0", {
+          homepage: "https://serde.rs",
+          repository: "https://github.com/serde-rs/serde",
+        }),
+      ],
+      meta: { next_page: null },
+    }),
+  })) as unknown as typeof fetch);
+  const result = await client.metadata("real", parseRequirement("1"), undefined, noCancel);
+  expect(result.kind).toBe("found");
+  if (result.kind === "found") {
+    expect(result.metadata.homepage).toBe("https://serde.rs");
+    expect(result.metadata.repository).toBe("https://github.com/serde-rs/serde");
+  }
+});
+
 test("Cargo client validates complete lists, caches exact metadata and handles failures and cancellation", async () => {
   vi.useFakeTimers({ toFake: ["Date", "setTimeout"], now: Date.now() + 100_000 });
   const cache = makeCache();
@@ -390,21 +415,21 @@ test("Cargo timeout and Refresh never persist transient failures or stale in-fli
   vi.advanceTimersByTime(8000);
   await settle();
   expect((await pending).kind).toBe("unknown");
-  expect(cache.get("crates:metadata:v2:real@1.0.0")).toBeUndefined();
+  expect(cache.get("crates:metadata:v3:real@1.0.0")).toBeUndefined();
   const refreshed = client.metadata("real", parseRequirement("1"), "1.0.0", noCancel);
   await settle();
   client.invalidate();
   await settle();
   expect((await refreshed).kind).toBe("unknown");
   expect(calls).toBe(2);
-  expect(cache.get("crates:metadata:v2:real@1.0.0")).toBeUndefined();
+  expect(cache.get("crates:metadata:v3:real@1.0.0")).toBeUndefined();
 });
 
 test("Cargo explicit workspace roots and separate lockfiles use distinct public metadata", async () => {
   const cache = makeCache();
   onTestFinished(() => cache.dispose());
   for (const version of ["1.0.0", "1.1.0"])
-    cache.set(`crates:metadata:v2:real@${version}`, {
+    cache.set(`crates:metadata:v3:real@${version}`, {
       version,
       license: version === "1.0.0" ? "MIT" : "ISC",
       yanked: false,
@@ -581,7 +606,7 @@ test("offline locked metadata reuses exact records from a fresh version list", a
     { version: "1.0.0", yanked: true },
   ]) {
     cache.clear();
-    cache.set("crates:versions:v2:real", [
+    cache.set("crates:versions:v3:real", [
       metadata,
       { version: "1.2.0", license: "ISC", yanked: false },
     ]);
@@ -766,8 +791,8 @@ test("range cache reuse preserves the original metadata expiry online and offlin
   const metadata = { version: "1.0.0", license: "MIT", yanked: false };
   for (const seedExact of [false, true]) {
     cache.clear();
-    cache.set("crates:versions:v2:real", [metadata]);
-    if (seedExact) cache.set("crates:metadata:v2:real@1.0.0", metadata);
+    cache.set("crates:versions:v3:real", [metadata]);
+    if (seedExact) cache.set("crates:metadata:v3:real@1.0.0", metadata);
     vi.advanceTimersByTime(167 * 3600000);
     for (online of [false, true]) {
       setSettings({ "packageLicenseViewer.crates.useRegistry": online });

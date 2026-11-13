@@ -6,6 +6,8 @@ export interface NpmManifest {
   /** Deprecated, but still present in older packages */
   licenses?: Array<string | { type?: string; url?: string }>;
   homepage?: string;
+  /** As declared: a shorthand string (`"owner/repo"`, `"github:owner/repo"`, a URL) or an object carrying a `url` — normalize with `normalizeRepositoryUrl` before use */
+  repository?: string | { type?: string; url?: string };
   deprecated?: string;
   private?: boolean;
   engines?: { node?: string };

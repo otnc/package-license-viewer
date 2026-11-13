@@ -12,6 +12,7 @@ import { parsePnpmWorkspaceYaml } from "../src/providers/npm/pnpmWorkspace";
 import { NpmLicenseProvider } from "../src/providers/npm";
 import { encodePackageName, parseSpec } from "../src/providers/npm/spec";
 import { parseJsrNpmCompatName, parseJsrPackageName } from "../src/providers/jsr/client";
+import { normalizeRepositoryUrl } from "../src/providers/repository";
 import { isDenoManifest, parseDenoManifest, parseDenoSpecifier } from "../src/providers/jsr/parse";
 import { fakeDocument, fakeHost, fakeUri } from "./support/fakeHost";
 
@@ -167,6 +168,57 @@ test("resolve() surfaces engines.node from an installed package", async () => {
     noCancel
   );
   expect(info.nodeEngine).toBe(">=14.17");
+});
+
+test("resolve() surfaces the repository declared by an installed package", async () => {
+  const host = fakeHost({
+    "/project/node_modules/lodash/package.json": JSON.stringify({
+      name: "lodash",
+      version: "4.17.21",
+      license: "MIT",
+      repository: { type: "git", url: "git+https://github.com/lodash/lodash.git" },
+    }),
+  });
+  const provider = new NpmLicenseProvider(new LicenseCache(memoryMemento()), host);
+  const document = fakeDocument("{}", "/project/package.json");
+  const info = await provider.resolve(
+    { name: "lodash", spec: "^4.17.21", section: "dependencies", line: 0 },
+    document,
+    noCancel
+  );
+  expect(info.repository).toBe("https://github.com/lodash/lodash");
+});
+
+test("normalizeRepositoryUrl flattens npm's repository shapes into a browsable URL", () => {
+  // Shorthands
+  expect(normalizeRepositoryUrl("lodash/lodash")).toBe("https://github.com/lodash/lodash");
+  expect(normalizeRepositoryUrl("github:lodash/lodash")).toBe("https://github.com/lodash/lodash");
+  expect(normalizeRepositoryUrl("gitlab:a/b")).toBe("https://gitlab.com/a/b");
+  expect(normalizeRepositoryUrl("bitbucket:a/b")).toBe("https://bitbucket.org/a/b");
+  expect(normalizeRepositoryUrl("gist:0123abcd")).toBe("https://gist.github.com/0123abcd");
+  // URL forms, with and without the object wrapper
+  expect(normalizeRepositoryUrl("https://github.com/lodash/lodash")).toBe(
+    "https://github.com/lodash/lodash"
+  );
+  expect(
+    normalizeRepositoryUrl({ type: "git", url: "git+https://github.com/lodash/lodash.git" })
+  ).toBe("https://github.com/lodash/lodash");
+  expect(normalizeRepositoryUrl("git://github.com/lodash/lodash.git")).toBe(
+    "https://github.com/lodash/lodash"
+  );
+  expect(normalizeRepositoryUrl("ssh://git@github.com/lodash/lodash.git")).toBe(
+    "https://github.com/lodash/lodash"
+  );
+  expect(normalizeRepositoryUrl("git@github.com:lodash/lodash.git")).toBe(
+    "https://github.com/lodash/lodash"
+  );
+  expect(normalizeRepositoryUrl("https://example.com/a/b/")).toBe("https://example.com/a/b");
+  // Nothing a browser could open
+  expect(normalizeRepositoryUrl(undefined)).toBeUndefined();
+  expect(normalizeRepositoryUrl("")).toBeUndefined();
+  expect(normalizeRepositoryUrl({ type: "git" })).toBeUndefined();
+  expect(normalizeRepositoryUrl("just-a-word")).toBeUndefined();
+  expect(normalizeRepositoryUrl("/local/path")).toBeUndefined();
 });
 
 test("encodePackageName encodes the scope separator", () => {
@@ -731,6 +783,58 @@ test("buildHover still shows a separate Homepage line when it differs from the t
     homepage: "https://lodash.com/",
   })!;
   expect(hover.value).toMatch(/\[Homepage\]\(https:\/\/lodash\.com\/\)/);
+});
+
+test("buildHover shows the repository beside the Homepage link", () => {
+  const hover = buildHover(ENTRY, {
+    license: "MIT",
+    version: "4.17.21",
+    source: "local",
+    registryPackageName: "lodash",
+    homepage: "https://lodash.com/",
+    repository: "https://bitbucket.org/lodash/lodash",
+  })!;
+  expect(hover.value).toContain(
+    "[Homepage](https://lodash.com/) · [Repository](https://bitbucket.org/lodash/lodash)"
+  );
+});
+
+test("buildHover labels a GitHub repository GitHub, with the GitHub mark in front", () => {
+  const hover = buildHover(ENTRY, {
+    license: "MIT",
+    version: "4.17.21",
+    source: "local",
+    registryPackageName: "lodash",
+    repository: "https://github.com/lodash/lodash",
+  })!;
+  expect(hover.value).toContain("GitHub](https://github.com/lodash/lodash)");
+  expect(hover.value).toContain("data:image/svg+xml");
+  expect(hover.value).not.toContain("[Repository]");
+});
+
+test("buildHover shows only the repository link when the homepage is the repository", () => {
+  const hover = buildHover(ENTRY, {
+    license: "MIT",
+    version: "4.17.21",
+    source: "local",
+    registryPackageName: "lodash",
+    homepage: "https://github.com/lodash/lodash",
+    repository: "https://github.com/lodash/lodash",
+  })!;
+  expect(hover.value).not.toContain("[Homepage]");
+  expect(hover.value).toContain("GitHub](https://github.com/lodash/lodash)");
+});
+
+test("buildHover skips a repository link that would just repeat the title link", () => {
+  const hover = buildHover(ENTRY, {
+    license: "MIT",
+    version: "1.0.24",
+    source: "registry",
+    packagePageUrl: "https://example.com/pkg@1.0.24",
+    repository: "https://example.com/pkg@1.0.24",
+  })!;
+  expect(hover.value).not.toContain("[Repository]");
+  expect(hover.value).not.toContain("GitHub]");
 });
 
 test("buildHover leaves the title unlinked without a resolved version", () => {

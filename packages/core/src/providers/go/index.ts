@@ -93,7 +93,7 @@ export class GoLicenseProvider implements LicenseProvider {
       source: "registry",
       license,
       version,
-      homepage: result.module.sourceRepo,
+      repository: result.module.sourceRepo,
       packagePageUrl: modulePageUrl(path, version),
       via,
       detail: license ? undefined : describeMissingLicense(result.module.licenses),

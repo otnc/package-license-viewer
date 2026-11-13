@@ -191,6 +191,7 @@ function report(
     license: pkg.license,
     version: pkg.version,
     ...(pkg.homepage ? { homepage: pkg.homepage } : {}),
+    ...(pkg.repository ? { repository: pkg.repository } : {}),
     ...(pkg.phpVersion ? { phpVersion: pkg.phpVersion } : {}),
     ...(pkg.fromPackagist ? { packagePageUrl: packagePageUrl(pkg.name, pkg.version) } : {}),
     ...(via ? { via } : {}),

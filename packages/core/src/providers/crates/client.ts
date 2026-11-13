@@ -10,6 +10,7 @@ export interface CrateVersion {
   version: string;
   license?: string;
   homepage?: string;
+  repository?: string;
   yanked: boolean;
   /** The version's declared `rust-version` (MSRV), normalized to a range, e.g. `">= 1.56"` */
   rustVersion?: string;
@@ -32,6 +33,7 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
     typeof value.yanked !== "boolean" ||
     (value.license != null && typeof value.license !== "string") ||
     (value.homepage != null && typeof value.homepage !== "string") ||
+    (value.repository != null && typeof value.repository !== "string") ||
     (value.rust_version != null && typeof value.rust_version !== "string")
   )
     throw new Error("invalid crates.io version metadata");
@@ -39,6 +41,7 @@ function decodeVersion(value: unknown, name: string): CrateVersion {
     version: value.num,
     license: typeof value.license === "string" ? value.license.trim() || undefined : undefined,
     homepage: typeof value.homepage === "string" ? value.homepage : undefined,
+    repository: typeof value.repository === "string" ? value.repository : undefined,
     yanked: value.yanked,
     rustVersion: normalizeRustVersion(value.rust_version),
   };
@@ -123,9 +126,9 @@ export class CratesClient {
     token: CancellationLike
   ): Promise<MetadataResult> {
     const epoch = this.epoch;
-    // v2: v1 entries predate the rustVersion field and would mask it for up to a week
-    const key = (v: string) => `crates:metadata:v2:${name}@${v}`;
-    const listKey = `crates:versions:v2:${name}`;
+    // v3: v2 entries predate the repository field and would mask it for up to a week (v2 itself did the same for rustVersion over v1)
+    const key = (v: string) => `crates:metadata:v3:${name}@${v}`;
+    const listKey = `crates:versions:v3:${name}`;
     try {
       checkCancelled(token);
       const cached = locked

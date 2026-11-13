@@ -244,7 +244,7 @@ test("MoonBit resolution prefers .mooncakes, then moon.work, then the index, the
     source: "local",
     license: "Apache-2.0",
     version: "0.9.1",
-    homepage: "https://example.com/u",
+    repository: "https://example.com/u",
     packagePageUrl: "https://mooncakes.io/docs/plv/unpacked@0.9.1",
     via: "unpacked module (`.mooncakes`)",
     detail: undefined,

@@ -143,6 +143,7 @@ export class CratesLicenseProvider implements LicenseProvider {
       license: metadata.license,
       version: metadata.version,
       homepage: metadata.homepage,
+      repository: metadata.repository,
       packagePageUrl: `https://crates.io/crates/${encodeURIComponent(spec.name)}/${encodeURIComponent(metadata.version)}`,
       via,
       detail: metadata.license ? undefined : "license string unavailable in published metadata",
