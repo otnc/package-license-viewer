@@ -16,20 +16,20 @@
   "rows": {
     "packageLicenseViewer.refresh": {
       "description": {
-        "en": "Re-read local metadata, lockfiles and Cargo workspace declarations, then redraw. Use after dependency changes.",
-        "ja": "ローカルのメタデータ、ロックファイル、Cargoワークスペースの宣言を読み直して再描画します。依存関係を変更した後に使用してください。"
+        "en": "Re-read local metadata, lockfiles and Cargo workspace declarations, then redraw. Run it after changing dependencies.",
+        "ja": "ローカルのメタデータ、ロックファイル、Cargo ワークスペースの宣言を読み直して再描画します。依存関係を変更したあとに実行してください。"
       }
     },
     "packageLicenseViewer.clearCache": {
       "description": {
-        "en": "Drop everything cached from the registries.",
-        "ja": "レジストリからキャッシュした内容をすべて破棄します。"
+        "en": "Delete all cached registry results.",
+        "ja": "レジストリから取得してキャッシュした結果をすべて削除します。"
       }
     },
     "packageLicenseViewer.toggle": {
       "description": {
         "en": "Turn the annotations on or off.",
-        "ja": "インラインのライセンス注釈のオン/オフを切り替えます。"
+        "ja": "ライセンスの注釈の表示と非表示を切り替えます。"
       }
     }
   }

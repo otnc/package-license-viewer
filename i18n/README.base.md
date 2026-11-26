@@ -7,11 +7,11 @@
 [![License: MIT](https://img.shields.io/github/license/otnc/package-license-viewer)](LICENSE)
 
 :::kiritan{locale=en}
-Shows the license of every dependency inline at the end of the line, with the license itself colored so it stands out at a glance.
+Shows each dependency's license at the end of its line in the manifest. The license is colored, so you can spot it at a glance.
 :::
 
 :::kiritan{locale=ja}
-依存パッケージ1つ1つのライセンスを、行末にインラインで表示します。ライセンス部分は色分けされるので、一目で見分けられます。
+マニフェストに書かれた依存パッケージごとに、その行の末尾にライセンスを表示します。ライセンス部分には色が付くので、ひと目で分かります。
 :::
 
 ```jsonc
@@ -34,23 +34,23 @@ Hover an annotation to see the resolved version, where the information came from
 :::
 
 :::kiritan{locale=ja}
-注釈にカーソルを合わせると、解決されたバージョン、情報の取得元、パッケージのホームページとソースリポジトリへのリンクが表示されます。
+注釈にカーソルを合わせると、解決したバージョン、情報の取得元、パッケージのホームページとソースリポジトリへのリンクを表示します。
 :::
 
 ::docs-table{id=supported-languages}
 
 :::kiritan{locale=en}
-See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
+See [docs/resolution-details.md](docs/resolution-details.md) for how each language resolves a license, notes for each package manager, and known cases where the registry has no license data (such as JSR).
 :::
 
 :::kiritan{locale=ja}
-各言語ごとのライセンス解決の詳細、パッケージマネージャーごとの注意点、既知のメタデータの欠落(JSRなど)については [docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
+言語ごとのライセンスの解決方法、パッケージマネージャーごとの注意点、JSR のようにレジストリにライセンス情報がない既知のケースは、[docs/resolution-details.md](docs/resolution-details.md) を参照してください(英語のみ)。
 :::
 
 ::docs-table{id=editors}
 
 :::kiritan{locale=en}
-The Vim/Neovim plugin lives at the repository root, so every plugin manager installs it from just `otnc/package-license-viewer`, with no `rtp` option or build hook:
+The Vim/Neovim plugin is at the repository root, so every plugin manager can install it from `otnc/package-license-viewer` alone. No `rtp` option or build hook is needed.
 
 | Plugin manager | Editor | Install |
 | --- | --- | --- |
@@ -64,11 +64,11 @@ The Vim/Neovim plugin lives at the repository root, so every plugin manager inst
 | [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
 | Native packages (`:help packages`) | Vim / Neovim | `git clone` into `~/.vim/pack/plugins/start/` |
 
-It needs Node.js 22+ and npm on `$PATH`; the language server is built in the background the first time a supported file is opened, and again after an update. See [`:help package_license_viewer`](doc/package_license_viewer.txt) for every manager and for configuration.
+Node.js 22 or later and npm must be on `$PATH`. The plugin builds the language server in the background the first time you open a supported file, and again after the plugin is updated. See [`:help package_license_viewer`](doc/package_license_viewer.txt) for every plugin manager and for configuration.
 :::
 
 :::kiritan{locale=ja}
-Vim/NeoVimプラグインはリポジトリ直下にあるので、どのプラグインマネージャーでも `otnc/package-license-viewer` を指定するだけでインストールできます。`rtp` オプションやbuildフックは要りません。
+Vim/Neovim プラグインはリポジトリの直下にあるので、どのプラグインマネージャーでも `otnc/package-license-viewer` を指定するだけでインストールできます。`rtp` オプションや build フックは要りません。
 
 | プラグインマネージャー | エディタ | インストール |
 | --- | --- | --- |
@@ -82,7 +82,7 @@ Vim/NeoVimプラグインはリポジトリ直下にあるので、どのプラ�
 | [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
 | ネイティブパッケージ(`:help packages`) | Vim / Neovim | `~/.vim/pack/plugins/start/` に `git clone` |
 
-Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応ファイルを初めて開いたとき(と更新後)にバックグラウンドでビルドされます。各マネージャーの書き方と設定は [`:help package_license_viewer`](doc/package_license_viewer.txt) を参照してください(英語のみ)。
+`$PATH` に Node.js 22 以降と npm が必要です。言語サーバーは、対応するファイルを初めて開いたときと、プラグインを更新したあとに、バックグラウンドでビルドされます。プラグインマネージャーごとの書き方と設定は [`:help package_license_viewer`](doc/package_license_viewer.txt) を参照してください(英語のみ)。
 :::
 
 ::docs-table{id=commands}
@@ -100,21 +100,21 @@ To support another manifest format, load your own [custom provider](docs/cli.md#
 :::kiritan{locale=ja}
 ## CLI と CI
 
-`plv` を使うと、コマンドラインで依存関係のライセンスを確認し、CI で許可リストや禁止リストと照合できます。ビルド手順、JSON 出力、efm-langserver の設定例は [CLI ガイド](docs/cli.md)（英語）を参照してください。
+`plv` CLI を使うと、依存関係のライセンスをコマンドラインで一覧にしたり、CI で許可リストや禁止リストと照合したりできます。ビルド手順、JSON 出力、efm-langserver の設定例は [CLI ガイド](docs/cli.md)(英語のみ)を参照してください。
 
-独自のマニフェスト形式に対応させるには、`--provider` で自作の[プロバイダー](docs/cli.md#custom-providers)を読み込みます。
+ほかのマニフェスト形式に対応させたいときは、自作の[プロバイダー](docs/cli.md#custom-providers)を `--provider` で読み込めます。
 :::
 
 :::kiritan{locale=en}
 ## Contributing
 
-Adding a new ecosystem is one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.
+To add a new ecosystem, implement one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and the contribution workflow.
 :::
 
 :::kiritan{locale=ja}
 ## コントリビュート
 
-新しいエコシステムを追加するのに必要なのは `LicenseProvider` というインターフェース1つだけです。アーキテクチャと開発フローについては [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+新しいエコシステムに対応するには、`LicenseProvider` インターフェースを1つ実装するだけです。アーキテクチャと開発の流れは [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
 :::
 
 ## %{contributorsHeading}
