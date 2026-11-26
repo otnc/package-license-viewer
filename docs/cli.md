@@ -27,6 +27,24 @@ Exit status is 0 for successful reporting or a policy with no findings, 1 for po
 
 The CLI stores registry results per manifest in the user cache directory under `package-license-viewer/cli`. Results expire after 168 hours by default. Override that with `--cache-ttl-hours` and set it to `0` to disable caching.
 
+## Custom providers
+
+Use `--provider` to add support for a manifest format. For a working example, save the [example provider](../packages/cli/test/fixtures/custom-provider.mjs) as `example-provider.mjs` and create an `example.deps` file with one dependency per line, such as `example 1.2.3 MIT`.
+
+```sh
+node packages/cli/dist/plv.js --provider ./example-provider.mjs --format json ./example.deps
+```
+
+The provider module default-exports an object with three methods. The method signatures come from [`LicenseProvider`](../packages/core/src/providers/types.ts).
+
+- `supports(document)` returns whether the provider handles the file. Check `document.uri` here, since the CLI selects the provider before reading the manifest.
+- `parse(document)` reads `document.getText()` and returns entries with `name`, `spec`, `section`, and a zero-based `line`. It also receives the unsaved contents when using `--stdin`.
+- `resolve(entry, document, token)` returns a promise for a result with a `source` and, when available, a `license` and resolved `version`. For example, return `{ source: "local", license: "MIT", version: "1.2.3" }`.
+
+Module paths are relative to the working directory. Repeat `--provider` to load multiple modules. The first matching custom provider takes precedence over built-in providers. Results use the CLI's existing output and policy checks. Custom providers manage their own caching.
+
+Use modules you trust. Node.js executes them with the same permissions as the CLI. To use one from efm-langserver, add `--provider /absolute/path/to/provider.mjs` before `--` in `lint-command`.
+
 ## efm-langserver
 
 Add a tool like this to your [efm-langserver configuration](https://github.com/mattn/efm-langserver/blob/master/schema.md). Replace the bundle path and license policy with your own. The example applies the policy to JSON and JSONC manifests.
