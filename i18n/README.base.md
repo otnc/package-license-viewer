@@ -93,12 +93,16 @@ Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応�
 ## Command line and CI
 
 Use the `plv` CLI to report dependency licenses or check them against an allowlist or denylist. See the [CLI guide](docs/cli.md) for build instructions, JSON output, and an efm-langserver configuration example.
+
+To support another manifest format, load your own [custom provider](docs/cli.md#custom-providers) with `--provider`.
 :::
 
 :::kiritan{locale=ja}
 ## CLI と CI
 
 `plv` を使うと、コマンドラインで依存関係のライセンスを確認し、CI で許可リストや禁止リストと照合できます。ビルド手順、JSON 出力、efm-langserver の設定例は [CLI ガイド](docs/cli.md)（英語）を参照してください。
+
+独自のマニフェスト形式に対応させるには、`--provider` で自作の[プロバイダー](docs/cli.md#custom-providers)を読み込みます。
 :::
 
 :::kiritan{locale=en}

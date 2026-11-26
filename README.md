@@ -123,6 +123,8 @@ It needs Node.js 22+ and npm on `$PATH`; the language server is built in the bac
 
 Use the `plv` CLI to report dependency licenses or check them against an allowlist or denylist. See the [CLI guide](docs/cli.md) for build instructions, JSON output, and an efm-langserver configuration example.
 
+To support another manifest format, load your own [custom provider](docs/cli.md#custom-providers) with `--provider`.
+
 ## Contributing
 
 Adding a new ecosystem is one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.

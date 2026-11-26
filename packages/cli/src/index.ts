@@ -18,12 +18,14 @@ import { nodeProviderHost } from "../../lsp-server/src/nodeHost";
 import { toTextDocumentLike } from "../../lsp-server/src/textDocument";
 import { setSettingsSource } from "../../lsp-server/src/vscodeShim";
 import { openCacheState } from "./cache";
+import { loadCustomProviders } from "./providers";
 
 const usage = `Usage: plv [options] <manifest>
 
   --format <text|json>      Output format (default: text)
   --stdin                  Read manifest contents from stdin
   --ignore-unsupported     Treat unsupported manifests as empty results
+  --provider <path>         Load a custom license provider (repeatable)
   --allow <license>        Allow a license expression (repeatable)
   --deny <license>         Deny a license expression (repeatable)
   --cache-ttl-hours <n>    Cache lifetime in hours (0 disables caching)
@@ -44,6 +46,7 @@ const run = async () => {
       format: { type: "string", default: "text" },
       stdin: { type: "boolean" },
       "ignore-unsupported": { type: "boolean" },
+      provider: { type: "string", multiple: true, default: [] },
       allow: { type: "string", multiple: true, default: [] },
       deny: { type: "string", multiple: true, default: [] },
       "cache-ttl-hours": { type: "string" },
@@ -90,9 +93,11 @@ const run = async () => {
   const cancellation = new CancellationTokenSource();
 
   try {
-    const providers = createProviders(cache, nodeProviderHost);
+    const customProviders = await loadCustomProviders(values.provider);
     const manifest = toTextDocumentLike(TextDocument.create(uri, "", 0, ""));
-    const provider = findProvider(providers, manifest);
+    const provider =
+      customProviders.find((candidate) => candidate.supports(manifest)) ??
+      findProvider(createProviders(cache, nodeProviderHost), manifest);
     if (!provider) {
       if (!values["ignore-unsupported"]) throw new Error(`Unsupported manifest: ${path}`);
       if (values.format === "json") console.log("[]");

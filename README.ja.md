@@ -123,6 +123,8 @@ Node.js 22以降とnpmが `$PATH` に必要です。言語サーバーは対応�
 
 `plv` を使うと、コマンドラインで依存関係のライセンスを確認し、CI で許可リストや禁止リストと照合できます。ビルド手順、JSON 出力、efm-langserver の設定例は [CLI ガイド](docs/cli.md)（英語）を参照してください。
 
+独自のマニフェスト形式に対応させるには、`--provider` で自作の[プロバイダー](docs/cli.md#custom-providers)を読み込みます。
+
 ## コントリビュート
 
 新しいエコシステムを追加するのに必要なのは `LicenseProvider` というインターフェース1つだけです。アーキテクチャと開発フローについては [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
