@@ -1,6 +1,6 @@
 # Vim / Neovim support and a shared language server
 
-Status: implemented, except for Vim/Neovim CI (see Milestones). This document lays out the design behind Vim and Neovim support alongside the existing VS Code extension, without duplicating the license-resolution logic that already exists for npm, JSR and Cargo.
+Status: implemented. The only open milestone is a registered plugin listing (see Milestones). This document lays out the design behind Vim and Neovim support alongside the existing VS Code extension, without duplicating the license-resolution logic that already exists for npm, JSR and Cargo.
 
 ## Goals
 

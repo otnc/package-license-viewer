@@ -10,16 +10,14 @@ permissions:
   contents: read
 
 jobs:
+  # Node 22 is the oldest version the CLI and the Vim/Neovim language server support (engines: >=22).
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run format:check

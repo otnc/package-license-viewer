@@ -8,7 +8,7 @@
 [![CI](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/otnc/package-license-viewer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/github/license/otnc/package-license-viewer)](LICENSE)
 
-Shows the license of every dependency inline at the end of the line, with the license itself colored so it stands out at a glance.
+Shows each dependency's license at the end of its line in the manifest. The license is colored, so you can spot it at a glance.
 
 ```jsonc
 // package.json
@@ -29,29 +29,29 @@ Hover an annotation to see the resolved version, where the information came from
 
 ## Supported languages
 
-| Language | Support | Version | Package managers | First contributor | Notes |
+| Language | Support | Version | Package managers | Main contributors | Notes |
 | --- | --- | --- | --- | --- | --- |
 | JavaScript / TypeScript | ✅ | ✅ | npm, pnpm, yarn (classic & berry), bun | [@otnc](https://github.com/otnc) | `package.json`, plus `deno.json`/`jsr.json`/`import_map.json` and pnpm workspace catalogs |
-| Deno / JSR | ✅ | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above — `jsr:` and `npm:` specifiers are both resolved |
+| Deno / JSR | ✅ | ✅ | jsr, `npm:` specifiers | [@otnc](https://github.com/otnc) | Same manifests as above; both `jsr:` and `npm:` specifiers are resolved |
 | Go | ✅ | ✅ | go mod | [@otnc](https://github.com/otnc) | `go.mod` requirements, with `replace` applied, resolved against deps.dev; no local Go install needed, and modules matching `GOPRIVATE` are never looked up |
 | Rust | ✅ | ✅ | Cargo | [@bem130](https://github.com/bem130) | `Cargo.toml` declarations resolved against crates.io / `Cargo.lock`; no local Cargo install needed |
 | MoonBit | ✅ | ❌ | moon | [@Allianaab2m](https://github.com/Allianaab2m) | `moon.mod` / `moon.mod.json` resolved against `.mooncakes`, the local registry index and mooncakes.io; no local `moon` install needed |
 | Ruby | ✅ | ✅ | bundler, gem | [@muse-chan](https://github.com/muse-chan) | `Gemfile` and `*.gemspec` declarations resolved against rubygems.org / `Gemfile.lock`; no local Ruby install needed |
 | PHP | ✅ | ✅ | Composer | [@v420v](https://github.com/v420v) | `composer.json` requirements resolved against `vendor/` / `composer.lock` / Packagist; no local PHP or Composer install needed |
-| Python | ❌ | ❌ | pip, uv, poetry |  | Planned — [Issue #14](https://github.com/otnc/package-license-viewer/issues/14) |
-| Your language? |  |  |  |  | Not listed here? Support for other languages is welcome — open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)) |
+| Python | ❌ | ❌ | pip, uv, poetry |  | Planned ([Issue #14](https://github.com/otnc/package-license-viewer/issues/14)) |
+| Your language? |  |  |  |  | Not listed? Support for more languages is welcome. Open an [issue](https://github.com/otnc/package-license-viewer/issues) or a pull request (see [CONTRIBUTING.md](CONTRIBUTING.md#adding-another-ecosystem)). |
 
-See [docs/resolution-details.md](docs/resolution-details.md) for exactly how each language resolves a license, per-package-manager notes, and known metadata gaps (e.g. JSR).
+See [docs/resolution-details.md](docs/resolution-details.md) for how each language resolves a license, notes for each package manager, and known cases where the registry has no license data (such as JSR).
 
 ## Editors
 
 | Editor | Support | Notes |
 | --- | --- | --- |
 | VS Code | ✅ | The full feature set: inline annotations, hover, and every `packageLicenseViewer.*` setting. |
-| Neovim | ✅ (experimental) | Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server is built with npm automatically on first use — see `:help package_license_viewer`. |
-| Vim | ✅ (experimental) | Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`. |
+| Neovim | ✅ (experimental) | Inline annotations, hover and settings, through a bundled Node language server and a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The plugin builds the server with npm on first use. See `:help package_license_viewer`. |
+| Vim | ✅ (experimental) | Same features as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop`. See `:help package_license_viewer`. |
 
-The Vim/Neovim plugin lives at the repository root, so every plugin manager installs it from just `otnc/package-license-viewer`, with no `rtp` option or build hook:
+The Vim/Neovim plugin is at the repository root, so every plugin manager can install it from `otnc/package-license-viewer` alone. No `rtp` option or build hook is needed.
 
 | Plugin manager | Editor | Install |
 | --- | --- | --- |
@@ -65,14 +65,14 @@ The Vim/Neovim plugin lives at the repository root, so every plugin manager inst
 | [vim-jetpack](https://github.com/tani/vim-jetpack) | Vim / Neovim | `Jetpack 'otnc/package-license-viewer'` |
 | Native packages (`:help packages`) | Vim / Neovim | `git clone` into `~/.vim/pack/plugins/start/` |
 
-It needs Node.js 22+ and npm on `$PATH`; the language server is built in the background the first time a supported file is opened, and again after an update. See [`:help package_license_viewer`](doc/package_license_viewer.txt) for every manager and for configuration.
+Node.js 22 or later and npm must be on `$PATH`. The plugin builds the language server in the background the first time you open a supported file, and again after the plugin is updated. See [`:help package_license_viewer`](doc/package_license_viewer.txt) for every plugin manager and for configuration.
 
 ## Commands
 
 | Command | Description |
 | --- | --- |
-| `Package License Viewer: Refresh License Annotations` | Re-read local metadata, lockfiles and Cargo workspace declarations, then redraw. Use after dependency changes. |
-| `Package License Viewer: Clear License Cache` | Drop everything cached from the registries. |
+| `Package License Viewer: Refresh License Annotations` | Re-read local metadata, lockfiles and Cargo workspace declarations, then redraw. Run it after changing dependencies. |
+| `Package License Viewer: Clear License Cache` | Delete all cached registry results. |
 | `Package License Viewer: Toggle Inline License Annotations` | Turn the annotations on or off. |
 
 ## Settings
@@ -80,30 +80,30 @@ It needs Node.js 22+ and npm on `$PATH`; the language server is built in the bac
 | Setting | Default | Description |
 | --- | --- | --- |
 | `packageLicenseViewer.enabled` | `true` | Show inline license annotations. |
-| `packageLicenseViewer.format` | `${license}` | Annotation template. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`. |
+| `packageLicenseViewer.format` | `${license}` | Template for the annotation text. Placeholders: `${license}`, `${version}`, `${name}`, `${source}`, `${nodeEngine}`, `${rubyVersion}`, `${rustVersion}`, `${goVersion}`, `${phpVersion}`. |
 | `packageLicenseViewer.showResolvedVersion` | `false` | Append the resolved version, e.g. `MIT · 4.17.21`. |
 | `packageLicenseViewer.showNodeEngine` | `true` | Append the package's `engines.node` range, when it has one, e.g. `MIT (Node: >=20)`. |
 | `packageLicenseViewer.showRubyVersion` | `true` | Append a gem's `required_ruby_version` range, when it has one, e.g. `MIT (Ruby: >=3.0)`. |
 | `packageLicenseViewer.showRustVersion` | `true` | Append a crate's `rust-version` (MSRV), when it has one, e.g. `MIT (Rust: >=1.56)`. |
 | `packageLicenseViewer.showGoVersion` | `true` | Append a module version's `go` directive, when it has one, e.g. `MIT (Go: >=1.21)`. |
 | `packageLicenseViewer.showPhpVersion` | `true` | Append a package's `require.php` constraint, when it has one, e.g. `MIT (PHP: >=8.1)`. |
-| `packageLicenseViewer.unknownText` | `""` | Text shown when the license is unknown. Empty means show nothing. |
-| `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | Theme color id, or a CSS color such as `#88888899`, for everything except the license itself. |
-| `packageLicenseViewer.licenseColor` | `charts.green` | Theme color id, or a CSS color, used for just the license part of the annotation. |
+| `packageLicenseViewer.unknownText` | `""` | Text shown when the license is unknown. Leave it empty to show nothing. |
+| `packageLicenseViewer.annotationColor` | `editorCodeLens.foreground` | Color of the annotation except the license part: a theme color ID or a CSS color such as `#88888899`. |
+| `packageLicenseViewer.licenseColor` | `charts.green` | Color of the license part of the annotation: a theme color ID or a CSS color. |
 | `packageLicenseViewer.margin` | `0 0 0 1.5em` | CSS margin before the annotation. |
-| `packageLicenseViewer.cacheTtlHours` | `168` | Lifetime of cached registry results. `0` disables the on-disk cache. |
-| `packageLicenseViewer.requestTimeoutMs` | `8000` | Timeout of a single registry request. |
-| `packageLicenseViewer.maxConcurrentRequests` | `8` | Parallel registry requests. |
+| `packageLicenseViewer.cacheTtlHours` | `168` | How many hours cached registry results stay valid. `0` disables the on-disk cache. |
+| `packageLicenseViewer.requestTimeoutMs` | `8000` | Timeout for each registry request, in milliseconds. |
+| `packageLicenseViewer.maxConcurrentRequests` | `8` | Maximum number of registry requests sent at the same time. |
 | `packageLicenseViewer.npm.enabled` | `true` | Enable annotations for `package.json`. |
-| `packageLicenseViewer.npm.registry` | `https://registry.npmjs.org` | Registry base URL. |
+| `packageLicenseViewer.npm.registry` | `https://registry.npmjs.org` | Base URL of the npm registry. |
 | `packageLicenseViewer.npm.useRegistry` | `true` | Allow registry lookups. Set to `false` to stay fully offline. |
-| `packageLicenseViewer.npm.useLockfiles` | `true` | Read lockfiles for exact pinned versions. |
+| `packageLicenseViewer.npm.useLockfiles` | `true` | Read lockfiles to get the exact locked versions. |
 | `packageLicenseViewer.npm.sections` | 4 standard sections | Sections that are always annotated. |
 | `packageLicenseViewer.npm.autoDetectSections` | `true` | Also annotate other top-level objects whose key ends with `dependencies`. |
 | `packageLicenseViewer.npm.pnpmWorkspaceCatalogs` | `true` | Also annotate the `catalog:` and `catalogs:` sections of `pnpm-workspace.yaml`. |
-| `packageLicenseViewer.jsr.enabled` | `true` | Enable annotations for Deno / import map manifests. |
+| `packageLicenseViewer.jsr.enabled` | `true` | Enable annotations for Deno manifests and import maps. |
 | `packageLicenseViewer.jsr.registry` | `https://jsr.io` | JSR registry base URL. |
-| `packageLicenseViewer.jsr.apiUrl` | `https://api.jsr.io` | JSR API base URL, where the license lives. |
+| `packageLicenseViewer.jsr.apiUrl` | `https://api.jsr.io` | Base URL of the JSR API, which provides the license. |
 | `packageLicenseViewer.crates.enabled` | `true` | Annotate dependency declarations in `Cargo.toml`. |
 | `packageLicenseViewer.crates.useRegistry` | `true` | Allow crates.io requests. When disabled, existing cached public metadata can still be used. |
 | `packageLicenseViewer.crates.useLockfiles` | `true` | Prefer a uniquely matching crates.io version in the applicable `Cargo.lock`. |
@@ -127,7 +127,7 @@ To support another manifest format, load your own [custom provider](docs/cli.md#
 
 ## Contributing
 
-Adding a new ecosystem is one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and contribution workflow.
+To add a new ecosystem, implement one interface: `LicenseProvider`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture and the contribution workflow.
 
 ## Contributors
 

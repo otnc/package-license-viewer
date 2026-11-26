@@ -1,6 +1,6 @@
 # How license resolution works
 
-This is the detailed reference for how each supported ecosystem resolves a license, moved out of the README to keep that page short. See the README's language/package-manager table for the current support status at a glance.
+This page describes how each supported ecosystem resolves a license. For a quick overview of what is supported, see the language table in the README.
 
 | Manifest | Sections read |
 | --- | --- |
@@ -8,6 +8,8 @@ This is the detailed reference for how each supported ecosystem resolves a licen
 | `deno.json`, `deno.jsonc`, `jsr.json`, `import_map.json` | `imports` — both `jsr:` and `npm:` specifiers |
 | `pnpm-workspace.yaml` | `catalog:` and `catalogs:` — the actual ranges a workspace catalog resolves to |
 | `Cargo.toml` | `dependencies`, `dev-dependencies`, `build-dependencies`, their target-specific forms, and `workspace.dependencies` |
+| `moon.mod` | the `import` block |
+| `moon.mod.json` | `deps` and the deprecated `bin-deps` |
 | `go.mod` | `require`, single-line and block form, direct and `// indirect` alike, with `replace` applied |
 | `Gemfile` | `gem` calls, in and out of `group` blocks |
 | `*.gemspec` | `add_dependency`, `add_runtime_dependency`, `add_development_dependency` |
@@ -79,6 +81,21 @@ No Cargo or Rust installation is required. The extension never runs Cargo comman
 Editing/saving the document, switching editors or Refresh triggers updates. Auxiliary file reads are cached for five seconds and annotation results for one minute; expiration alone does not trigger an update. After an external change to Cargo.lock or a workspace manifest, use Refresh for immediate re-evaluation, or wait for these caches to expire and trigger another editor update. Clear Cache also invalidates auxiliary reads. Cargo setting changes invalidate annotations.
 
 Opening a workspace containing `Cargo.toml` activates the extension even if TOML files are treated as plain text. Opening a standalone file without such a workspace requires a TOML language registration (or running the Refresh command). The extension contributes no TOML grammar or language server. VS Code 1.90 remains the minimum supported version.
+
+## MoonBit
+
+`moon.mod` lists dependencies in an `import { "user/module@version" }` block, and `moon.mod.json` in `deps` (and the deprecated `bin-deps`). Each item is split on its last `@`, as moon does. A declared version is exact, never a range, because moon resolves with minimal version selection.
+
+The lookup path is:
+
+1. `.mooncakes`, where `moon build` unpacks the modules it selected. Only this directory shows which version minimal version selection actually picked.
+2. `moon.work` members. A dependency on a member is a local module and is skipped, whatever its `@version` says.
+3. The registry index that `moon update` keeps in `$MOON_HOME/registry/index` (`~/.moon` by default). It records every published version and its license, so a machine with the MoonBit toolchain installed resolves without any request.
+4. mooncakes.io.
+
+The mooncakes.io API has no form for a nested module name such as `moonbitlang/lex/runtime`, so such modules resolve from disk only and get no hover link. Requests to mooncakes.io are spaced out, and an HTTP 429 pauses them for a minute without retrying.
+
+No MoonBit installation is required. The extension never runs `moon`, downloads archives, or reads `.mbt` or `moon.pkg` files. Setting `moonbit.useRegistry` to `false` stops requests while still using installed modules, the registry index and cached metadata, and `moonbit.useRegistryIndex` to `false` stops reading the index.
 
 ## Go
 

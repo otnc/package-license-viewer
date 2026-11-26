@@ -23,7 +23,7 @@
       "support": "✅",
       "notes": {
         "en": "The full feature set: inline annotations, hover, and every `packageLicenseViewer.*` setting.",
-        "ja": "全機能に対応: インライン注釈、hover、`packageLicenseViewer.*` の全設定。"
+        "ja": "インライン注釈、ホバー、`packageLicenseViewer.*` のすべての設定に対応します。"
       }
     },
     {
@@ -33,8 +33,8 @@
         "ja": "✅ (実験的)"
       },
       "notes": {
-        "en": "Inline annotations, hover, and setting sync, via a bundled Node language server plus a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The server is built with npm automatically on first use — see `:help package_license_viewer`.",
-        "ja": "インライン注釈、hover、設定の同期に対応。同梱のNode製言語サーバーとLua層(`vim.lsp.start()`、`nvim_buf_set_extmark()`)経由。言語サーバーは初回利用時にnpmで自動ビルドされます — `:help package_license_viewer` を参照してください(英語のみ)。"
+        "en": "Inline annotations, hover and settings, through a bundled Node language server and a Lua layer (`vim.lsp.start()`, `nvim_buf_set_extmark()`). The plugin builds the server with npm on first use. See `:help package_license_viewer`.",
+        "ja": "インライン注釈、ホバー、設定に対応します。同梱の Node 製言語サーバーと Lua のレイヤー(`vim.lsp.start()`、`nvim_buf_set_extmark()`)で動きます。言語サーバーは初回利用時に npm で自動ビルドされます。詳しくは `:help package_license_viewer` を参照してください(英語のみ)。"
       }
     },
     {
@@ -44,8 +44,8 @@
         "ja": "✅ (実験的)"
       },
       "notes": {
-        "en": "Same as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop` — see `:help package_license_viewer`.",
-        "ja": "Neovimと同様に対応。プラグイン自前のVimScript製LSPクライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)経由。`+job`、`+channel`、`+textprop` を備えたVim 9.0以降が必要です — `:help package_license_viewer` を参照してください(英語のみ)。"
+        "en": "Same features as Neovim, through the plugin's own VimScript LSP client (`job`/`channel` + `prop_add`/`popup_atcursor`). Needs Vim 9.0+ with `+job`, `+channel` and `+textprop`. See `:help package_license_viewer`.",
+        "ja": "Neovim と同じ機能に対応します。プラグインに含まれる VimScript 製の LSP クライアント(`job`/`channel` + `prop_add`/`popup_atcursor`)で動きます。`+job`、`+channel`、`+textprop` を備えた Vim 9.0 以降が必要です。詳しくは `:help package_license_viewer` を参照してください(英語のみ)。"
       }
     }
   ]

@@ -14,7 +14,7 @@ Whichever language you write the rest of the subject in, keep the [Conventional 
 
 ## Architecture
 
-Everything hangs off one interface, [`LicenseProvider`](packages/core/src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts); nothing else needs to change to add one.
+Everything hangs off one interface, [`LicenseProvider`](packages/core/src/providers/types.ts). A provider turns a manifest into a list of dependencies (`parse`) and resolves each one to a license (`resolve`). Providers are registered in [`packages/core/src/providers/index.ts`](packages/core/src/providers/index.ts). That registration is the only change the shared code needs when you add one.
 
 The VS Code extension, the LSP server, and the [CLI](docs/cli.md) use the same providers from `packages/core`.
 
@@ -82,7 +82,7 @@ No `composer` invocation, private repository (Private Packagist, Satis, `vcs`/`p
 
 ## Adding another ecosystem
 
-Implement `LicenseProvider`, register it, and connect its activation and settings.
+Implement `LicenseProvider`, register it, and add its activation events and settings.
 
 ```ts
 export class ExampleLicenseProvider implements LicenseProvider {
@@ -196,7 +196,7 @@ When adding a provider or changing resolution logic, add a unit test next to the
 
 ## Releasing
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) is run by hand from the Actions tab. Give it a version — a bump keyword (`patch`, `minor`, `major`, `prerelease`) or an explicit version like `0.2.0` — and it does the rest:
+[`.github/workflows/release.yml`](.github/workflows/release.yml) is run by hand from the Actions tab. Give it a version, either a bump keyword (`patch`, `minor`, `major`, `prerelease`) or an explicit version like `1.0.0`, and it does the rest:
 
 1. type-check, unit tests, and the integration suite in a real VS Code
 2. bump `package.json`, and update `CHANGELOG.md` from Conventional Commits since the last tag
@@ -204,8 +204,12 @@ When adding a provider or changing resolution logic, add a unit test next to the
 4. build the `.vsix`
 5. publish to the VS Code Marketplace
 6. commit (including any documentation rebuilt in step 3), tag and push, then create the GitHub Release with the `.vsix` attached
+7. publish the same `.vsix` to [Open VSX](https://open-vsx.org/) in a separate job
 
-Publishing is skipped automatically when `VSCE_PAT` is absent, so the workflow is usable before you have a token. Get one from <https://marketplace.visualstudio.com/manage> — an Azure DevOps PAT with the Marketplace → Manage scope — and add it as a repository secret.
+Each registry is skipped automatically when its token is absent, so the workflow is usable before you have tokens. Add them as repository secrets:
+
+- `VSCE_PAT`: an Azure DevOps PAT with the Marketplace → Manage scope, from <https://marketplace.visualstudio.com/manage>
+- `OVSX_PAT`: an Open VSX access token that can publish to the `otoneko1102` namespace (see [Publishing Extensions](https://github.com/eclipse-openvsx/openvsx/wiki/Publishing-Extensions))
 
 ### Changelog
 
@@ -219,4 +223,4 @@ npx git-cliff --unreleased --tag vX.Y.Z
 
 Tagging happens only after publishing succeeded, so a failed release leaves no dangling tag. Tick `dry_run` to rehearse the whole pipeline without publishing, committing or tagging.
 
-To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, and run `npm run publish` (optionally `npm run publish -- patch`).
+To publish locally instead, copy `.env.example` to `.env`, fill in `VSCE_PAT`, and run `npm run publish` (optionally `npm run publish -- patch`). This publishes to the VS Code Marketplace only.
